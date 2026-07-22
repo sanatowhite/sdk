@@ -48,7 +48,7 @@ internal object UpdateDialogPresenter {
     private fun registerDownloadReceiver(activity: Activity, receiver: UpdateDownloadReceiver) {
         val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            activity.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
         } else {
             activity.registerReceiver(receiver, filter)
         }
