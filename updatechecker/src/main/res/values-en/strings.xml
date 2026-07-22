@@ -1,0 +1,7 @@
+<resources>
+    <string name="updatechecker_dialog_title">New version %1$s available</string>
+    <string name="updatechecker_update_now">Update now</string>
+    <string name="updatechecker_remind_later">Remind me later</string>
+    <string name="updatechecker_download_title">Downloading version %1$s</string>
+    <string name="updatechecker_verify_failed">Package verification failed, please try again</string>
+</resources>

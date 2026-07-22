@@ -34,5 +34,9 @@ class UpdateChecker internal constructor(
 
     companion object {
         fun shouldAutoCheck(context: Context): Boolean = UpdateCheckPrefs.shouldAutoCheck(context)
+
+        fun showUpdateDialog(activity: android.app.Activity, info: UpdateInfo) {
+            UpdateDialogPresenter.show(activity, info)
+        }
     }
 }

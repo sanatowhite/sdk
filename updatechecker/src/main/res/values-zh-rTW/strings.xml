@@ -1,0 +1,7 @@
+<resources>
+    <string name="updatechecker_dialog_title">發現新版本 %1$s</string>
+    <string name="updatechecker_update_now">立即更新</string>
+    <string name="updatechecker_remind_later">稍後提醒</string>
+    <string name="updatechecker_download_title">正在下載新版本 %1$s</string>
+    <string name="updatechecker_verify_failed">安裝包校驗失敗,請重試</string>
+</resources>
