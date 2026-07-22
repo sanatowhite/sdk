@@ -6,7 +6,7 @@
 
     <application>
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="io.sanato.updatechecker.UpdateCheckerFileProvider"
             android:authorities="${applicationId}.versioncheck.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
