@@ -1,0 +1,1 @@
+-keep class io.sanato.updatechecker.UpdateCheckerFileProvider { *; }
