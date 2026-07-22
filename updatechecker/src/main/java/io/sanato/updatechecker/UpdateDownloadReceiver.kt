@@ -16,6 +16,19 @@ internal class UpdateDownloadReceiver(
         val completedId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
         if (completedId != downloadId) return
 
+        // Download IDs are a small, guessable, monotonically-increasing shared counter, not a
+        // secret, and this receiver is RECEIVER_EXPORTED so any app on the device can send a
+        // spoofed/premature DOWNLOAD_COMPLETE broadcast carrying the right ID. Re-confirm the
+        // real status via DownloadManager itself before trusting the broadcast: if it's not
+        // actually STATUS_SUCCESSFUL yet, keep listening instead of unregistering, so the genuine
+        // completion broadcast (which will arrive later) is not missed.
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val isSuccessful = downloadManager.query(DownloadManager.Query().setFilterById(downloadId)).use { cursor ->
+            cursor.moveToFirst() &&
+                cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL
+        }
+        if (!isSuccessful) return
+
         context.unregisterReceiver(this)
 
         val file = ApkDownloader.downloadedFile(context, info)
