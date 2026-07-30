@@ -167,19 +167,95 @@ data class UpdateInfo(
 
 `version_check` 只是免费的 raw 文件托管,不是真正的对象存储,**同一个 app 的历史 APK 不需要留档**——旧版本用户升级后旧包就没有意义了,留着只会让仓库越来越大、clone 越来越慢。所以每次发布新版本时,推送新 APK 的**同时要删除该 app 之前推送的旧 APK**(按 `<app-slug>-v*-release.apk` 前缀匹配,只删自己 app 的,不动其它 app 的文件),仓库里始终保持"每个 app 恰好一个 APK + 一个 JSON"。
 
-具体示例可以参考 Sanato Diary 这个消费方仓库里的发布脚本 `tools/release/publish_update.sh`(不在本 SDK 仓库内,是接入方各自维护的),它的发布流程是:
+### 更新源仓库地址
 
-1. 读取宿主 app 的 `versionCode` / `versionName`,校验和传入参数一致。
-2. 对刚打出来的 release APK 算 SHA256。
-3. clone/更新本地对 `version_check` 仓库的缓存 checkout。
-4. **`git rm` 掉该 app 前缀下所有旧 APK**(新旧文件名不同时才会真的删,幂等)。
-5. 复制新 APK 进去,按上面字段生成新的 JSON(覆盖旧 JSON,因为 JSON 文件名固定不变,天然只有一份)。
-6. `git add` + `git commit` + `git push origin main` 推到 `sanatowhite/version_check`。
+- 网页 / clone:https://github.com/sanatowhite/version_check
+- push 用 SSH remote:`git@github.com:sanatowhite/version_check.git`
+- 客户端(本 SDK)实际请求的下载地址,规律是 `https://raw.githubusercontent.com/sanatowhite/version_check/main/<文件名>`——`git@github.com` 是**运维/发布方**推送用的地址,`raw.githubusercontent.com` 是**客户端 SDK**读取用的地址,两者指向同一个仓库,不要混淆。
 
-任何新接入 `version_check` 的 app,只要照着这个模式(固定 app-slug、发布时清理旧 APK、覆盖同名 JSON)写自己的发布脚本,就能和本 SDK 无缝配合。
+### 完整发布步骤(AI 可以直接照抄执行,不依赖任何外部脚本)
 
-> **设计决定(2026-07-30 讨论过,不要重新提议):发布脚本不迁移进本仓库。**
-> 曾经讨论过把 `publish_update.sh` 通用化后迁到本 SDK 仓库、让所有接入方共用同一份脚本,最终决定**不迁移**——发布脚本仍然由每个接入方在自己的 app 仓库里各自维护一份(参照上面的模式抄一份改几个变量即可)。本仓库只负责客户端 SDK 和上面这份 JSON 契约文档,不管发布侧的具体实现。
+下面每一步都是真实可执行的命令,把 `<占位符>` 换成具体值即可。这套步骤和 Sanato Diary 在 `tools/release/publish_update.sh` 里的自动化是同一套逻辑,写在这里是为了让任何接入了本 SDK 的新 app、在没有那个脚本的情况下,AI 也能照着这份 README 独立完成一次完整发布。
+
+**准备好这几个值:**
+
+- `APP_SLUG`:这个 app 自己定的短标识,一旦定下来以后每次发布都要用同一个(例如 `sanato-diary`、`fenfenbo`)。
+- `VERSION_NAME` / `VERSION_CODE`:这次要发布的版本号,通常从宿主 app 的 `build.gradle`(`versionName` / `versionCode`)里读。
+- `RELEASE_APK`:已经签名打好的 release APK 本地路径。
+- `CHANGELOG_TEXT`:给用户看的中文更新说明。
+- `FORCE`:是否强制升级(`true`/`false`),默认 `false`,只有重大安全修复等场景才设 `true`。
+
+**1. clone 或更新本地对 `version_check` 的检出:**
+
+```bash
+# 第一次:
+git clone git@github.com:sanatowhite/version_check.git /path/to/version_check_checkout
+# 已经 clone 过:
+cd /path/to/version_check_checkout
+git fetch origin
+git checkout main
+git reset --hard origin/main   # 保证和远端一致,避免本地残留脏状态
+```
+
+**2. 算 release APK 的 SHA256(客户端安装前会校验这个值,必须准确):**
+
+```bash
+shasum -a 256 "<RELEASE_APK>" | awk '{print $1}'
+```
+
+**3. 删除这个 app 之前发布过的旧 APK(仓库里每个 app 只保留一个 APK,避免无限膨胀):**
+
+```bash
+cd /path/to/version_check_checkout
+for f in "<APP_SLUG>"-v*-release.apk; do
+  [ -e "$f" ] && git rm -q "$f"
+done
+```
+
+只删 `<APP_SLUG>-v*-release.apk` 前缀匹配的文件,不要动其他 app 的产物。
+
+**4. 按命名约定复制新 APK 进去:**
+
+```bash
+cp "<RELEASE_APK>" "/path/to/version_check_checkout/<APP_SLUG>-v<VERSION_NAME>-code<VERSION_CODE>-release.apk"
+```
+
+**5. 生成 / 覆盖这个 app 的更新配置 JSON**(文件名固定不变,所以直接覆盖写就天然只有一份,不需要额外删除旧 JSON):
+
+```bash
+cat > "/path/to/version_check_checkout/<APP_SLUG>_update_version.json" <<EOF
+{
+  "versionCode": <VERSION_CODE>,
+  "versionName": "<VERSION_NAME>",
+  "apkUrl": "https://raw.githubusercontent.com/sanatowhite/version_check/main/<APP_SLUG>-v<VERSION_NAME>-code<VERSION_CODE>-release.apk",
+  "sha256": "<第2步算出来的sha256>",
+  "releaseNotes": "<CHANGELOG_TEXT>",
+  "force": <FORCE>
+}
+EOF
+```
+
+字段必须齐全(`versionCode`/`versionName`/`apkUrl`/`sha256`/`force` 缺一个客户端就会解析失败),`releaseNotes` 里的换行、引号注意做 JSON 转义(如果用脚本生成,优先用 `python3 -c "import json,sys; print(json.dumps(...))"` 或任意 JSON 库拼,不要手写字符串拼接,容易转义出错)。
+
+**6. 提交并推送(这一步是真实对外发布,推送后所有装了旧版本的用户下次检查更新就会看到——执行前必须已经拿到用户对版本号/changelog/是否 force 的明确确认):**
+
+```bash
+cd /path/to/version_check_checkout
+git add "<APP_SLUG>-v<VERSION_NAME>-code<VERSION_CODE>-release.apk" "<APP_SLUG>_update_version.json"
+git commit -m "Publish <APP_SLUG> <VERSION_NAME>"
+git push origin main
+```
+
+**7. 验证发布是否生效**(raw.githubusercontent.com 有缓存,推送后可能要等几十秒到几分钟才刷新):
+
+```bash
+curl -s "https://raw.githubusercontent.com/sanatowhite/version_check/main/<APP_SLUG>_update_version.json"
+```
+
+确认返回的 `versionCode`/`versionName`/`sha256` 和这次发布的一致,再告诉用户"已发布,下载链接是 `https://raw.githubusercontent.com/sanatowhite/version_check/main/<APP_SLUG>-v<VERSION_NAME>-code<VERSION_CODE>-release.apk`"。
+
+> **设计决定(2026-07-30 讨论过,不要重新提议):把上面这套步骤包装成脚本时,脚本本身不要迁移进本仓库。**
+> 曾经讨论过把 Sanato Diary 的 `tools/release/publish_update.sh` 通用化后迁到本 SDK 仓库、让所有接入方共用同一份脚本,最终决定**不迁移**——每个接入方按上面的步骤在自己的 app 仓库里各自维护一份发布脚本(改几个变量即可)。本仓库只负责客户端 SDK 和这份可执行的发布步骤文档,不维护发布侧的共享代码。
 
 ### 宿主 app 侧的最小接入示例
 
