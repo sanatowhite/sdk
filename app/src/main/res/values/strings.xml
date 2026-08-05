@@ -1,0 +1,4 @@
+<resources>
+    <!-- bootstrap.sh 会替换这一个 key，见计划里的 Step 4 -->
+    <string name="app_name">App Template</string>
+</resources>

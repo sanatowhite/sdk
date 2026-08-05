@@ -42,5 +42,15 @@ rootProject.name = "version-check-sdk"
 include(":updatechecker") // 唯一在 sdkOnly 下存活的模块，永远保留
 
 if (System.getenv("JITPACK") != "true") {
-    // 未来 Phase 3 在这里加 :app / :core-* / :debug-tools / :benchmark / :baselineprofile
+    include(
+        ":app",
+        ":core-common",
+        ":core-ui",
+        ":core-net",
+        ":core-data",
+        ":core-telemetry",
+        ":debug-tools",
+        ":benchmark",
+        ":baselineprofile",
+    )
 }
