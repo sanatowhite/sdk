@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "version-check-sdk"
-include ':updatechecker'
+include(":updatechecker")
