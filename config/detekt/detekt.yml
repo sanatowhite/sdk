@@ -1,0 +1,3 @@
+# detekt 是 advisory（见 SanatoQualityConventionPlugin），这份配置目前留空 =
+# 完全继承 detekt 默认规则集（buildUponDefaultConfig = true）。
+# 需要关掉某条规则误报时再在这里加 override，不要一开始就抄一份很长的模板。

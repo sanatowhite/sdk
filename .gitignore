@@ -3,5 +3,7 @@
 /local.properties
 .idea/
 .DS_Store
-/build
-/updatechecker/build
+# 通配而不是逐模块硬编码：新增模块（core-*/app/debug-tools/benchmark/...）
+# 不需要每次都来加一行。
+**/build/
+.kotlin/
