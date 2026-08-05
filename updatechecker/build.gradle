@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
@@ -26,6 +27,29 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+}
+
+// 显式声明 publication，不再依赖 JitPack 自动注入的 init script。
+// artifactId 固定为 "updatechecker"：JitPack 检测到 ~/.m2 里最终只有这一个
+// artifact 时，会把发布坐标重命名为仓库名 version-check-sdk——这正是现有
+// 消费方 com.github.sanatowhite:version-check-sdk 坐标得以保住的机制。
+// groupId / version 留空，继承 project.group / project.version；
+// jitpack.yml 传的 -Pgroup=$GROUP -Pversion=$VERSION 正好写进这两个属性。
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifactId = 'updatechecker'
+            }
+        }
     }
 }
 

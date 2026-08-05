@@ -1,0 +1,36 @@
+# jitpack.yml
+#
+# 这个仓库正在从单模块库演进为多模块 app 模板 monorepo，但对外发布的坐标
+# com.github.sanatowhite:version-check-sdk 必须继续只指向 :updatechecker 这一个模块。
+#
+# 三重目的：
+#   1. 锁定 JDK：本仓库的真实构建日志（v1.0.2）显示 JitPack 默认用 JDK 11 启动，
+#      靠正则匹配 AGP 报错文案 "requires Java 17 to run" 才临时补装 JDK 17。
+#      升级到 Gradle 9 后，Gradle 自己会先用不同措辞拒绝启动（"Gradle requires JVM 17
+#      or later"），JitPack 的补救逻辑匹配不到，会直接硬失败。显式声明 jdk 消除这个依赖。
+#   2. 只构建 :updatechecker：避免未来 :app 等模块的 Firebase / 签名 / google-services
+#      把 JitPack 构建拖挂——那些模块不该出现在这次发布里。
+#   3. 让 ~/.m2 里最终只留下一个 artifact，从而保住
+#      com.github.sanatowhite:version-check-sdk:<tag> 这个历史坐标不变
+#      （JitPack 按 m2 里最终 artifact 数量决定坐标：单个 → com.github.User:Repo，
+#      多个 → com.github.User.Repo:Module 外加一个把所有模块当依赖的聚合 POM）。
+jdk:
+  - openjdk17
+
+before_install:
+  # 17.0.14-amzn 是 v1.0.2 构建日志里 JitPack 自己成功装过的版本，确认镜像上存在。
+  # 上面的 jdk: openjdk17 通常已经够用，这里加一道保险。
+  - sdk install java 17.0.14-amzn || true
+  - sdk use java 17.0.14-amzn || true
+
+env:
+  # JitPack 内建会设这个变量；这里显式声明是为了本地能用
+  # `JITPACK=true ./gradlew :updatechecker:publishToMavenLocal ...` 复现 JitPack 的配置路径。
+  JITPACK: "true"
+
+install:
+  # $GROUP / $VERSION 是 JitPack 注入的环境变量（GROUP=com.github.sanatowhite，
+  # VERSION=tag 名或 commit）。自定义 install 后 JitPack 不再自动传 -Pgroup/-Pversion，
+  # 必须自己传。不加 -x test / -x lint：publishToMavenLocal 本身不依赖它们，而对不在
+  # 任务图中的任务用 -x 会被 Gradle 报 "Task not found" 直接失败。
+  - ./gradlew :updatechecker:publishToMavenLocal -Pgroup=$GROUP -Pversion=$VERSION --no-daemon --stacktrace
