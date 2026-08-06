@@ -30,7 +30,7 @@ class WhatsNewViewModel
         // "还不知道",调用方必须等它变成非 null 才能下判断。
         val shouldShow: StateFlow<Boolean?> =
             userSettingsRepository.settings
-                .map { it.lastSeenWhatsNewVersionCode in 1 until BuildInfo.versionCode }
+                .map { shouldShowWhatsNew(it.lastSeenWhatsNewVersionCode, BuildInfo.versionCode) }
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), null)
 
         fun markSeen() {
@@ -41,3 +41,13 @@ class WhatsNewViewModel
             const val STOP_TIMEOUT_MILLIS = 5_000L
         }
     }
+
+/**
+ * 抽成纯函数只是为了能在单测里覆盖"从旧版本升级"这类跟 [BuildInfo.versionCode]
+ * 实际取值(现在是 1)无关的场景——纯函数可以喂任意 lastSeen/current 组合,
+ * 不需要真的把当前版本号推到 2 才能测出"升级"分支。
+ */
+internal fun shouldShowWhatsNew(
+    lastSeenVersionCode: Int,
+    currentVersionCode: Int,
+): Boolean = lastSeenVersionCode in 1 until currentVersionCode

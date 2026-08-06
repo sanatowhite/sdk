@@ -62,4 +62,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     debugImplementation(project(":debug-tools"))
+
+    testImplementation(libs.junit4)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockk)
+    testImplementation(testFixtures(project(":core-data")))
 }

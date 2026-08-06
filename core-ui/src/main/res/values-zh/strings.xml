@@ -1,0 +1,5 @@
+<resources>
+    <string name="core_ui_retry">重试</string>
+    <string name="core_ui_empty_default">暂无内容</string>
+    <string name="core_ui_error_default">出错了</string>
+</resources>

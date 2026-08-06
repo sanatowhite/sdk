@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.sanato.apptemplate.core.common.UiState
+import io.sanato.apptemplate.core.ui.R
 import io.sanato.apptemplate.core.ui.theme.AppTheme
 
 @Composable
@@ -58,7 +60,7 @@ fun ErrorState(
     ) {
         Icon(Icons.Outlined.Warning, contentDescription = null)
         Text(text = message, style = MaterialTheme.typography.bodyMedium)
-        Button(onClick = onRetry) { Text("重试") }
+        Button(onClick = onRetry) { Text(stringResource(R.string.core_ui_retry)) }
     }
 }
 
@@ -70,7 +72,7 @@ fun ErrorState(
 fun <T> StateContent(
     state: UiState<T>,
     onRetry: () -> Unit,
-    emptyMessage: String = "暂无内容",
+    emptyMessage: String = stringResource(R.string.core_ui_empty_default),
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit,
 ) {
@@ -78,6 +80,7 @@ fun <T> StateContent(
     // 先捕获成局部 val。
     val data = state.data
     val error = state.error
+    val defaultErrorMessage = stringResource(R.string.core_ui_error_default)
     when {
         state.isLoading && data == null -> {
             LoadingState(modifier)
@@ -85,7 +88,7 @@ fun <T> StateContent(
 
         error != null && data == null -> {
             ErrorState(
-                message = error.message ?: "出错了",
+                message = error.message ?: defaultErrorMessage,
                 onRetry = onRetry,
                 modifier = modifier,
             )

@@ -1,0 +1,5 @@
+<resources>
+    <string name="core_ui_retry">Retry</string>
+    <string name="core_ui_empty_default">Nothing here</string>
+    <string name="core_ui_error_default">Something went wrong</string>
+</resources>
