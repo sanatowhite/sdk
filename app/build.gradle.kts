@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":core-data"))
     implementation(project(":core-telemetry"))
     implementation(project(":updatechecker"))
+    implementation(project(":logkit"))
 
     if (telemetryFirebaseEnabled) {
         implementation(project(":telemetry-firebase"))

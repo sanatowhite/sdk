@@ -8,7 +8,8 @@ import org.junit.Test
 class UpdateConfigParserTest {
     @Test
     fun `parses a well formed config`() {
-        val json = """
+        val json =
+            """
             {
               "versionCode": 7,
               "versionName": "1.0.1",
@@ -17,7 +18,7 @@ class UpdateConfigParserTest {
               "releaseNotes": "fix things",
               "force": false
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val info = UpdateConfigParser.parse(json)
 
@@ -29,7 +30,8 @@ class UpdateConfigParserTest {
 
     @Test
     fun `releaseNotes defaults to empty string when absent`() {
-        val json = """
+        val json =
+            """
             {
               "versionCode": 7,
               "versionName": "1.0.1",
@@ -37,7 +39,7 @@ class UpdateConfigParserTest {
               "sha256": "abc",
               "force": true
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val info = UpdateConfigParser.parse(json)
 

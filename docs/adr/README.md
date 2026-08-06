@@ -9,3 +9,4 @@ Lightweight ADRs (context / decision / consequences) for the choices made while 
 - [0005 — `version.properties` as the single source of truth for app versioning](0005-version-properties-not-git-tags.md)
 - [0006 — Pluggable `Telemetry` abstraction with Firebase as an optional, off-by-default backend](0006-telemetry-abstraction-optional-firebase.md)
 - [0007 — What the template deliberately does not ship (Room, auth, in-app review)](0007-deliberately-excluded-capabilities.md)
+- [0008 — `:logkit` is a log pipeline, not a detector; `:core-telemetry` still does the detecting](0008-logkit-pipeline-vs-apm-detection.md)

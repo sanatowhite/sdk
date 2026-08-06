@@ -14,13 +14,19 @@ internal object UpdateCheckPrefs {
             timeZone = TimeZone.getDefault()
         }
 
-    fun shouldAutoCheck(context: Context, todayMillis: Long = System.currentTimeMillis()): Boolean {
+    fun shouldAutoCheck(
+        context: Context,
+        todayMillis: Long = System.currentTimeMillis(),
+    ): Boolean {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val lastDate = prefs.getString(KEY_LAST_CHECK_DATE, null) ?: return true
         return lastDate != dateFormat().format(todayMillis)
     }
 
-    fun markChecked(context: Context, todayMillis: Long = System.currentTimeMillis()) {
+    fun markChecked(
+        context: Context,
+        todayMillis: Long = System.currentTimeMillis(),
+    ) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(KEY_LAST_CHECK_DATE, dateFormat().format(todayMillis)).apply()
     }

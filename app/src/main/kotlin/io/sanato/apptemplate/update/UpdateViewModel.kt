@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.sanato.logkit.LogKit
 import io.sanato.updatechecker.UpdateChecker
 import io.sanato.updatechecker.UpdateDownloadState
 import io.sanato.updatechecker.UpdateDownloader
@@ -63,12 +64,24 @@ class UpdateViewModel
 
         fun checkForUpdate() {
             viewModelScope.launch {
+                LogKit.i("Update", "checking")
                 _uiState.value = UpdateUiState.Checking
                 _uiState.value =
                     when (val result = updateChecker.check()) {
-                        is UpdateResult.Available -> UpdateUiState.Available(result.info)
-                        is UpdateResult.UpToDate -> UpdateUiState.UpToDate
-                        is UpdateResult.Error -> UpdateUiState.Error(result.message)
+                        is UpdateResult.Available -> {
+                            LogKit.i("Update", "available versionCode=${result.info.versionCode}")
+                            UpdateUiState.Available(result.info)
+                        }
+
+                        is UpdateResult.UpToDate -> {
+                            LogKit.i("Update", "up to date")
+                            UpdateUiState.UpToDate
+                        }
+
+                        is UpdateResult.Error -> {
+                            LogKit.w("Update", "check failed: ${result.message}")
+                            UpdateUiState.Error(result.message)
+                        }
                     }
             }
         }
@@ -83,6 +96,9 @@ class UpdateViewModel
                             }
 
                             is UpdateDownloadState.InProgress -> {
+                                // 刻意不记:每个下载进度块记一条会在几秒内 churn 掉
+                                // 整个 5MB 日志预算,把想留住的崩溃现场挤出去——
+                                // 这是最容易不小心炸掉预算的一处,别在这里加日志。
                                 UpdateUiState.Downloading(state.bytesDownloaded, state.totalBytes)
                             }
 
@@ -92,10 +108,12 @@ class UpdateViewModel
                             }
 
                             is UpdateDownloadState.ReadyToInstall -> {
+                                LogKit.i("Update", "ready to install: ${state.file.name}")
                                 UpdateUiState.ReadyToInstall(state.file)
                             }
 
                             is UpdateDownloadState.Failed -> {
+                                LogKit.w("Update", "download failed: ${state.reason}")
                                 UpdateUiState.DownloadFailed(state.reason)
                             }
                         }

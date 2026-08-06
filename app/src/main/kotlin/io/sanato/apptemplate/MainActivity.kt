@@ -28,6 +28,7 @@ import io.sanato.apptemplate.debug.DebugOverlay
 import io.sanato.apptemplate.feedback.AppScreenshot
 import io.sanato.apptemplate.navigation.AppNavHost
 import io.sanato.apptemplate.splash.AppEntryViewModel
+import io.sanato.logkit.LogKit
 import javax.inject.Inject
 
 /**
@@ -66,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         jankReporter = ScreenJankReporter(window, telemetry)
-        jankReporter.onScreenChanged("Home")
+        // 不再硬编码 onScreenChanged("Home")——真实起始目的地可能是 Consent,
+        // 且 `AppNavHost` 的 `OnDestinationChangedListener` 一注册就会用真实
+        // 当前目的地调一次(NavController 的既有语义),这里手动预设只会在
+        // 走 Consent 分支时把第一屏的卡顿错记到 "Home"。
 
         setContent {
             val darkTheme = isSystemInDarkTheme()
@@ -96,7 +100,11 @@ class MainActivity : AppCompatActivity() {
                             },
                     ) {
                         DebugOverlay(ringLogBuffer = ringLogBuffer) {
-                            AppNavHost(startDestination = resolvedStartDestination)
+                            AppNavHost(
+                                startDestination = resolvedStartDestination,
+                                telemetry = telemetry,
+                                onScreenChanged = jankReporter::onScreenChanged,
+                            )
                         }
                     }
                 }
@@ -106,6 +114,7 @@ class MainActivity : AppCompatActivity() {
                 LaunchedEffect(Unit) {
                     reportFullyDrawn()
                     memorySampler.sampleOnColdStartComplete()
+                    LogKit.i("App", "TTFD reported")
                 }
             }
         }

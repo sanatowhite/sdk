@@ -88,7 +88,13 @@ fun currentPublicApi(classesDir: File): String {
     val classNames =
         fileTree(classesDir) { include("**/*.class") }
             .files
-            .map { it.relativeTo(classesDir).path.removeSuffix(".class").replace(File.separatorChar, '.') }
+            .map {
+                it
+                    .relativeTo(classesDir)
+                    .path
+                    .removeSuffix(".class")
+                    .replace(File.separatorChar, '.')
+            }
             // 跳过内部类/lambda 合成类,只看顶层类型的公开签名。
             .filterNot { it.contains('$') }
             .sorted()

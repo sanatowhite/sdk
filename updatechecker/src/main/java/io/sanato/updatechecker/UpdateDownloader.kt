@@ -42,11 +42,15 @@ class UpdateDownloader(
                         }
                         return@flow
                     }
+
                     DownloadManager.STATUS_FAILED -> {
                         emit(UpdateDownloadState.Failed("Download failed (status=${progress.status})"))
                         return@flow
                     }
-                    else -> emit(UpdateDownloadState.InProgress(progress.bytesDownloaded, progress.totalBytes))
+
+                    else -> {
+                        emit(UpdateDownloadState.InProgress(progress.bytesDownloaded, progress.totalBytes))
+                    }
                 }
                 delay(POLL_INTERVAL_MILLIS)
             }
@@ -80,13 +84,20 @@ class UpdateDownloader(
         downloadManager.query(DownloadManager.Query().setFilterById(downloadId)).use { cursor ->
             if (!cursor.moveToFirst()) return DownloadProgress(DownloadManager.STATUS_RUNNING, 0L, 0L)
             val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-            val downloaded = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+            val downloaded =
+                cursor.getLong(
+                    cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR),
+                )
             val total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
             return DownloadProgress(status, downloaded, total)
         }
     }
 
-    private data class DownloadProgress(val status: Int, val bytesDownloaded: Long, val totalBytes: Long)
+    private data class DownloadProgress(
+        val status: Int,
+        val bytesDownloaded: Long,
+        val totalBytes: Long,
+    )
 
     private companion object {
         const val POLL_INTERVAL_MILLIS = 500L

@@ -5,6 +5,8 @@ import android.os.Build
 import io.sanato.apptemplate.core.telemetry.AnrReport
 import io.sanato.apptemplate.core.telemetry.AnrSource
 import io.sanato.apptemplate.core.telemetry.AppForegroundState
+import io.sanato.apptemplate.core.telemetry.DiagnosticLevel
+import io.sanato.apptemplate.core.telemetry.DiagnosticLogSink
 import io.sanato.apptemplate.core.telemetry.Telemetry
 import io.sanato.apptemplate.core.telemetry.anr.AnrExitInfoReaper
 import io.sanato.apptemplate.core.telemetry.anr.ForegroundExitBeacon
@@ -37,15 +39,49 @@ class AnrCheckInitializer
     constructor(
         private val telemetry: Telemetry,
         private val foregroundState: AppForegroundState,
+        private val logSink: DiagnosticLogSink,
     ) : AppInitializer {
         override fun init(application: Application) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val newAnrs = AnrExitInfoReaper(application).reapNewAnrExits()
+                // `reaper` 提成局部变量,让下面两个调用共用同一个实例——
+                // `reapNewAnrExits()` 是消耗性的,每次启动只能有一个调用方
+                // (见其文档),但 `readAnrTrace` 是无状态的纯读,共用实例没问题。
+                val reaper = AnrExitInfoReaper(application)
+                val newAnrs = reaper.reapNewAnrExits()
                 repeat(newAnrs.size) { telemetry.anr(AnrReport(AnrSource.EXIT_INFO)) }
+
+                if (newAnrs.isNotEmpty()) {
+                    // ANR trace 常常几十到几百 KB,读取是磁盘 IO——这个初始化器
+                    // 是 @Eager,跑在 Application.onCreate 主线程,绝不能在这里
+                    // 内联读,否则每次"上次发生过 ANR"之后的启动都会被拖慢,
+                    // 用被测之物污染冷启动测量(同一条理由,见 CLAUDE.md 里
+                    // androidx.startup 被否决的原因)。
+                    Thread {
+                        newAnrs.forEach { info ->
+                            reaper.readAnrTrace(info)?.let { trace ->
+                                logSink.log(
+                                    DiagnosticLevel.WARN,
+                                    "ANR",
+                                    "exitInfo ts=${info.timestamp} pid=${info.pid}\n$trace",
+                                    null,
+                                )
+                            }
+                        }
+                    }.apply {
+                        name = "logkit-anr-trace"
+                        priority = Thread.MIN_PRIORITY
+                    }.start()
+                }
             } else {
                 val beacon = ForegroundExitBeacon(application)
                 if (beacon.consumePreviousSessionAbnormalExit()) {
                     telemetry.anr(AnrReport(AnrSource.FOREGROUND_BEACON))
+                    logSink.log(
+                        DiagnosticLevel.WARN,
+                        "ANR",
+                        "previous session died in foreground (no trace available pre-API 30)",
+                        null,
+                    )
                 }
                 foregroundState.addListener { isForeground ->
                     if (isForeground) beacon.markForeground() else beacon.markBackground()

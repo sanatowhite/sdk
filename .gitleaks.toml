@@ -11,6 +11,14 @@ paths = [
   '''app/proguard-rules\.pro''',
   '''.*/build/.*''',
   '''.*\.lock$''',
+  # :logkit 的 THROWAWAY 测试密钥对——只用于本仓库的测试和本地验证,不是真正
+  # 发布用的密钥(真正的私钥永不签入,见 scripts/logkit-keygen.sh 和
+  # logkit/keys/README.md)。故意提交是为了让 fork 出去的人能立刻读到自己
+  # dev build 产出的加密日志,而不必先跑一次 keygen。
+  '''logkit/keys/debug-private-key\.pem''',
+  # 嵌入的公钥(SPKI DER 字节数组)——公钥不是秘密,但是一长串高熵数字,
+  # 通用规则可能误报。
+  '''logkit/src/main/java/io/sanato/logkit/BuiltInRecipientKey\.kt''',
 ]
 regexes = [
   # debug keystore 的默认 alias/密码("androiddebugkey"/"android")本身就是公开常量。

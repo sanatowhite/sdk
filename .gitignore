@@ -7,3 +7,10 @@
 # 不需要每次都来加一行。
 **/build/
 .kotlin/
+
+# scripts/logkit-keygen.sh 的输出——真正的生产私钥绝不能被提交。这些模式刻意
+# 不匹配 logkit/keys/debug-private-key.pem(那份是刻意签入的 THROWAWAY 测试
+# 密钥,固定路径,不受这里的通配影响,见其旁边的 README 说明)。
+logkit-private-*.pem
+logkit-public-*.der
+/logkit-keys/

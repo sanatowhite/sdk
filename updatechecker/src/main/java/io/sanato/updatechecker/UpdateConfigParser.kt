@@ -3,14 +3,17 @@ package io.sanato.updatechecker
 import org.json.JSONObject
 
 object UpdateConfigParser {
-    class MalformedConfigException(message: String) : Exception(message)
+    class MalformedConfigException(
+        message: String,
+    ) : Exception(message)
 
     fun parse(json: String): UpdateInfo {
-        val obj = try {
-            JSONObject(json)
-        } catch (e: Exception) {
-            throw MalformedConfigException("Invalid JSON: ${e.message}")
-        }
+        val obj =
+            try {
+                JSONObject(json)
+            } catch (e: Exception) {
+                throw MalformedConfigException("Invalid JSON: ${e.message}")
+            }
         if (!obj.has("versionCode") || !obj.has("versionName") || !obj.has("apkUrl") ||
             !obj.has("sha256") || !obj.has("force")
         ) {
@@ -22,7 +25,7 @@ object UpdateConfigParser {
             apkUrl = obj.getString("apkUrl"),
             sha256 = obj.getString("sha256"),
             releaseNotes = obj.optString("releaseNotes", ""),
-            force = obj.getBoolean("force")
+            force = obj.getBoolean("force"),
         )
     }
 }

@@ -2,7 +2,6 @@ package io.sanato.updatechecker
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import java.util.TimeZone
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -11,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.TimeZone
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])

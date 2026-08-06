@@ -6,5 +6,5 @@ data class UpdateInfo(
     val apkUrl: String,
     val sha256: String,
     val releaseNotes: String,
-    val force: Boolean
+    val force: Boolean,
 )

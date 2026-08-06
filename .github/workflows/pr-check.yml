@@ -37,6 +37,31 @@ jobs:
       - name: Test + apiCheck
         run: ./gradlew :updatechecker:test :updatechecker:apiCheck --stacktrace
 
+  logkit-guard:
+    name: logkit-guard (:logkit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Robolectric jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      # :logkit-decrypt:test 是这里承重的一项——encrypt-in-:logkit →
+      # decrypt-in-tool 的真实往返只在这里跑,是唯一能抓到格式漂移(比如
+      # HKDF 的 info 字符串或某个字段偏移被改动却忘了两边同步)的地方。
+      # 不要为了省 CI 分钟删掉它。
+      - name: Test + apiCheck + decrypt round-trip
+        run: ./gradlew :logkit:test :logkit:apiCheck :logkit-decrypt:test --stacktrace
+
   build-test-lint:
     name: build-test-lint
     runs-on: ubuntu-latest

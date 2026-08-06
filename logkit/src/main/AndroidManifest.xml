@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  刻意为空：:logkit 没有 provider、没有权限、没有 res。
+  见 logkit/README.md "为什么没有 FileProvider"——每个 <provider> 都在
+  Application.onCreate 之前实例化,这个模块的整个前提是 attachBaseContext
+  里零开销,不值得为一个月用一次的分享功能付这个代价。
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.sanato.apptemplate.BuildConfig
 import io.sanato.apptemplate.R
 import io.sanato.apptemplate.core.telemetry.RingLogBuffer
+import io.sanato.logkit.LogKit
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -27,6 +28,13 @@ class FeedbackViewModel
             screenshot: Bitmap?,
             includeLogs: Boolean,
         ) {
+            // 只记长度,绝不记正文——自由输入的反馈描述是最可能泄 PII 的地方,
+            // 且这条日志会被这次操作本身打包进 feedback_logs.txt 发出去。
+            LogKit.i(
+                "Feedback",
+                "compose: screenshot=${screenshot != null} logs=$includeLogs descLen=${description.length}",
+            )
+
             val attachments = mutableListOf<Uri>()
 
             if (screenshot != null) {

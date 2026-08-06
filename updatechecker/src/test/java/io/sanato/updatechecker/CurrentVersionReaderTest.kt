@@ -16,10 +16,11 @@ class CurrentVersionReaderTest {
     @Test
     fun `reads the host app's own long version code`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val packageInfo = PackageInfo().apply {
-            packageName = context.packageName
-            setLongVersionCode(42L)
-        }
+        val packageInfo =
+            PackageInfo().apply {
+                packageName = context.packageName
+                setLongVersionCode(42L)
+            }
         shadowOf(context.packageManager).installPackage(packageInfo)
 
         val result = CurrentVersionReader.read(context)

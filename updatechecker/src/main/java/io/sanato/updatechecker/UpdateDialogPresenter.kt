@@ -12,14 +12,19 @@ import android.view.KeyEvent
 import androidx.core.content.ContextCompat
 
 internal object UpdateDialogPresenter {
-    fun show(activity: Activity, info: UpdateInfo) {
-        val builder = AlertDialog.Builder(activity)
-            .setTitle(activity.getString(R.string.updatechecker_dialog_title, info.versionName))
-            .setMessage(info.releaseNotes)
-            .setCancelable(!info.force)
-            .setPositiveButton(R.string.updatechecker_update_now) { _, _ ->
-                startDownload(activity, info)
-            }
+    fun show(
+        activity: Activity,
+        info: UpdateInfo,
+    ) {
+        val builder =
+            AlertDialog
+                .Builder(activity)
+                .setTitle(activity.getString(R.string.updatechecker_dialog_title, info.versionName))
+                .setMessage(info.releaseNotes)
+                .setCancelable(!info.force)
+                .setPositiveButton(R.string.updatechecker_update_now) { _, _ ->
+                    startDownload(activity, info)
+                }
 
         if (!info.force) {
             builder.setNegativeButton(R.string.updatechecker_remind_later, null)
@@ -32,7 +37,10 @@ internal object UpdateDialogPresenter {
         dialog.show()
     }
 
-    private fun startDownload(activity: Activity, info: UpdateInfo) {
+    private fun startDownload(
+        activity: Activity,
+        info: UpdateInfo,
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
             !activity.packageManager.canRequestPackageInstalls()
         ) {
@@ -45,7 +53,10 @@ internal object UpdateDialogPresenter {
         registerDownloadReceiver(activity, UpdateDownloadReceiver(info, downloadId))
     }
 
-    private fun registerDownloadReceiver(activity: Activity, receiver: UpdateDownloadReceiver) {
+    private fun registerDownloadReceiver(
+        activity: Activity,
+        receiver: UpdateDownloadReceiver,
+    ) {
         val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         // DownloadManager's completion broadcast comes from a different UID (com.android.providers.downloads),
         // so RECEIVER_EXPORTED is required on API 33+ for it to reach us at all. Safe because

@@ -1,0 +1,467 @@
+Compiled from "RecordQueue.kt"
+public final class io.sanato.logkit.ArrayBlockingRecordQueue implements io.sanato.logkit.RecordQueue {
+  public io.sanato.logkit.ArrayBlockingRecordQueue(int);
+  public boolean offer(io.sanato.logkit.QueueItem);
+  public io.sanato.logkit.QueueItem poll(long);
+  public int drainTo(java.util.List<io.sanato.logkit.QueueItem>, int);
+  public int approxSize();
+}
+
+Compiled from "BuiltInRecipientKey.kt"
+public final class io.sanato.logkit.BuiltInRecipientKey {
+  public static final io.sanato.logkit.BuiltInRecipientKey INSTANCE;
+  public final byte[] getPUBLIC_KEY_SPKI_DER();
+  public final int getKEY_ID();
+}
+
+Compiled from "Clock.kt"
+public interface io.sanato.logkit.Clock {
+  public abstract long wallMillis();
+  public abstract long nanoTime();
+}
+
+Compiled from "Crypto.kt"
+public interface io.sanato.logkit.Crypto {
+  public abstract io.sanato.logkit.FileKeys newFileKeys(long);
+  public abstract byte[] sealFrame(io.sanato.logkit.FileKeys, long, long, int, byte[], boolean, boolean);
+}
+
+Compiled from "Diagnostics.kt"
+public final class io.sanato.logkit.Diagnostics {
+  public io.sanato.logkit.Diagnostics();
+  public final java.util.concurrent.atomic.AtomicLong getDroppedByOverflow();
+  public final java.util.concurrent.atomic.AtomicLong getDroppedByIo();
+  public final java.util.concurrent.atomic.AtomicLong getFrameWriteFailures();
+  public final java.util.concurrent.atomic.AtomicLong getEvictedFiles();
+  public final java.util.concurrent.atomic.AtomicLong getFirstDroppedSeq();
+  public final void recordOverflowDrop(long);
+}
+
+Compiled from "Crypto.kt"
+public final class io.sanato.logkit.FileKeys {
+  public io.sanato.logkit.FileKeys(byte[], byte[], byte[], int);
+  public final byte[] getContentKey();
+  public final byte[] getWrappedKey();
+  public final byte[] getNonceSalt();
+  public final int getKeyId();
+  public final byte[] component1();
+  public final byte[] component2();
+  public final byte[] component3();
+  public final int component4();
+  public final io.sanato.logkit.FileKeys copy(byte[], byte[], byte[], int);
+  public static io.sanato.logkit.FileKeys copy$default(io.sanato.logkit.FileKeys, byte[], byte[], byte[], int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+Compiled from "LogDirectory.kt"
+public final class io.sanato.logkit.FileLogDirectory implements io.sanato.logkit.LogDirectory {
+  public io.sanato.logkit.FileLogDirectory(java.io.File);
+  public java.io.File root();
+  public void ensureExists();
+  public java.util.List<java.io.File> list();
+  public io.sanato.logkit.FileSink create(java.lang.String);
+  public boolean delete(java.io.File);
+}
+
+Compiled from "LogDirectory.kt"
+public final class io.sanato.logkit.FileOutputStreamSink implements io.sanato.logkit.FileSink {
+  public io.sanato.logkit.FileOutputStreamSink(java.io.File);
+  public java.io.File getFile();
+  public void write(byte[], int, int);
+  public boolean sync();
+  public long length();
+  public void close();
+}
+
+Compiled from "LogDirectory.kt"
+public interface io.sanato.logkit.FileSink {
+  public abstract java.io.File getFile();
+  public abstract void write(byte[], int, int);
+  public abstract boolean sync();
+  public abstract long length();
+  public abstract void close();
+}
+
+Compiled from "FlushCoordinator.kt"
+public interface io.sanato.logkit.FlushCoordinator {
+  public abstract long pendingFlushTarget();
+  public abstract void onSynced(long);
+  public abstract void onDrained(int);
+}
+
+Compiled from "RecordQueue.kt"
+public final class io.sanato.logkit.ImmediateRecordQueue implements io.sanato.logkit.RecordQueue {
+  public io.sanato.logkit.ImmediateRecordQueue(kotlin.jvm.functions.Function1<? super io.sanato.logkit.QueueItem, kotlin.Unit>);
+  public boolean offer(io.sanato.logkit.QueueItem);
+  public io.sanato.logkit.QueueItem poll(long);
+  public int drainTo(java.util.List<io.sanato.logkit.QueueItem>, int);
+  public int approxSize();
+}
+
+Compiled from "LogDirectory.kt"
+public interface io.sanato.logkit.LogDirectory {
+  public abstract java.io.File root();
+  public abstract void ensureExists();
+  public abstract java.util.List<java.io.File> list();
+  public abstract io.sanato.logkit.FileSink create(java.lang.String);
+  public abstract boolean delete(java.io.File);
+}
+
+Compiled from "LogExporter.kt"
+public final class io.sanato.logkit.LogExporter {
+  public static final io.sanato.logkit.LogExporter INSTANCE;
+  public final int purgeAll(io.sanato.logkit.LogDirectory);
+  public final boolean export(io.sanato.logkit.LogDirectory, java.io.File, java.lang.String);
+  public static boolean export$default(io.sanato.logkit.LogExporter, io.sanato.logkit.LogDirectory, java.io.File, java.lang.String, int, java.lang.Object);
+}
+
+Compiled from "LogKitStats.kt"
+public final class io.sanato.logkit.LogFileInfo {
+  public io.sanato.logkit.LogFileInfo(java.lang.String, long, long);
+  public final java.lang.String getName();
+  public final long getSizeBytes();
+  public final long getFileSeq();
+  public java.lang.String toString();
+}
+
+Compiled from "LogFileSet.kt"
+public final class io.sanato.logkit.LogFileNaming {
+  public static final io.sanato.logkit.LogFileNaming INSTANCE;
+  public final java.lang.String buildName(long, long, java.lang.String);
+  public final io.sanato.logkit.LogFileNaming$ParsedName parse(java.lang.String);
+}
+
+Compiled from "LogFileSet.kt"
+public final class io.sanato.logkit.LogFileSet {
+  public io.sanato.logkit.LogFileSet(io.sanato.logkit.LogDirectory, long, long, int, io.sanato.logkit.Diagnostics);
+  public final void initialize();
+  public final long nextFileSeq();
+  public final void recordCreated(java.io.File, long, java.lang.String);
+  public final void recordWritten(java.io.File, long);
+  public final long lengthOf(java.io.File);
+  public final boolean shouldRotate(long, long);
+  public final int evict(java.io.File);
+  public final java.util.List<java.io.File> files();
+  public final long totalBytes();
+  public final int fileCount();
+}
+
+Compiled from "LogKit.kt"
+public final class io.sanato.logkit.LogKit {
+  public static final io.sanato.logkit.LogKit INSTANCE;
+  public static final boolean install(android.content.Context, io.sanato.logkit.LogKitConfig);
+  public static final boolean isInstalled();
+  public static final boolean isHealthy();
+  public static final void v(java.lang.String, java.lang.String);
+  public static final void d(java.lang.String, java.lang.String);
+  public static final void i(java.lang.String, java.lang.String);
+  public static final void w(java.lang.String, java.lang.String);
+  public static final void e(java.lang.String, java.lang.String);
+  public static final void e(java.lang.String, java.lang.String, java.lang.Throwable);
+  public static final boolean fatal(java.lang.String, java.lang.String, java.lang.Throwable);
+  public static final boolean flushBlocking(long);
+  public static final long droppedRecordCount();
+  public static final io.sanato.logkit.LogKitStats stats();
+  public static final int purge();
+  public static final boolean export(java.io.File);
+  public final void installForTest$logkit(io.sanato.logkit.LogKitCore);
+  public final void resetForTest$logkit();
+}
+
+Compiled from "LogKitConfig.kt"
+public final class io.sanato.logkit.LogKitConfig {
+  public final io.sanato.logkit.LogLevel getMinLevel();
+  public final int getQueueCapacity();
+  public final long getMaxFileBytes();
+  public final long getTotalBudgetBytes();
+  public final int getMaxFileCount();
+  public final boolean getMirrorToLogcat();
+  public final int getMaxMessageBytes();
+  public final long getFrameLingerMillis();
+  public final int getMaxFrameBytes();
+  public final long getFatalFlushTimeoutMillis();
+  public final int getRecipientKeyId$logkit();
+  public final byte[] getRecipientPublicKeyDer$logkit();
+  public final java.util.Map<java.lang.String, java.lang.String> getMetadata();
+  public io.sanato.logkit.LogKitConfig(io.sanato.logkit.LogLevel, int, long, long, int, boolean, int, long, int, long, int, byte[], java.util.Map, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+Compiled from "LogKitCore.kt"
+public final class io.sanato.logkit.LogKitCore implements io.sanato.logkit.FlushCoordinator {
+  public io.sanato.logkit.LogKitCore(android.app.Application, io.sanato.logkit.LogKitConfig, kotlin.jvm.functions.Function1<? super io.sanato.logkit.RecordQueue, ? extends io.sanato.logkit.RecordQueue>, io.sanato.logkit.LogDirectory, io.sanato.logkit.Crypto, io.sanato.logkit.Clock);
+  public io.sanato.logkit.LogKitCore(android.app.Application, io.sanato.logkit.LogKitConfig, kotlin.jvm.functions.Function1, io.sanato.logkit.LogDirectory, io.sanato.logkit.Crypto, io.sanato.logkit.Clock, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final void start();
+  public final void stopForTest$logkit();
+  public final void enqueue(io.sanato.logkit.LogLevel, java.lang.String, java.lang.String, java.lang.Throwable);
+  public final boolean flushBlocking(long);
+  public final boolean fatal(java.lang.String, java.lang.String, java.lang.Throwable);
+  public final boolean isHealthy();
+  public final long droppedRecordCount();
+  public final int purge();
+  public final boolean export(java.io.File);
+  public final io.sanato.logkit.LogKitStats stats();
+  public long pendingFlushTarget();
+  public void onSynced(long);
+  public void onDrained(int);
+}
+
+Compiled from "LogKitStats.kt"
+public final class io.sanato.logkit.LogKitStats {
+  public io.sanato.logkit.LogKitStats(java.util.List<io.sanato.logkit.LogFileInfo>, long, long, int, long, long, long, boolean, int, int);
+  public final java.util.List<io.sanato.logkit.LogFileInfo> getFiles();
+  public final long getTotalBytes();
+  public final long getBudgetBytes();
+  public final int getQueuedRecords();
+  public final long getNextSequence();
+  public final long getDroppedRecords();
+  public final long getEvictedFiles();
+  public final boolean getPersistenceHealthy();
+  public final int getKeyId();
+  public final int getFormatVersion();
+}
+
+Compiled from "LogKitStats.kt"
+public final class io.sanato.logkit.LogKitStatsKt {
+  public static final io.sanato.logkit.LogKitStats buildStats(java.util.List<? extends java.io.File>, kotlin.jvm.functions.Function1<? super java.io.File, java.lang.Long>, long, long, int, long, long, long, boolean, int);
+}
+
+Compiled from "LogLevel.kt"
+public final class io.sanato.logkit.LogLevel extends java.lang.Enum<io.sanato.logkit.LogLevel> {
+  public static final io.sanato.logkit.LogLevel$Companion Companion;
+  public static final io.sanato.logkit.LogLevel VERBOSE;
+  public static final io.sanato.logkit.LogLevel DEBUG;
+  public static final io.sanato.logkit.LogLevel INFO;
+  public static final io.sanato.logkit.LogLevel WARN;
+  public static final io.sanato.logkit.LogLevel ERROR;
+  public final int getWireValue$logkit();
+  public final int getLogcatPriority$logkit();
+  public static io.sanato.logkit.LogLevel[] values();
+  public static io.sanato.logkit.LogLevel valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.logkit.LogLevel> getEntries();
+}
+
+Compiled from "LogWriter.kt"
+public final class io.sanato.logkit.LogWriter implements java.lang.Runnable {
+  public static final java.lang.String TAG;
+  public static final int MAX_CREATE_ATTEMPTS;
+  public static final long MIN_BACKOFF_MILLIS;
+  public static final long MAX_BACKOFF_MILLIS;
+  public static final int EVICT_CHECK_FRAME_INTERVAL;
+  public static final long EVICT_CHECK_BYTE_INTERVAL;
+  public static final int FRAME_SIZE_SLACK;
+  public io.sanato.logkit.LogWriter(io.sanato.logkit.RecordQueue, io.sanato.logkit.LogKitConfig, io.sanato.logkit.LogDirectory, io.sanato.logkit.Crypto, io.sanato.logkit.Clock, io.sanato.logkit.Diagnostics, io.sanato.logkit.FlushCoordinator, kotlin.jvm.functions.Function0<java.lang.String>, kotlin.jvm.functions.Function0<java.lang.Integer>);
+  public io.sanato.logkit.LogWriter(io.sanato.logkit.RecordQueue, io.sanato.logkit.LogKitConfig, io.sanato.logkit.LogDirectory, io.sanato.logkit.Crypto, io.sanato.logkit.Clock, io.sanato.logkit.Diagnostics, io.sanato.logkit.FlushCoordinator, kotlin.jvm.functions.Function0, kotlin.jvm.functions.Function0, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final boolean getHealthy();
+  public final boolean getDirectoryUnavailable();
+  public final boolean getCryptoUnavailable();
+  public final void stop();
+  public void run();
+  public final void drainAndFlushInline();
+  public final void loopOnceForTest$logkit();
+}
+
+Compiled from "LogcatMirror.kt"
+public final class io.sanato.logkit.LogcatMirror {
+  public static final io.sanato.logkit.LogcatMirror INSTANCE;
+  public final void mirror(io.sanato.logkit.format.LogRecordData);
+}
+
+Compiled from "ProcessTag.kt"
+public final class io.sanato.logkit.ProcessTag {
+  public static final io.sanato.logkit.ProcessTag INSTANCE;
+  public final java.lang.String resolve(android.app.Application);
+  public final java.lang.String sanitize$logkit(java.lang.String);
+}
+
+Compiled from "QueueItem.kt"
+public abstract class io.sanato.logkit.QueueItem {
+  public io.sanato.logkit.QueueItem(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+Compiled from "Crypto.kt"
+public final class io.sanato.logkit.RealCrypto implements io.sanato.logkit.Crypto {
+  public io.sanato.logkit.RealCrypto(byte[], int, java.security.SecureRandom);
+  public io.sanato.logkit.RealCrypto(byte[], int, java.security.SecureRandom, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.logkit.FileKeys newFileKeys(long);
+  public byte[] sealFrame(io.sanato.logkit.FileKeys, long, long, int, byte[], boolean, boolean);
+}
+
+Compiled from "RecordQueue.kt"
+public interface io.sanato.logkit.RecordQueue {
+  public abstract boolean offer(io.sanato.logkit.QueueItem);
+  public abstract io.sanato.logkit.QueueItem poll(long);
+  public abstract int drainTo(java.util.List<io.sanato.logkit.QueueItem>, int);
+  public abstract int approxSize();
+}
+
+Compiled from "Clock.kt"
+public final class io.sanato.logkit.SystemClockSource implements io.sanato.logkit.Clock {
+  public static final io.sanato.logkit.SystemClockSource INSTANCE;
+  public long wallMillis();
+  public long nanoTime();
+}
+
+Compiled from "RecordCodec.kt"
+public final class io.sanato.logkit.format.DecodedRecord {
+  public io.sanato.logkit.format.DecodedRecord(io.sanato.logkit.format.LogRecordData, int);
+  public final io.sanato.logkit.format.LogRecordData getRecord();
+  public final int getBytesConsumed();
+  public final io.sanato.logkit.format.LogRecordData component1();
+  public final int component2();
+  public final io.sanato.logkit.format.DecodedRecord copy(io.sanato.logkit.format.LogRecordData, int);
+  public static io.sanato.logkit.format.DecodedRecord copy$default(io.sanato.logkit.format.DecodedRecord, io.sanato.logkit.format.LogRecordData, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+Compiled from "Envelope.kt"
+public final class io.sanato.logkit.format.Envelope {
+  public static final io.sanato.logkit.format.Envelope INSTANCE;
+  public static final byte KEM_ID_ECIES_P256;
+  public static final int WRAPPED_KEY_LEN;
+  public final java.security.KeyPair generateRecipientKeyPair(java.security.SecureRandom);
+  public static java.security.KeyPair generateRecipientKeyPair$default(io.sanato.logkit.format.Envelope, java.security.SecureRandom, int, java.lang.Object);
+  public final byte[] generateContentKey(java.security.SecureRandom);
+  public static byte[] generateContentKey$default(io.sanato.logkit.format.Envelope, java.security.SecureRandom, int, java.lang.Object);
+  public final byte[] wrap(java.security.PublicKey, byte[], int, long, java.security.SecureRandom);
+  public static byte[] wrap$default(io.sanato.logkit.format.Envelope, java.security.PublicKey, byte[], int, long, java.security.SecureRandom, int, java.lang.Object);
+  public final byte[] unwrap(java.security.PrivateKey, byte[], int, long);
+  public final boolean selfProbeSymmetric(java.security.SecureRandom);
+  public static boolean selfProbeSymmetric$default(io.sanato.logkit.format.Envelope, java.security.SecureRandom, int, java.lang.Object);
+  public final boolean selfProbe(java.security.PublicKey, java.security.PrivateKey, int, long, java.security.SecureRandom);
+  public static boolean selfProbe$default(io.sanato.logkit.format.Envelope, java.security.PublicKey, java.security.PrivateKey, int, long, java.security.SecureRandom, int, java.lang.Object);
+}
+
+Compiled from "FileHeaderCodec.kt"
+public final class io.sanato.logkit.format.FileHeader {
+  public io.sanato.logkit.format.FileHeader(int, int, int, int, int, byte[], long, long, long, int, java.lang.String, byte[], java.util.Map<java.lang.String, java.lang.String>);
+  public final int getFormatVersion();
+  public final int getKemId();
+  public final int getAeadId();
+  public final int getCompressionId();
+  public final int getKeyId();
+  public final byte[] getNonceSalt();
+  public final long getCreatedAtWallMillis();
+  public final long getCreatedAtElapsedNanos();
+  public final long getFileSeq();
+  public final int getPid();
+  public final java.lang.String getProcessTag();
+  public final byte[] getWrappedKey();
+  public final java.util.Map<java.lang.String, java.lang.String> getMetadata();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public final int component1();
+  public final int component2();
+  public final int component3();
+  public final int component4();
+  public final int component5();
+  public final byte[] component6();
+  public final long component7();
+  public final long component8();
+  public final long component9();
+  public final int component10();
+  public final java.lang.String component11();
+  public final byte[] component12();
+  public final java.util.Map<java.lang.String, java.lang.String> component13();
+  public final io.sanato.logkit.format.FileHeader copy(int, int, int, int, int, byte[], long, long, long, int, java.lang.String, byte[], java.util.Map<java.lang.String, java.lang.String>);
+  public static io.sanato.logkit.format.FileHeader copy$default(io.sanato.logkit.format.FileHeader, int, int, int, int, int, byte[], long, long, long, int, java.lang.String, byte[], java.util.Map, int, java.lang.Object);
+  public java.lang.String toString();
+}
+
+Compiled from "FileHeaderCodec.kt"
+public final class io.sanato.logkit.format.FileHeaderCodec {
+  public static final io.sanato.logkit.format.FileHeaderCodec INSTANCE;
+  public static final int MAGIC;
+  public static final int FORMAT_VERSION;
+  public final byte[] encode(io.sanato.logkit.format.FileHeader);
+  public final io.sanato.logkit.format.FileHeader decode(byte[]);
+}
+
+Compiled from "FrameCodec.kt"
+public final class io.sanato.logkit.format.FrameCodec {
+  public static final io.sanato.logkit.format.FrameCodec INSTANCE;
+  public static final int MAGIC;
+  public static final int HEADER_LEN;
+  public static final int FLAG_DEFLATED;
+  public static final int FLAG_FLUSH_INDUCED;
+  public static final int MAX_PLAINTEXT_BYTES;
+  public final byte[] encodeHeader(io.sanato.logkit.format.FrameHeader);
+  public final io.sanato.logkit.format.FrameHeader decodeHeader(byte[], int);
+  public final byte[] seal(byte[], byte[], long, long, int, byte[], boolean, boolean);
+  public static byte[] seal$default(io.sanato.logkit.format.FrameCodec, byte[], byte[], long, long, int, byte[], boolean, boolean, int, java.lang.Object);
+  public final byte[] open(byte[], byte[], io.sanato.logkit.format.FrameHeader, byte[], int);
+}
+
+Compiled from "FrameCodec.kt"
+public final class io.sanato.logkit.format.FrameHeader {
+  public io.sanato.logkit.format.FrameHeader(int, long, long, int, int, int);
+  public final int getFrameFlags();
+  public final long getFrameIndex();
+  public final long getFirstRecordSeq();
+  public final int getRecordCount();
+  public final int getPlaintextLen();
+  public final int getPayloadLen();
+  public final int component1();
+  public final long component2();
+  public final long component3();
+  public final int component4();
+  public final int component5();
+  public final int component6();
+  public final io.sanato.logkit.format.FrameHeader copy(int, long, long, int, int, int);
+  public static io.sanato.logkit.format.FrameHeader copy$default(io.sanato.logkit.format.FrameHeader, int, long, long, int, int, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+Compiled from "Hkdf.kt"
+public final class io.sanato.logkit.format.Hkdf {
+  public static final io.sanato.logkit.format.Hkdf INSTANCE;
+  public final byte[] extract(byte[], byte[]);
+  public final byte[] expand(byte[], byte[], int);
+}
+
+Compiled from "LogFormatException.kt"
+public final class io.sanato.logkit.format.LogFormatException extends java.lang.Exception {
+  public io.sanato.logkit.format.LogFormatException(java.lang.String);
+}
+
+Compiled from "RecordCodec.kt"
+public final class io.sanato.logkit.format.LogRecordData {
+  public io.sanato.logkit.format.LogRecordData(long, long, long, int, int, java.lang.String, java.lang.String, java.lang.String);
+  public final long getSeq();
+  public final long getWallMillis();
+  public final long getElapsedNanos();
+  public final int getThreadId();
+  public final int getLevel();
+  public final java.lang.String getTag();
+  public final java.lang.String getThreadName();
+  public final java.lang.String getMessage();
+  public final long component1();
+  public final long component2();
+  public final long component3();
+  public final int component4();
+  public final int component5();
+  public final java.lang.String component6();
+  public final java.lang.String component7();
+  public final java.lang.String component8();
+  public final io.sanato.logkit.format.LogRecordData copy(long, long, long, int, int, java.lang.String, java.lang.String, java.lang.String);
+  public static io.sanato.logkit.format.LogRecordData copy$default(io.sanato.logkit.format.LogRecordData, long, long, long, int, int, java.lang.String, java.lang.String, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+Compiled from "RecordCodec.kt"
+public final class io.sanato.logkit.format.RecordCodec {
+  public static final io.sanato.logkit.format.RecordCodec INSTANCE;
+  public static final int MAX_TAG_BYTES;
+  public static final int MAX_THREAD_NAME_BYTES;
+  public final byte[] encode(io.sanato.logkit.format.LogRecordData, int);
+  public final io.sanato.logkit.format.DecodedRecord decode(byte[], int);
+  public final java.util.List<io.sanato.logkit.format.LogRecordData> decodeAll(byte[], int);
+}
+

@@ -4,7 +4,10 @@ import java.io.File
 import java.security.MessageDigest
 
 object Sha256Verifier {
-    fun matches(file: File, expectedHexSha256: String): Boolean {
+    fun matches(
+        file: File,
+        expectedHexSha256: String,
+    ): Boolean {
         val digest = MessageDigest.getInstance("SHA-256")
         file.inputStream().use { input ->
             val buffer = ByteArray(8192)

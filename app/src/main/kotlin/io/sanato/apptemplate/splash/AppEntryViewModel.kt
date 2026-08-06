@@ -7,6 +7,7 @@ import io.sanato.apptemplate.consent.CURRENT_CONSENT_VERSION
 import io.sanato.apptemplate.core.data.UserSettingsRepository
 import io.sanato.apptemplate.navigation.Consent
 import io.sanato.apptemplate.navigation.Home
+import io.sanato.logkit.LogKit
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -31,8 +32,12 @@ class AppEntryViewModel
         val startDestination: StateFlow<Any?> =
             flow {
                 val settings = withTimeoutOrNull(SPLASH_TIMEOUT_MILLIS) { userSettingsRepository.settings.first() }
+                if (settings == null) {
+                    LogKit.w("Splash", "settings read timed out after ${SPLASH_TIMEOUT_MILLIS}ms — forcing Consent")
+                }
                 val destination =
                     if (settings != null && settings.consentVersion >= CURRENT_CONSENT_VERSION) Home else Consent
+                LogKit.i("Splash", "startDestination = ${destination.javaClass.simpleName}")
                 emit(destination)
             }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
     }

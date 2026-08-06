@@ -48,16 +48,28 @@ plugins {
 
 // Kover 聚合报告——quality-report(非阻塞)CI job 用。`:updatechecker` 故意不
 // 纳入(它的覆盖率不该被这套模板的质量门禁牵动,保持独立评估的原则和它不套用
-// build-logic convention plugin 是同一个道理)。
+// build-logic convention plugin 是同一个道理)。`:logkit` 同理排除,且原因完全
+// 相同:聚合机制本身要求给模块 apply kover 插件,这直接违反"除 com.android.library
+// 外不套任何插件"这条铁律——加了就不再是零插件的独立模块。`:logkit-decrypt`
+// 是纯 JVM 模块,不参与 Android 模块的聚合体系,同样不在这个列表里。
 // 每个参与聚合的子项目也要 apply 这个插件本身,根项目的 `kover(project(...))`
 // 依赖才能找到匹配的 "kover" variant——这是 Kover 多模块聚合报告的前提。
 val koverAggregatedModules =
     listOf(":core-common", ":core-ui", ":core-net", ":core-data", ":core-telemetry", ":app")
 
-koverAggregatedModules.forEach { path -> project(path).apply(plugin = "org.jetbrains.kotlinx.kover") }
+// ⚠️ 修复一个先于本次改动就存在的 bug:这两处 project(path) 在配置期就 eager
+// 求值,但 JITPACK=true 时 settings.gradle.kts 根本不 include 这些模块——
+// `JITPACK=true ./gradlew :updatechecker:publishToMavenLocal ...`(CLAUDE.md
+// 里记录的标准 SDK-only 构建命令)因此在配置阶段直接报
+// "Project with path ':core-common' could not be found",连 :updatechecker
+// 都跑不起来。同一份文件后面 verifyModuleGraph 用的是 doLast{} 里的惰性
+// project(path),从未触发这个问题——只有这两行是例外。
+if (System.getenv("JITPACK") != "true") {
+    koverAggregatedModules.forEach { path -> project(path).apply(plugin = "org.jetbrains.kotlinx.kover") }
 
-dependencies {
-    koverAggregatedModules.forEach { path -> kover(project(path)) }
+    dependencies {
+        koverAggregatedModules.forEach { path -> kover(project(path)) }
+    }
 }
 
 // 模块依赖方向的机械检查——只检查 project() 依赖,不解析构建脚本文本。
@@ -78,6 +90,12 @@ tasks.register("verifyModuleGraph") {
                 ":core-data" to setOf(":core-common", ":core-net"),
                 ":core-telemetry" to setOf(":core-common"),
                 ":updatechecker" to emptySet<String>(),
+                // 和 :updatechecker 同一条铁律,但理由不同::logkit 没有发布链路
+                // 要保护(本期不对外发布),但它是 ADR-0008 里 subtree 镜像的候选,
+                // 镜像出去的单模块仓库里根本不存在 :core-common ——依赖数必须
+                // 恒为 0,不是"现在恰好没依赖"。
+                ":logkit" to emptySet<String>(),
+                ":logkit-decrypt" to emptySet<String>(),
             )
 
         val violations = mutableListOf<String>()

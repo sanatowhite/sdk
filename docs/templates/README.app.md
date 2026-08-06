@@ -8,7 +8,8 @@ Built from [android-app-template](https://github.com/sanatowhite/version-check-s
 - Performance monitoring (`:core-telemetry`) — startup timing, jank, crashes, ANRs, memory, network, optional Firebase backend.
 - Standard pages: settings (theme/dynamic color/language/notifications), about, licenses, privacy policy, terms of service, first-launch consent, What's New.
 - Feedback page (screenshot + logs + device info -> email).
-- Debug Drawer (debug builds only): feature flag overrides, crash/ANR/OOM triggers, startup/jank/network log viewer.
+- Debug Drawer (debug builds only): feature flag overrides, crash/ANR/OOM triggers, startup/jank/network log viewer, and a LogKit panel (concurrency stress test, 5MB rotation, crash/ANR log durability, export & share).
+- Encrypted rolling logs (`:logkit`): every crash/ANR/jank/network signal is written to disk, compressed and encrypted, capped at 5MB. Users can share the exported file for troubleshooting; only whoever holds the matching private key can read it. **Before you ship a real release, run `scripts/logkit-keygen.sh` and swap the built-in public key** — see `logkit/keys/README.md`.
 
 ## Getting started
 

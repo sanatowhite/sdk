@@ -2,6 +2,8 @@ package io.sanato.apptemplate.core.telemetry.crash
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.sanato.apptemplate.core.telemetry.DiagnosticLevel
+import io.sanato.apptemplate.core.telemetry.DiagnosticLogSink
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -54,5 +56,31 @@ class CrashRecorderTest {
 
         val secondDrain = CrashRecorder.drainPendingCrashReports(context)
         assertTrue(secondDrain.isEmpty())
+    }
+
+    @Test
+    fun `sink receives exactly one FATAL and previousHandler still runs if the sink throws`() {
+        var previousHandlerInvoked = false
+        Thread.setDefaultUncaughtExceptionHandler { _, _ -> previousHandlerInvoked = true }
+
+        val received = mutableListOf<DiagnosticLevel>()
+        val throwingSink =
+            DiagnosticLogSink { level, _, _, _ ->
+                received.add(level)
+                throw IllegalStateException("sink misbehaving")
+            }
+        val recorder = CrashRecorder.install(context, throwingSink)
+
+        recorder.uncaughtException(Thread.currentThread(), IllegalStateException("boom"))
+
+        assertEquals(listOf(DiagnosticLevel.FATAL), received)
+        assertTrue("a throwing sink must not prevent previousHandler from running", previousHandlerInvoked)
+    }
+
+    @Test
+    fun `default install with no sink behaves exactly as before`() {
+        val recorder = CrashRecorder.install(context)
+        recorder.uncaughtException(Thread.currentThread(), IllegalStateException("boom"))
+        assertEquals(1, CrashRecorder.drainPendingCrashReports(context).size)
     }
 }

@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.sanato.apptemplate.about.BuildInfo
 import io.sanato.apptemplate.core.data.UserSettingsRepository
+import io.sanato.logkit.LogKit
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,10 +33,12 @@ class WhatsNewViewModel
         val shouldShow: StateFlow<Boolean?> =
             userSettingsRepository.settings
                 .map { shouldShowWhatsNew(it.lastSeenWhatsNewVersionCode, BuildInfo.versionCode) }
+                .onEach { LogKit.i("WhatsNew", "shouldShow=$it current=${BuildInfo.versionCode}") }
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), null)
 
         fun markSeen() {
             viewModelScope.launch { userSettingsRepository.setLastSeenWhatsNewVersionCode(BuildInfo.versionCode) }
+            LogKit.i("WhatsNew", "markSeen lastSeen=${BuildInfo.versionCode}")
         }
 
         private companion object {

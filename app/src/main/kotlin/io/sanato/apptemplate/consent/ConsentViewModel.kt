@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.sanato.apptemplate.core.data.UserSettingsRepository
+import io.sanato.logkit.LogKit
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +17,7 @@ class ConsentViewModel
         fun accept(onAccepted: () -> Unit) {
             viewModelScope.launch {
                 userSettingsRepository.setConsentVersion(CURRENT_CONSENT_VERSION)
+                LogKit.i("Consent", "consent accepted v=$CURRENT_CONSENT_VERSION")
                 onAccepted()
             }
         }

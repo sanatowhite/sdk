@@ -9,11 +9,20 @@ import java.io.File
 sealed class UpdateDownloadState {
     object Idle : UpdateDownloadState()
 
-    data class InProgress(val bytesDownloaded: Long, val totalBytes: Long) : UpdateDownloadState()
+    data class InProgress(
+        val bytesDownloaded: Long,
+        val totalBytes: Long,
+    ) : UpdateDownloadState()
 
-    data class Verifying(val file: File) : UpdateDownloadState()
+    data class Verifying(
+        val file: File,
+    ) : UpdateDownloadState()
 
-    data class ReadyToInstall(val file: File) : UpdateDownloadState()
+    data class ReadyToInstall(
+        val file: File,
+    ) : UpdateDownloadState()
 
-    data class Failed(val reason: String) : UpdateDownloadState()
+    data class Failed(
+        val reason: String,
+    ) : UpdateDownloadState()
 }

@@ -4,6 +4,8 @@ A fork-able Android app template: Compose + Hilt + Navigation, in-app update che
 
 It also carries `:updatechecker`, a standalone in-app update checking library published independently to JitPack as `com.github.sanatowhite:version-check-sdk`. That module predates the template, has its own tag namespace (`v*` vs. the app's `app-v*`), and can be consumed on its own without any of the rest of this repo.
 
+A second standalone module, `:logkit`, adds encrypted, compressed, order-consistent rolling log capture (with crash/ANR stack traces written in by `:core-telemetry`) — see `docs/adr/0008-logkit-pipeline-vs-apm-detection.md` for why detection and logging are split across two modules. It is **not** published yet (gated out of the JitPack path so it doesn't disturb `:updatechecker`'s coordinate) — copy the module directory to use it standalone.
+
 ## I want the whole template
 
 ```bash
@@ -27,6 +29,7 @@ Every `core-*` module is independently deletable and has its own README describi
 | Module | What it is | How to get it |
 |---|---|---|
 | [`:updatechecker`](updatechecker/README.md) | In-app update check → download → SHA-256 verify → install. Zero third-party dependencies. | Already published: `implementation("com.github.sanatowhite:version-check-sdk:<tag>")` via JitPack — see its README for the full JitPack setup. |
+| [`:logkit`](logkit/README.md) | Multi-threaded, order-consistent, compressed-and-encrypted rolling log SDK (5MB budget, oldest-first eviction) + an offline decrypt CLI (`tools/logkit-decrypt`). Zero third-party dependencies. | Not published yet — copy the module directory; run `scripts/logkit-keygen.sh` and swap the built-in public key before shipping anything real. |
 | [`:core-common`](core-common/README.md) | Shared result/UI-state types and coroutine dispatcher qualifiers used by every other `core-*` module. | Not separately published — copy the module directory into your project. |
 | [`:core-ui`](core-ui/README.md) | M3 theme (dynamic color), spacing tokens, loading/empty/error state components, page scaffolding. | Copy the module directory; only depends on `:core-common`. |
 | [`:core-net`](core-net/README.md) | OkHttp/Retrofit setup, retry policy, `NetworkMonitor`, `safeApiCall` error wrapping. | Copy the module directory; only depends on `:core-common`. |
@@ -36,7 +39,7 @@ Every `core-*` module is independently deletable and has its own README describi
 | [`:debug-tools`](debug-tools/README.md) | In-app Debug Drawer (feature flag overrides, crash/ANR/OOM triggers, log viewer). `debugImplementation` only. | Copy the module directory; designed for this template's `:app` facade pattern, not a general-purpose library. |
 | [`:benchmark`](benchmark/README.md) / [`:baselineprofile`](baselineprofile/README.md) | Macrobenchmark smoke tests + Baseline Profile generation for `:app`. | Not independently useful — these target `:app` specifically via `targetProjectPath`. |
 
-None of these modules will resolve as a Maven/JitPack coordinate except `:updatechecker` — "copy the directory into your project" is the intended standalone consumption path for everything else, since publishing each one independently isn't worth the overhead for a template project. Each module's own dependency footprint (what it pulls in transitively) is documented in its README so you know what you're actually taking on.
+None of these modules will resolve as a Maven/JitPack coordinate except `:updatechecker` — "copy the directory into your project" is the intended standalone consumption path for everything else (including `:logkit`, which is publish-ready in shape but deliberately not published, see its README), since publishing each one independently isn't worth the overhead for a template project. Each module's own dependency footprint (what it pulls in transitively) is documented in its README so you know what you're actually taking on.
 
 ## Repository layout
 
@@ -47,9 +50,11 @@ android-app-template/
 ├── debug-tools/            -- debugImplementation only, zero release residue
 ├── telemetry-firebase/     -- optional, off by default
 ├── updatechecker/          -- standalone SDK, independently published, own tag namespace
+├── logkit/                 -- second standalone SDK (encrypted rolling logs), not published yet
+├── tools/logkit-decrypt/   -- pure-JVM offline decrypt CLI for :logkit's archive format
 ├── benchmark/ baselineprofile/
 ├── build-logic/convention/ -- precompiled Gradle script plugins
-├── scripts/                -- bootstrap.sh, new-module.sh, dep-graph.sh
+├── scripts/                -- bootstrap.sh, new-module.sh, dep-graph.sh, logkit-keygen.sh
 ├── docs/adr/                -- architecture decision records
 ├── CLAUDE.md               -- guidance for AI coding assistants working in this repo
 └── TEMPLATE.md             -- fork checklist and removal guide
@@ -60,6 +65,7 @@ android-app-template/
 ```bash
 ./gradlew :app:assembleDebug            # the template app
 ./gradlew :updatechecker:test           # the SDK module, 19 tests, runs in isolation from everything else
+./gradlew :logkit:test :logkit-decrypt:test   # the second SDK module + its offline decrypt tool's round-trip test
 ./gradlew lintDebug spotlessCheck verifyModuleGraph   # required PR-check gates
 ```
 
