@@ -9,4 +9,6 @@ data class UserSettings(
     val notificationsEnabled: Boolean = true,
     val telemetryEnabled: Boolean = true,
     val consentVersion: Int = 0,
+    // 全新安装也要写这个值(见 :app What's New 的接入点),否则首次启动就弹更新日志。
+    val lastSeenWhatsNewVersionCode: Int = 0,
 )

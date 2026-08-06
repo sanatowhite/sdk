@@ -33,4 +33,8 @@ class FakeUserSettingsRepository(
     override suspend fun setConsentVersion(version: Int) {
         state.update { it.copy(consentVersion = version) }
     }
+
+    override suspend fun setLastSeenWhatsNewVersionCode(versionCode: Int) {
+        state.update { it.copy(lastSeenWhatsNewVersionCode = versionCode) }
+    }
 }

@@ -1,5 +1,6 @@
 import buildlogic.configureAndroidCommon
 import buildlogic.configureSigning
+import buildlogic.gitShaProvider
 import buildlogic.lib
 import buildlogic.libs
 import buildlogic.readAppVersion
@@ -34,6 +35,11 @@ class SanatoAndroidApplicationConventionPlugin : Plugin<Project> {
                     versionName = version.versionName
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     vectorDrawables.useSupportLibrary = true
+
+                    buildConfigField("String", "GIT_SHA", "\"${gitShaProvider().get()}\"")
+                    // 只在 release 覆盖成真实值(见下方 buildTypes.release)——固定值
+                    // 让 debug 构建不会因为"每次配置都不一样"而每次都让配置缓存失效。
+                    buildConfigField("long", "BUILD_TIME_MILLIS", "0L")
                 }
 
                 compileOptions {
@@ -75,6 +81,7 @@ class SanatoAndroidApplicationConventionPlugin : Plugin<Project> {
                         )
                         signingConfig = signingConfigs.findByName("release")
                             ?: signingConfigs.getByName("debug")
+                        buildConfigField("long", "BUILD_TIME_MILLIS", "${System.currentTimeMillis()}L")
                     }
                     create("staging") {
                         initWith(getByName("release"))

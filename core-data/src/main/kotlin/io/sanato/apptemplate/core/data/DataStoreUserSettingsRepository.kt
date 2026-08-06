@@ -23,6 +23,7 @@ class DataStoreUserSettingsRepository
                     notificationsEnabled = prefs[Keys.NOTIFICATIONS] ?: true,
                     telemetryEnabled = prefs[Keys.TELEMETRY] ?: true,
                     consentVersion = prefs[Keys.CONSENT_VERSION] ?: 0,
+                    lastSeenWhatsNewVersionCode = prefs[Keys.LAST_SEEN_WHATS_NEW] ?: 0,
                 )
             }
 
@@ -46,6 +47,10 @@ class DataStoreUserSettingsRepository
             dataStore.edit { it[Keys.CONSENT_VERSION] = version }
         }
 
+        override suspend fun setLastSeenWhatsNewVersionCode(versionCode: Int) {
+            dataStore.edit { it[Keys.LAST_SEEN_WHATS_NEW] = versionCode }
+        }
+
         private fun parseThemeMode(raw: String): ThemeMode =
             runCatching {
                 ThemeMode.valueOf(raw)
@@ -57,5 +62,6 @@ class DataStoreUserSettingsRepository
             val NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
             val TELEMETRY = booleanPreferencesKey("telemetry_enabled")
             val CONSENT_VERSION = intPreferencesKey("consent_version")
+            val LAST_SEEN_WHATS_NEW = intPreferencesKey("last_seen_whats_new_version_code")
         }
     }

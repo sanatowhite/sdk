@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.sanato.android.hilt)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
@@ -11,6 +12,11 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+aboutLibraries {
+    // 离线模式:构建期不联网抓 license,CI 不会因为这一步变成不确定的网络依赖。
+    offlineMode = true
 }
 
 // 唯一的开关来源是 gradle.properties 的 telemetryFirebaseEnabled——settings.gradle.kts
@@ -42,6 +48,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.aboutlibraries.compose.m3)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

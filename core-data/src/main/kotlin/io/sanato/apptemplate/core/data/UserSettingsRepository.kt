@@ -14,4 +14,6 @@ interface UserSettingsRepository {
     suspend fun setTelemetryEnabled(enabled: Boolean)
 
     suspend fun setConsentVersion(version: Int)
+
+    suspend fun setLastSeenWhatsNewVersionCode(versionCode: Int)
 }

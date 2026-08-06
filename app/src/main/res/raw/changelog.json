@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "versionCode": 1,
+      "versionName": "0.1.0",
+      "date": "2026-08-06",
+      "highlights": [
+        "Initial template release",
+        "In-app update checking",
+        "Performance monitoring (startup, jank, crashes, ANRs, memory, network)"
+      ]
+    }
+  ]
+}
