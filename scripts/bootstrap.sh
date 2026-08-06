@@ -68,6 +68,19 @@ BRANCH_NAME="bootstrap/${NEW_APP_ID##*.}"
 git switch -c "$BRANCH_NAME"
 echo "==> Working on branch $BRANCH_NAME (abort any time with: git switch main && git branch -D $BRANCH_NAME)"
 
+# ⚠️ `git switch main` alone does NOT discard staged changes (git mv stages
+# renames immediately) — they carry over onto main's working tree uncommitted.
+# A real rollback needs a hard reset on the branch being abandoned *before*
+# switching away from it.
+rollback() {
+  echo "::error:: $1 Rolling back." >&2
+  git reset --hard HEAD >/dev/null
+  git clean -fd >/dev/null
+  git switch main --quiet
+  git branch -D "$BRANCH_NAME" >/dev/null
+  exit 1
+}
+
 # ── Step 1: move source directories ──────────────────────────────
 # 覆盖所有 source root:main/test/androidTest/debug/release/staging/testFixtures。
 # updatechecker/ 整个不参与遍历——glob 里从不出现它的路径。
@@ -110,40 +123,36 @@ find . \( -path "*/java/io/sanato" -o -path "*/kotlin/io/sanato" \) -type d -emp
 # 在第三段(apptemplate vs updatechecker)就分叉,即使下面的路径排除失效,也不会
 # 误伤 updatechecker 的任何一行。这是设计层面的双保险,不是靠脚本小心。
 echo "==> Rewriting $TEMPLATE_APP_ID references to $NEW_APP_ID"
+# ⚠️ 用 # 做 perl s/// 的分隔符,不用默认的 /——两个 token 本身都含 /(斜杠分形态),
+# 用 / 当分隔符会被内容里的 / 提前截断,报 "Backslash found where operator expected"。
 find . -type f \( -name "*.kt" -o -name "*.kts" -o -name "*.xml" -o -name "*.pro" \
   -o -name "*.md" -o -name "*.txt" -o -name "*.toml" -o -name "*.properties" \) \
   -not -path "./.git/*" -not -path "*/build/*" \
   -not -path "./updatechecker/*" -not -path "./build-logic/*" \
   -print0 | xargs -0 perl -0777 -pi \
-    -e "s/\Q$TEMPLATE_APP_ID_SLASH\E/$NEW_APP_ID_SLASH/g;" \
-    -e "s/\Q$TEMPLATE_APP_ID\E/$NEW_APP_ID/g;"
+    -e "s#\Q$TEMPLATE_APP_ID_SLASH\E#$NEW_APP_ID_SLASH#g;" \
+    -e "s#\Q$TEMPLATE_APP_ID\E#$NEW_APP_ID#g;"
 
 # ── Step 3: immediate assertions (abort + rollback on failure) ────
 echo "==> Verifying :updatechecker was not touched"
 if [ -n "$(git status --porcelain -- updatechecker)" ]; then
-  echo "::error:: bootstrap.sh modified files under updatechecker/ — this must never happen. Rolling back." >&2
-  git switch main
-  git branch -D "$BRANCH_NAME"
-  exit 1
+  rollback "bootstrap.sh modified files under updatechecker/ — this must never happen."
 fi
 
+# `|| true` on the whole assignment: grep legitimately returns exit 1 when it finds
+# zero matches, which is the PASSING case here — under `pipefail` that would
+# otherwise trip `set -e` and abort the script on the success path.
 REMAINING_TEMPLATE_REFS=$(grep -rl "$TEMPLATE_APP_ID" --include="*.kt" --include="*.kts" \
   --include="*.xml" --include="*.md" --exclude-dir=build --exclude-dir=.git \
-  --exclude-dir=updatechecker --exclude-dir=build-logic . 2>/dev/null | wc -l | tr -d ' ')
+  --exclude-dir=updatechecker --exclude-dir=build-logic . 2>/dev/null | wc -l | tr -d ' ') || true
 if [ "$REMAINING_TEMPLATE_REFS" != "0" ]; then
-  echo "::error:: $REMAINING_TEMPLATE_REFS file(s) still reference $TEMPLATE_APP_ID after replacement. Rolling back." >&2
   grep -rl "$TEMPLATE_APP_ID" --include="*.kt" --include="*.kts" --include="*.xml" --include="*.md" \
     --exclude-dir=build --exclude-dir=.git --exclude-dir=updatechecker --exclude-dir=build-logic . 2>/dev/null >&2
-  git switch main
-  git branch -D "$BRANCH_NAME"
-  exit 1
+  rollback "$REMAINING_TEMPLATE_REFS file(s) still reference $TEMPLATE_APP_ID after replacement."
 fi
 
 if ! grep -rq "$UPDATECHECKER_APP_ID" --include="*.kt" updatechecker/ 2>/dev/null; then
-  echo "::error:: updatechecker/ no longer references $UPDATECHECKER_APP_ID — something went badly wrong. Rolling back." >&2
-  git switch main
-  git branch -D "$BRANCH_NAME"
-  exit 1
+  rollback "updatechecker/ no longer references $UPDATECHECKER_APP_ID — something went badly wrong."
 fi
 
 # ── Step 4: project identity ──────────────────────────────────────
