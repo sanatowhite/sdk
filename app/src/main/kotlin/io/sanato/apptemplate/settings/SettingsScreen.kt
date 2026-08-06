@@ -60,11 +60,15 @@ fun SettingsScreen(
     val updateState by updateViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
+    // 用 stringResource() 而不是 LaunchedEffect 里的 context.getString()——后者读的
+    // 是 LocalContext.current 那一刻的资源,Configuration(比如语言)变化不会让它
+    // 重新求值,理论上可能展示过期语言的文案。
+    val upToDateMessage = stringResource(R.string.update_up_to_date)
 
     LaunchedEffect(updateState) {
         when (val state = updateState) {
             UpdateUiState.UpToDate -> {
-                Toast.makeText(context, context.getString(R.string.update_up_to_date), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, upToDateMessage, Toast.LENGTH_SHORT).show()
             }
 
             is UpdateUiState.Error -> {

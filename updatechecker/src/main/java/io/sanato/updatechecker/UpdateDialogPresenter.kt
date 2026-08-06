@@ -3,13 +3,13 @@ package io.sanato.updatechecker
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.view.KeyEvent
+import androidx.core.content.ContextCompat
 
 internal object UpdateDialogPresenter {
     fun show(activity: Activity, info: UpdateInfo) {
@@ -47,15 +47,16 @@ internal object UpdateDialogPresenter {
 
     private fun registerDownloadReceiver(activity: Activity, receiver: UpdateDownloadReceiver) {
         val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // DownloadManager's completion broadcast comes from a different UID (com.android.providers.downloads),
-            // so RECEIVER_EXPORTED is required on API 33+ for it to reach us at all. Safe because
-            // UpdateDownloadReceiver re-confirms real completion via DownloadManager.query() (not just broadcast
-            // arrival) before unregistering, and the sha256/file checked always come from our own trusted config
-            // fetch, never from the incoming Intent — a spoofed broadcast cannot install an attacker-controlled apk.
-            activity.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
-        } else {
-            activity.registerReceiver(receiver, filter)
-        }
+        // DownloadManager's completion broadcast comes from a different UID (com.android.providers.downloads),
+        // so RECEIVER_EXPORTED is required on API 33+ for it to reach us at all. Safe because
+        // UpdateDownloadReceiver re-confirms real completion via DownloadManager.query() (not just broadcast
+        // arrival) before unregistering, and the sha256/file checked always come from our own trusted config
+        // fetch, never from the incoming Intent — a spoofed broadcast cannot install an attacker-controlled apk.
+        //
+        // ContextCompat.registerReceiver (not a manual SDK_INT branch) handles the flag requirement
+        // uniformly across API levels — this also satisfies Android lint's
+        // UnspecifiedRegisterReceiverFlag check, which flags any call to the unflagged 2-arg
+        // registerReceiver overload regardless of which runtime branch it's guarded behind.
+        ContextCompat.registerReceiver(activity, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
     }
 }

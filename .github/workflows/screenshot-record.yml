@@ -1,0 +1,39 @@
+name: Record Screenshot Baselines
+
+# 手动触发,不进 pr-check——重录基线是一个有意的操作(比如升级了 Compose BOM
+# 之后大量截图理所当然地变化),不应该被自动跑到又自动改动 baseline PNG。
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to record baselines on and push back to"
+        required: true
+        default: "main"
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Record Roborazzi baselines
+        run: ./gradlew recordRoborazziDebug --stacktrace
+
+      - name: Commit updated baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "**/src/test/screenshots/**"
+          git diff --cached --quiet && echo "No screenshot changes." && exit 0
+          git commit -m "Re-record Roborazzi screenshot baselines"
+          git push origin "HEAD:${{ inputs.branch }}"

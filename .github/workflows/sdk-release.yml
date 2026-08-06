@@ -1,0 +1,35 @@
+name: SDK Release
+
+# 两套 tag namespace:SDK 用 v*,App 用 app-v*(见 release.yml)。
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  sdk-release:
+    name: Verify + ping JitPack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Test + apiCheck before tagging is trusted
+        run: ./gradlew :updatechecker:test :updatechecker:apiCheck --stacktrace
+
+      - name: Ping JitPack to pre-warm the build
+        # 消费方第一次 sync 这个 tag 时,如果 JitPack 还没构建过,会卡住等 JitPack
+        # 现场构建——提前 ping 一次触发它,避免"发布了但第一个用的人要等好几分钟"。
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          curl -sf "https://jitpack.io/api/builds/com.github.sanatowhite/version-check-sdk/${TAG}" || true
+          echo "Triggered JitPack build for ${TAG} — check https://jitpack.io/com/github/sanatowhite/version-check-sdk/${TAG}/build.log"

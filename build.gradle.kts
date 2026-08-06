@@ -38,11 +38,71 @@ plugins {
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.detekt) apply false
-    alias(libs.plugins.kover) apply false
     alias(libs.plugins.aboutlibraries) apply false
     // 刻意不出现 org.jetbrains.kotlin.android。
 
     alias(libs.plugins.spotless)
+    // kover 在根项目真的 apply(不是 apply false)——聚合报告需要它。
+    alias(libs.plugins.kover)
+}
+
+// Kover 聚合报告——quality-report(非阻塞)CI job 用。`:updatechecker` 故意不
+// 纳入(它的覆盖率不该被这套模板的质量门禁牵动,保持独立评估的原则和它不套用
+// build-logic convention plugin 是同一个道理)。
+// 每个参与聚合的子项目也要 apply 这个插件本身,根项目的 `kover(project(...))`
+// 依赖才能找到匹配的 "kover" variant——这是 Kover 多模块聚合报告的前提。
+val koverAggregatedModules =
+    listOf(":core-common", ":core-ui", ":core-net", ":core-data", ":core-telemetry", ":app")
+
+koverAggregatedModules.forEach { path -> project(path).apply(plugin = "org.jetbrains.kotlinx.kover") }
+
+dependencies {
+    koverAggregatedModules.forEach { path -> kover(project(path)) }
+}
+
+// 模块依赖方向的机械检查——只检查 project() 依赖,不解析构建脚本文本。
+// 用允许表而不是禁止表:没在表里的模块(:app/:debug-tools/:telemetry-firebase/
+// :benchmark/:baselineprofile)不受这条规则约束,可以自由依赖任何东西。
+//
+// 三条最重要的规则在这里体现:core-ui/core-net/core-telemetry 互相之间不能
+// 依赖(粘合只发生在 :app);core-data 可以依赖 core-net(为了共享 AppResult/
+// AppError 之类的类型);:updatechecker 内部依赖数必须是 0(硬约束,发布产物
+// 的 POM 不能带上消费方拿不到的坐标)。
+tasks.register("verifyModuleGraph") {
+    doLast {
+        val allowedProjectDeps =
+            mapOf(
+                ":core-common" to emptySet<String>(),
+                ":core-ui" to setOf(":core-common"),
+                ":core-net" to setOf(":core-common"),
+                ":core-data" to setOf(":core-common", ":core-net"),
+                ":core-telemetry" to setOf(":core-common"),
+                ":updatechecker" to emptySet<String>(),
+            )
+
+        val violations = mutableListOf<String>()
+        allowedProjectDeps.forEach { (modulePath, allowedDeps) ->
+            val moduleProject = project(modulePath)
+            val configNames = listOf("implementation", "api")
+            val actualDeps =
+                configNames
+                    .mapNotNull { moduleProject.configurations.findByName(it) }
+                    .flatMap { it.dependencies }
+                    .filterIsInstance<ProjectDependency>()
+                    .map { it.path }
+                    .toSet()
+            val forbidden = actualDeps - allowedDeps
+            if (forbidden.isNotEmpty()) {
+                violations += "$modulePath depends on $forbidden, only $allowedDeps allowed"
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            violations.forEach { logger.error("[verifyModuleGraph] $it") }
+            throw GradleException("Module dependency graph violations found (see log above).")
+        }
+        logger.lifecycle("[verifyModuleGraph] OK — all module dependencies respect the allowed graph.")
+    }
 }
 
 // spotless 按文件 glob 工作，天然跨模块，放根上一次 apply 才能覆盖 build-logic/**

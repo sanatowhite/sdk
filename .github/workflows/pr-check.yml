@@ -1,0 +1,135 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: pr-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # JDK 17 统一——不是 21/26,原因见 gradle/gradle-daemon-jvm.properties 的注释
+  # (JitPack 容器 + 本地 Homebrew + CI 三处都只保证有 17)。
+  JAVA_VERSION: "17"
+
+jobs:
+  sdk-guard:
+    name: sdk-guard (:updatechecker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Robolectric jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Test + apiCheck
+        run: ./gradlew :updatechecker:test :updatechecker:apiCheck --stacktrace
+
+  build-test-lint:
+    name: build-test-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Robolectric jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Assemble, test, lint, format, module graph
+        run: ./gradlew assembleDebug testDebugUnitTest lintDebug spotlessCheck verifyModuleGraph --stacktrace
+
+  screenshot:
+    name: screenshot (Roborazzi)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Robolectric jars
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Verify screenshot baselines
+        run: ./gradlew verifyRoborazziDebug --stacktrace
+      - name: Upload diff report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: roborazzi-diff-report
+          path: "**/build/outputs/roborazzi/**"
+          retention-days: 14
+
+  release-smoke:
+    name: release-smoke (R8 + keep rules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Assemble release
+        run: ./gradlew :app:assembleRelease --stacktrace
+      - name: Assert zero debug-tools residue in release APK
+        run: |
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
+          if "$BUILD_TOOLS/apkanalyzer" dex packages "$APK" | grep -qE "debugtools|leakcanary|okhttp3\.logging"; then
+            echo "::error::debug-only code leaked into the release APK"
+            exit 1
+          fi
+
+  quality-report:
+    name: quality-report (detekt + kover)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Detekt (advisory) + Kover aggregate report
+        run: ./gradlew detekt koverHtmlReport --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            **/build/reports/detekt/**
+            build/reports/kover/**
+          retention-days: 14
