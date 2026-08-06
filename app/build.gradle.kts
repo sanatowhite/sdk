@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -12,6 +13,12 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+baselineProfile {
+    // 生成物提交进版本库，是构建输入不是输出——见 baselineprofile/README 里的说明。
+    // 不在每次构建时自动跑一遍 instrumented test（很慢），改为手动/发版触发。
+    automaticGenerationDuringBuild = false
 }
 
 aboutLibraries {
@@ -62,6 +69,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     debugImplementation(project(":debug-tools"))
+
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
 
     testImplementation(libs.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
