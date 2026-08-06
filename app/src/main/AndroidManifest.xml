@@ -1,5 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- ACTION_SEND_MULTIPLE 在 API 30+ 需要显式声明包可见性才能解析到邮件客户端。 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
     <application
         android:name=".AppTemplateApp"
         android:label="@string/app_name"
@@ -19,5 +27,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 反馈页截图/日志附件走这个 authority——与 :updatechecker 自己的
+             ${applicationId}.versioncheck.fileprovider 是两个独立的 provider,
+             不要混用。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

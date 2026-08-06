@@ -6,17 +6,26 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import io.sanato.apptemplate.core.telemetry.RingLogBuffer
 import io.sanato.apptemplate.core.telemetry.Telemetry
 import io.sanato.apptemplate.core.telemetry.jank.ScreenJankReporter
 import io.sanato.apptemplate.core.telemetry.memory.MemorySampler
 import io.sanato.apptemplate.core.ui.theme.AppTemplateTheme
+import io.sanato.apptemplate.debug.DebugOverlay
+import io.sanato.apptemplate.feedback.AppScreenshot
 import io.sanato.apptemplate.navigation.AppNavHost
 import io.sanato.apptemplate.splash.AppEntryViewModel
 import javax.inject.Inject
@@ -33,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var memorySampler: MemorySampler
+
+    @Inject
+    lateinit var ringLogBuffer: RingLogBuffer
 
     private lateinit var jankReporter: ScreenJankReporter
 
@@ -68,7 +80,25 @@ class MainActivity : AppCompatActivity() {
             val resolvedStartDestination = startDestination
             if (resolvedStartDestination != null) {
                 AppTemplateTheme(darkTheme = darkTheme) {
-                    AppNavHost(startDestination = resolvedStartDestination)
+                    // `rememberGraphicsLayer()` 这个便捷 Composable 在当前 Compose UI
+                    // 版本里不存在——手动走 `LocalGraphicsContext` 创建/释放。
+                    val graphicsContext = LocalGraphicsContext.current
+                    val graphicsLayer = remember { graphicsContext.createGraphicsLayer() }
+                    DisposableEffect(graphicsContext) {
+                        onDispose { graphicsContext.releaseGraphicsLayer(graphicsLayer) }
+                    }
+                    SideEffect { AppScreenshot.register(graphicsLayer) }
+                    Box(
+                        modifier =
+                            Modifier.drawWithContent {
+                                drawContent()
+                                graphicsLayer.record { this@drawWithContent.drawContent() }
+                            },
+                    ) {
+                        DebugOverlay(ringLogBuffer = ringLogBuffer) {
+                            AppNavHost(startDestination = resolvedStartDestination)
+                        }
+                    }
                 }
 
                 // 本模板骨架页面没有真正的异步加载,内容一画出来就算"完全显示"。

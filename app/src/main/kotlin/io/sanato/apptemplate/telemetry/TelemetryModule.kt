@@ -14,6 +14,7 @@ import io.sanato.apptemplate.core.telemetry.CompositeTelemetry
 import io.sanato.apptemplate.core.telemetry.LogcatTelemetry
 import io.sanato.apptemplate.core.telemetry.NetworkRequestReport
 import io.sanato.apptemplate.core.telemetry.NoOpTelemetry
+import io.sanato.apptemplate.core.telemetry.RingLogBuffer
 import io.sanato.apptemplate.core.telemetry.Telemetry
 import io.sanato.apptemplate.core.telemetry.memory.MemorySampler
 import javax.inject.Singleton
@@ -36,6 +37,18 @@ object TelemetryModule {
     @Provides
     @IntoSet
     fun provideLogcatOrNoOpTelemetry(): Telemetry = if (BuildConfig.DEBUG) LogcatTelemetry() else NoOpTelemetry
+
+    /**
+     * `RingLogBuffer` 既是 Telemetry 后端(自动捕获所有事件)又要作为单例暴露给
+     * 反馈页直接读 `snapshot()`——同一个实例通过两条绑定路径分别注入。
+     */
+    @Provides
+    @Singleton
+    fun provideRingLogBuffer(): RingLogBuffer = RingLogBuffer()
+
+    @Provides
+    @IntoSet
+    fun provideRingLogBufferAsTelemetry(ringLogBuffer: RingLogBuffer): Telemetry = ringLogBuffer
 
     @Provides
     @Singleton

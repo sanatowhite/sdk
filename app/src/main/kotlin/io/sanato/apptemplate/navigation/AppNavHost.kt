@@ -9,6 +9,7 @@ import io.sanato.apptemplate.R
 import io.sanato.apptemplate.about.AboutScreen
 import io.sanato.apptemplate.about.LicensesScreen
 import io.sanato.apptemplate.consent.ConsentScreen
+import io.sanato.apptemplate.feedback.FeedbackScreen
 import io.sanato.apptemplate.legal.LegalDocScreen
 import io.sanato.apptemplate.settings.SettingsScreen
 import io.sanato.apptemplate.ui.home.HomeScreen
@@ -28,7 +29,11 @@ fun AppNavHost(
                 onNavigateToAbout = { navController.navigate(About) },
                 onNavigateToPrivacyPolicy = { navController.navigate(PrivacyPolicy) },
                 onNavigateToTermsOfService = { navController.navigate(TermsOfService) },
+                onNavigateToFeedback = { navController.navigate(Feedback) },
             )
+        }
+        composable<Feedback> {
+            FeedbackScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable<About> {
             AboutScreen(

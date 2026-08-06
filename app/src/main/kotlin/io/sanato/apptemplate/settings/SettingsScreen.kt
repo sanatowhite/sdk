@@ -3,6 +3,7 @@ package io.sanato.apptemplate.settings
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,9 @@ import io.sanato.apptemplate.R
 import io.sanato.apptemplate.core.data.ThemeMode
 import io.sanato.apptemplate.core.ui.components.AppScaffold
 import io.sanato.apptemplate.core.ui.theme.AppTheme
+import io.sanato.apptemplate.update.UpdateDialog
+import io.sanato.apptemplate.update.UpdateUiState
+import io.sanato.apptemplate.update.UpdateViewModel
 
 private val SUPPORTED_LANGUAGE_TAGS = listOf(null, "en", "zh-Hans")
 
@@ -47,11 +52,30 @@ fun SettingsScreen(
     onNavigateToAbout: () -> Unit,
     onNavigateToPrivacyPolicy: () -> Unit,
     onNavigateToTermsOfService: () -> Unit,
+    onNavigateToFeedback: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
+    updateViewModel: UpdateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val updateState by updateViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(updateState) {
+        when (val state = updateState) {
+            UpdateUiState.UpToDate -> {
+                Toast.makeText(context, context.getString(R.string.update_up_to_date), Toast.LENGTH_SHORT).show()
+            }
+
+            is UpdateUiState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+            }
+
+            else -> {
+                Unit
+            }
+        }
+    }
 
     AppScaffold(
         topBar = {
@@ -139,6 +163,18 @@ fun SettingsScreen(
                     modifier = Modifier.clickable { context.cacheDir.deleteRecursively() },
                 )
             }
+            item {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_check_for_updates)) },
+                    modifier = Modifier.clickable(onClick = updateViewModel::checkForUpdate),
+                )
+            }
+            item {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_send_feedback)) },
+                    modifier = Modifier.clickable(onClick = onNavigateToFeedback),
+                )
+            }
         }
     }
 
@@ -151,6 +187,13 @@ fun SettingsScreen(
             },
         )
     }
+
+    UpdateDialog(
+        state = updateState,
+        onDownload = updateViewModel::startDownload,
+        onInstall = updateViewModel::install,
+        onDismiss = updateViewModel::dismiss,
+    )
 }
 
 @Composable

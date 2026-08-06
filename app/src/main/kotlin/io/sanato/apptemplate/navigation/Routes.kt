@@ -24,3 +24,6 @@ data object TermsOfService
 
 @Serializable
 data object Consent
+
+@Serializable
+data object Feedback
