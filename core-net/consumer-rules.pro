@@ -11,10 +11,10 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
--keep,includedescriptorclasses class io.sanato.apptemplate.core.net.**$$serializer { *; }
--keepclassmembers class io.sanato.apptemplate.core.net.** {
+-keep,includedescriptorclasses class io.sanato.appkit.core.net.**$$serializer { *; }
+-keepclassmembers class io.sanato.appkit.core.net.** {
     *** Companion;
 }
--keepclasseswithmembers class io.sanato.apptemplate.core.net.** {
+-keepclasseswithmembers class io.sanato.appkit.core.net.** {
     kotlinx.serialization.KSerializer serializer(...);
 }

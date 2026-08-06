@@ -1,0 +1,18 @@
+Compiled from "AppInitializerModule.kt"
+public abstract class io.sanato.appkit.core.init.hilt.AppInitializerModule {
+  public io.sanato.appkit.core.init.hilt.AppInitializerModule();
+  public abstract java.util.Set<io.sanato.appkit.core.init.AppInitializer> eagerInitializers();
+  public abstract java.util.Set<io.sanato.appkit.core.init.AppInitializer> deferredInitializers();
+}
+
+
+Compiled from "HiltInitializingApplication.kt"
+public abstract class io.sanato.appkit.core.init.hilt.HiltInitializingApplication extends android.app.Application {
+  public io.sanato.appkit.core.init.AppInitializers appInitializers;
+  public io.sanato.appkit.core.init.hilt.HiltInitializingApplication();
+  public final io.sanato.appkit.core.init.AppInitializers getAppInitializers();
+  public final void setAppInitializers(io.sanato.appkit.core.init.AppInitializers);
+  public void onCreate();
+}
+
+

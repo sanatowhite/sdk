@@ -1,0 +1,21 @@
+Compiled from "FirebaseTelemetry.kt"
+public final class io.sanato.appkit.telemetry.firebase.FirebaseTelemetry implements io.sanato.appkit.core.telemetry.Telemetry {
+  public io.sanato.appkit.telemetry.firebase.FirebaseTelemetry(com.google.firebase.analytics.FirebaseAnalytics, com.google.firebase.crashlytics.FirebaseCrashlytics);
+  public boolean isEnabled();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+}
+
+
+Compiled from "FirebaseTelemetryModule.kt"
+public final class io.sanato.appkit.telemetry.firebase.FirebaseTelemetryModule {
+  public static final io.sanato.appkit.telemetry.firebase.FirebaseTelemetryModule INSTANCE;
+  public final io.sanato.appkit.core.telemetry.Telemetry provideFirebaseTelemetry(android.app.Application);
+}
+
+

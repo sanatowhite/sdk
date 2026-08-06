@@ -1,7 +1,7 @@
 package io.sanato.apptemplate.debug
 
 import androidx.compose.runtime.Composable
-import io.sanato.apptemplate.core.telemetry.RingLogBuffer
+import io.sanato.appkit.core.telemetry.RingLogBuffer
 
 /**
  * release 门面:内联直通,不引用 `:debug-tools` 的任何类型——那个模块本来就

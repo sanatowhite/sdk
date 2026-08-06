@@ -1,5 +1,15 @@
 # 0006 — Pluggable `Telemetry` abstraction with Firebase as an optional, off-by-default backend
 
+> ⚠️ **Superseded (partially).** The "off-by-default" half of this decision no longer
+> holds: `:app` now depends on `:telemetry-firebase` unconditionally and ships a
+> placeholder `app/google-services.json` so it builds/runs out of the box; forking
+> developers just swap in their own `google-services.json`. The `telemetryFirebaseEnabled`
+> gradle property and the conditional-`buildscript`-classpath mechanism described below
+> are gone. The rest of this ADR (the `Telemetry` interface shape, `CompositeTelemetry`/
+> `SamplingTelemetry`, `@Multibinds` requirement, no self-registration, no
+> `androidx.startup`) is still accurate. See ADR 0008 for the replacement decision
+> (Firebase-by-default is one facet of that broader SDK-publishing rework).
+
 ## Context
 
 The template needs to collect performance/crash/ANR data usefully, but a fork of this template should not be forced to create a Firebase project, ship `google-services.json`, or make any network calls to Google's backend just to compile and run. At the same time, someone who *does* want Firebase shouldn't have to write the Analytics/Crashlytics wiring from scratch.

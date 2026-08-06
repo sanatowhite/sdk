@@ -85,6 +85,8 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -166,3 +168,5 @@ sanato-android-application = { id = "sanato.android.application" }
 sanato-android-hilt = { id = "sanato.android.hilt" }
 sanato-android-roborazzi = { id = "sanato.android.roborazzi" }
 sanato-quality = { id = "sanato.quality" }
+sanato-android-library-published = { id = "sanato.android.library.published" }
+sanato-api-check = { id = "sanato.api.check" }

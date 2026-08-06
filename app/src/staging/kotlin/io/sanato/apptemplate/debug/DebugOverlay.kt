@@ -1,7 +1,7 @@
 package io.sanato.apptemplate.debug
 
 import androidx.compose.runtime.Composable
-import io.sanato.apptemplate.core.telemetry.RingLogBuffer
+import io.sanato.appkit.core.telemetry.RingLogBuffer
 
 /**
  * staging 门面:和 release 一样内联直通——`staging` buildType 是

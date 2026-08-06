@@ -5,6 +5,12 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.baselineprofile)
+    // Firebase 是这个模板的默认遥测后端(见 :telemetry-firebase README)——
+    // 不再走 telemetryFirebaseEnabled 开关。fork 者换掉 app/google-services.json
+    // 指向自己的 Firebase 项目就行;仓库里提交的是一份指向不存在项目的占位
+    // json,能让 :app 开箱编译/运行,但真实上报不到任何地方。
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -26,30 +32,29 @@ aboutLibraries {
     offlineMode = true
 }
 
-// 唯一的开关来源是 gradle.properties 的 telemetryFirebaseEnabled——settings.gradle.kts
-// 用它决定要不要 include(":telemetry-firebase"),这里必须读同一个值来决定要不要
-// 依赖它 + apply 两个 Firebase 插件,两处不一致会导致"模块没被 include 但这里
-// 硬编码依赖了它"这种直接失败的配置错误。
-val telemetryFirebaseEnabled = providers.gradleProperty("telemetryFirebaseEnabled").getOrElse("false") == "true"
-
-if (telemetryFirebaseEnabled) {
-    // 条件 apply,不放进 plugins{} 块——google-services/crashlytics 插件的 classpath
-    // 本身也是条件添加的(见根 build.gradle.kts 的 buildscript{}),两边必须一起开关。
-    apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
-}
-
 dependencies {
     implementation(project(":core-common"))
+    implementation(project(":core-common-hilt"))
+    implementation(project(":core-init"))
+    implementation(project(":core-init-hilt"))
     implementation(project(":core-ui"))
-    implementation(project(":core-net"))
     implementation(project(":core-data"))
+    implementation(project(":core-data-hilt"))
     implementation(project(":core-telemetry"))
+    implementation(project(":core-telemetry-hilt"))
+    implementation(project(":net-telemetry-hilt"))
     implementation(project(":updatechecker"))
-
-    if (telemetryFirebaseEnabled) {
-        implementation(project(":telemetry-firebase"))
-    }
+    // 默认遥测后端——见 app/build.gradle.kts 顶部 plugins{} 块的说明。
+    implementation(project(":telemetry-firebase"))
+    // 设置/关于/隐私政策/用户协议/同意/What's New——见 feature-settings/README.md。
+    implementation(project(":feature-settings"))
+    // 反馈页(邮件形式,附带截图/日志)——见 feature-feedback/README.md。
+    implementation(project(":feature-feedback"))
+    // 开源许可页——依赖下面 aboutLibraries{} 生成的 R.raw.aboutlibraries,
+    // 见 feature-licenses/README.md。
+    implementation(project(":feature-licenses"))
+    // 更新检查对话框 + 状态持有——见 feature-update/README.md。
+    implementation(project(":feature-update"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -58,7 +63,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.aboutlibraries.compose.m3)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

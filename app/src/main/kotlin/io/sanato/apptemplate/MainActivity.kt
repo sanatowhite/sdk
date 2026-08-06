@@ -6,28 +6,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import io.sanato.apptemplate.core.telemetry.RingLogBuffer
-import io.sanato.apptemplate.core.telemetry.Telemetry
-import io.sanato.apptemplate.core.telemetry.jank.ScreenJankReporter
-import io.sanato.apptemplate.core.telemetry.memory.MemorySampler
-import io.sanato.apptemplate.core.ui.theme.AppTemplateTheme
+import io.sanato.appkit.core.telemetry.RingLogBuffer
+import io.sanato.appkit.core.telemetry.Telemetry
+import io.sanato.appkit.core.telemetry.jank.ScreenJankReporter
+import io.sanato.appkit.core.telemetry.memory.MemorySampler
+import io.sanato.appkit.core.ui.theme.AppTemplateTheme
+import io.sanato.appkit.feature.feedback.FeedbackScreenshotHost
+import io.sanato.appkit.feature.settings.AppEntryViewModel
+import io.sanato.appkit.feature.settings.ConsentRoute
 import io.sanato.apptemplate.debug.DebugOverlay
-import io.sanato.apptemplate.feedback.AppScreenshot
 import io.sanato.apptemplate.navigation.AppNavHost
-import io.sanato.apptemplate.splash.AppEntryViewModel
+import io.sanato.apptemplate.navigation.Home
 import javax.inject.Inject
 
 /**
@@ -59,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         // 首启同意的条件 startDestination 要等 DataStore 读出来才能确定——
         // splash 一直留在屏幕上直到 AppEntryViewModel 算出结果(带 1.5s 超时,
         // 见该 ViewModel 的说明,防止 DataStore 异常时永久卡住)。
-        splashScreen.setKeepOnScreenCondition { entryViewModel.startDestination.value == null }
+        splashScreen.setKeepOnScreenCondition { entryViewModel.consentRequired.value == null }
 
         // targetSdk 36+ 起无法退出 edge-to-edge,这里无条件调用一次而不是判断版本——
         // 同时覆盖了 24-35 仍需要显式开启的情况。
@@ -76,25 +72,13 @@ class MainActivity : AppCompatActivity() {
                     isAppearanceLightNavigationBars = !darkTheme
                 }
             }
-            val startDestination by entryViewModel.startDestination.collectAsStateWithLifecycle()
-            val resolvedStartDestination = startDestination
+            val consentRequired by entryViewModel.consentRequired.collectAsStateWithLifecycle()
+            val resolvedStartDestination = consentRequired?.let { if (it) ConsentRoute else Home }
             if (resolvedStartDestination != null) {
                 AppTemplateTheme(darkTheme = darkTheme) {
-                    // `rememberGraphicsLayer()` 这个便捷 Composable 在当前 Compose UI
-                    // 版本里不存在——手动走 `LocalGraphicsContext` 创建/释放。
-                    val graphicsContext = LocalGraphicsContext.current
-                    val graphicsLayer = remember { graphicsContext.createGraphicsLayer() }
-                    DisposableEffect(graphicsContext) {
-                        onDispose { graphicsContext.releaseGraphicsLayer(graphicsLayer) }
-                    }
-                    SideEffect { AppScreenshot.register(graphicsLayer) }
-                    Box(
-                        modifier =
-                            Modifier.drawWithContent {
-                                drawContent()
-                                graphicsLayer.record { this@drawWithContent.drawContent() }
-                            },
-                    ) {
+                    // FeedbackScreenshotHost 包住内容根节点,给 :feature-feedback 的
+                    // "附带截图"功能提供捕获点——不用自己摆弄 GraphicsLayer。
+                    FeedbackScreenshotHost {
                         DebugOverlay(ringLogBuffer = ringLogBuffer) {
                             AppNavHost(startDestination = resolvedStartDestination)
                         }

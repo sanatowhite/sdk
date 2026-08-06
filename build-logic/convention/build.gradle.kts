@@ -51,5 +51,13 @@ gradlePlugin {
             id = "sanato.quality"
             implementationClass = "SanatoQualityConventionPlugin"
         }
+        register("publishedLibrary") {
+            id = "sanato.android.library.published"
+            implementationClass = "SanatoPublishedLibraryConventionPlugin"
+        }
+        register("apiCheck") {
+            id = "sanato.api.check"
+            implementationClass = "SanatoApiCheckConventionPlugin"
+        }
     }
 }

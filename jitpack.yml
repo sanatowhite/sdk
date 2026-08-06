@@ -1,19 +1,22 @@
 # jitpack.yml
 #
-# 这个仓库正在从单模块库演进为多模块 app 模板 monorepo，但对外发布的坐标
-# com.github.sanatowhite:version-check-sdk 必须继续只指向 :updatechecker 这一个模块。
+# 这个仓库以 com.github.sanatowhite.sdk:<module>:<tag> 的形式发布【多个】模块——
+# 这是刻意的：JitPack 的坐标规则是"~/.m2 里恰好 1 个 artifact → com.github.User:Repo；
+# 多个 → com.github.User.Repo:Module"，多模块发布本来就要落进第二条规则，
+# `com.github.sanatowhite.sdk` 这个 group 正是由此而来。旧坐标
+# `com.github.sanatowhite:version-check-sdk`（老仓库名 version-check-sdk 下的单模块
+# 发布）已作废，不再需要"只留一个 artifact"这类保护措施——见 docs/adr（原 0001，
+# 已被取代）。
 #
-# 三重目的：
+# 两重目的：
 #   1. 锁定 JDK：本仓库的真实构建日志（v1.0.2）显示 JitPack 默认用 JDK 11 启动，
 #      靠正则匹配 AGP 报错文案 "requires Java 17 to run" 才临时补装 JDK 17。
 #      升级到 Gradle 9 后，Gradle 自己会先用不同措辞拒绝启动（"Gradle requires JVM 17
 #      or later"），JitPack 的补救逻辑匹配不到，会直接硬失败。显式声明 jdk 消除这个依赖。
-#   2. 只构建 :updatechecker：避免未来 :app 等模块的 Firebase / 签名 / google-services
-#      把 JitPack 构建拖挂——那些模块不该出现在这次发布里。
-#   3. 让 ~/.m2 里最终只留下一个 artifact，从而保住
-#      com.github.sanatowhite:version-check-sdk:<tag> 这个历史坐标不变
-#      （JitPack 按 m2 里最终 artifact 数量决定坐标：单个 → com.github.User:Repo，
-#      多个 → com.github.User.Repo:Module 外加一个把所有模块当依赖的聚合 POM）。
+#   2. 只构建可发布模块：settings.gradle.kts 的 JITPACK gate 已经排除了 :app /
+#      :benchmark / :baselineprofile（签名/google-services/aboutlibraries/
+#      baselineprofile 插件，对发布链路纯粹是失败面），这里的 install 命令
+#      只调用聚合任务 publishSdkToMavenLocal，不依赖不带路径的全量 publish。
 jdk:
   - openjdk17
 
@@ -25,12 +28,21 @@ before_install:
 
 env:
   # JitPack 内建会设这个变量；这里显式声明是为了本地能用
-  # `JITPACK=true ./gradlew :updatechecker:publishToMavenLocal ...` 复现 JitPack 的配置路径。
+  # `JITPACK=true ./gradlew publishSdkToMavenLocal -Pversion=probe ...` 复现 JitPack 的配置路径。
   JITPACK: "true"
 
 install:
-  # $GROUP / $VERSION 是 JitPack 注入的环境变量（GROUP=com.github.sanatowhite，
-  # VERSION=tag 名或 commit）。自定义 install 后 JitPack 不再自动传 -Pgroup/-Pversion，
-  # 必须自己传。不加 -x test / -x lint：publishToMavenLocal 本身不依赖它们，而对不在
-  # 任务图中的任务用 -x 会被 Gradle 报 "Task not found" 直接失败。
-  - ./gradlew :updatechecker:publishToMavenLocal -Pgroup=$GROUP -Pversion=$VERSION --no-daemon --stacktrace
+  # ⚠️ 刻意【不】传 -Pgroup。Gradle 会把 -Pgroup=X 直接写进 project.group，而
+  # JitPack 注入的 $GROUP 是 com.github.sanatowhite（少了 .sdk 后缀）——用它会把
+  # 所有 artifact 发到一个 JitPack 永远不会去索引的路径。group 由
+  # gradle/version.properties 的 sdkGroup 唯一决定（见 SdkCoordinates.kt）。
+  #
+  # -Pversion=$VERSION 必须传：$VERSION 就是 tag 名，逐字变成每个模块的 Maven
+  # version 字符串。
+  #
+  # 不加 -x test / -x lint：publishSdkToMavenLocal 的任务图里本来就没有它们，
+  # 对不在图里的任务用 -x 会被 Gradle 报 "Task not found" 直接失败。
+  - ./gradlew publishSdkToMavenLocal -Pversion=$VERSION --no-daemon --stacktrace
+  # 把 JitPack 实际会索引的东西打印出来——构建日志里能一眼核对坐标对不对、
+  # 有没有多出 -test-fixtures 之类不该发的 artifact。
+  - find ~/.m2/repository/com/github/sanatowhite/sdk -type f | sort

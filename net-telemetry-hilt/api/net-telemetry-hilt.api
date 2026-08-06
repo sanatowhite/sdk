@@ -1,0 +1,7 @@
+Compiled from "NetworkTelemetryBridgeModule.kt"
+public final class io.sanato.appkit.net.telemetry.hilt.NetworkTelemetryBridgeModule {
+  public static final io.sanato.appkit.net.telemetry.hilt.NetworkTelemetryBridgeModule INSTANCE;
+  public final io.sanato.appkit.core.net.NetworkMetricsSink provideNetworkMetricsSink(io.sanato.appkit.core.telemetry.Telemetry);
+}
+
+

@@ -1,0 +1,11 @@
+<resources>
+    <string name="appkit_update_available_title">Version %1$s is available</string>
+    <string name="appkit_update_download">Download</string>
+    <string name="appkit_update_downloading">Downloading…</string>
+    <string name="appkit_update_ready_title">Ready to install</string>
+    <string name="appkit_update_ready_body">The update has been downloaded and verified.</string>
+    <string name="appkit_update_install">Install</string>
+    <string name="appkit_update_failed_title">Download failed</string>
+    <string name="appkit_update_up_to_date">You\'re on the latest version</string>
+    <string name="appkit_update_action_close">Close</string>
+</resources>

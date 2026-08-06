@@ -1,0 +1,32 @@
+<resources>
+    <string name="appkit_settings_title">设置</string>
+    <string name="appkit_settings_section_appearance">外观</string>
+    <string name="appkit_settings_theme">主题</string>
+    <string name="appkit_settings_theme_system">跟随系统</string>
+    <string name="appkit_settings_theme_light">浅色</string>
+    <string name="appkit_settings_theme_dark">深色</string>
+    <string name="appkit_settings_dynamic_color">动态取色</string>
+    <string name="appkit_settings_language">语言</string>
+    <string name="appkit_settings_language_system">跟随系统</string>
+    <string name="appkit_settings_section_privacy">隐私</string>
+    <string name="appkit_settings_telemetry">共享诊断数据</string>
+    <string name="appkit_settings_notifications">通知</string>
+    <string name="appkit_settings_privacy_policy">隐私政策</string>
+    <string name="appkit_settings_terms_of_service">用户协议</string>
+    <string name="appkit_settings_section_about">关于</string>
+    <string name="appkit_settings_about">关于</string>
+    <string name="appkit_settings_clear_cache">清除缓存</string>
+    <string name="appkit_settings_check_for_updates">检查更新</string>
+    <string name="appkit_settings_send_feedback">发送反馈</string>
+
+    <string name="appkit_about_licenses">开源许可</string>
+    <string name="appkit_about_changelog_title">更新日志</string>
+
+    <string name="appkit_whats_new_title">新版本特性</string>
+
+    <string name="appkit_consent_title">开始之前</string>
+    <string name="appkit_consent_body">请阅读我们的隐私政策和用户协议。继续使用即表示你同意这两份文档。</string>
+    <string name="appkit_consent_accept">同意并继续</string>
+
+    <string name="appkit_action_close">关闭</string>
+</resources>

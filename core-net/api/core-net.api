@@ -1,0 +1,108 @@
+Compiled from "AppError.kt"
+public abstract class io.sanato.appkit.core.net.AppError extends java.lang.Exception {
+  public io.sanato.appkit.core.net.AppError(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.net.AppError(java.lang.String, java.lang.Throwable, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$Http extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$Http(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getBody();
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$NoConnectivity extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$NoConnectivity(java.lang.Throwable);
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$Serialization extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$Serialization(java.lang.Throwable);
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$Ssl extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$Ssl(java.lang.Throwable);
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$Timeout extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$Timeout(java.lang.Throwable);
+}
+
+
+Compiled from "AppError.kt"
+public final class io.sanato.appkit.core.net.AppError$Unknown extends io.sanato.appkit.core.net.AppError {
+  public io.sanato.appkit.core.net.AppError$Unknown(java.lang.Throwable);
+}
+
+
+Compiled from "HttpClientFactory.kt"
+public final class io.sanato.appkit.core.net.HttpClientFactory {
+  public static final io.sanato.appkit.core.net.HttpClientFactory INSTANCE;
+  public final kotlinx.serialization.json.Json getDefaultJson();
+  public final okhttp3.OkHttpClient okHttpClient(boolean, java.util.List<? extends okhttp3.Interceptor>, io.sanato.appkit.core.net.NetworkMetricsSink);
+  public static okhttp3.OkHttpClient okHttpClient$default(io.sanato.appkit.core.net.HttpClientFactory, boolean, java.util.List, io.sanato.appkit.core.net.NetworkMetricsSink, int, java.lang.Object);
+  public final retrofit2.Retrofit retrofit(java.lang.String, okhttp3.OkHttpClient, kotlinx.serialization.json.Json);
+  public static retrofit2.Retrofit retrofit$default(io.sanato.appkit.core.net.HttpClientFactory, java.lang.String, okhttp3.OkHttpClient, kotlinx.serialization.json.Json, int, java.lang.Object);
+}
+
+
+Compiled from "NetworkMetricsSink.kt"
+public interface io.sanato.appkit.core.net.NetworkMetricsSink {
+  public abstract void onRequestCompleted(java.lang.String, java.lang.String, java.lang.Integer, long, boolean);
+}
+
+
+Compiled from "NetworkMonitor.kt"
+public final class io.sanato.appkit.core.net.NetworkMonitor {
+  public io.sanato.appkit.core.net.NetworkMonitor(android.content.Context);
+  public final kotlinx.coroutines.flow.Flow<java.lang.Boolean> isOnline();
+}
+
+
+Compiled from "RetryInterceptor.kt"
+public final class io.sanato.appkit.core.net.RetryInterceptor implements okhttp3.Interceptor {
+  public io.sanato.appkit.core.net.RetryInterceptor(int, long, long);
+  public io.sanato.appkit.core.net.RetryInterceptor(int, long, long, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public okhttp3.Response intercept(okhttp3.Interceptor$Chain);
+  public io.sanato.appkit.core.net.RetryInterceptor();
+}
+
+
+Compiled from "RetryInterceptor.kt"
+final class io.sanato.appkit.core.net.RetryInterceptor$Companion {
+  public final java.util.Set<java.lang.String> getIDEMPOTENT_METHODS();
+  public io.sanato.appkit.core.net.RetryInterceptor$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "SafeApiCall.kt"
+public final class io.sanato.appkit.core.net.SafeApiCallKt {
+  public static final <T> java.lang.Object safeApiCall(kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>, ? extends java.lang.Object>, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<? extends T>>);
+}
+
+
+Compiled from "TelemetryEventListenerFactory.kt"
+final class io.sanato.appkit.core.net.TelemetryEventListener extends okhttp3.EventListener {
+  public io.sanato.appkit.core.net.TelemetryEventListener(okhttp3.Request, io.sanato.appkit.core.net.NetworkMetricsSink);
+  public void callStart(okhttp3.Call);
+  public void responseHeadersEnd(okhttp3.Call, okhttp3.Response);
+  public void callEnd(okhttp3.Call);
+  public void callFailed(okhttp3.Call, java.io.IOException);
+}
+
+
+Compiled from "TelemetryEventListenerFactory.kt"
+public final class io.sanato.appkit.core.net.TelemetryEventListenerFactory implements okhttp3.EventListener$Factory {
+  public io.sanato.appkit.core.net.TelemetryEventListenerFactory(io.sanato.appkit.core.net.NetworkMetricsSink);
+  public okhttp3.EventListener create(okhttp3.Call);
+}
+
+

@@ -1,14 +1,22 @@
 name: SDK Release
 
-# 两套 tag namespace:SDK 用 v*,App 用 app-v*(见 release.yml)。
+# 两套 tag namespace:SDK 用裸 semver(`1.2.0`,不带前导 v——避免 Gradle 版本比较
+# 把 `v` 当非数字段处理,也避免消费方误以为能写 `v1.0.0`),App 用 `app-v*`(见
+# release.yml)。`app-v1.2.0` 也会匹配 `*.*.*`,必须显式排除,否则一次 app 发版
+# 会同时误触发这个 workflow。
 on:
   push:
     tags:
-      - "v*"
+      - "*.*.*"
+      - "!app-v*"
+
+env:
+  JAVA_VERSION: "17"
+  SDK_GROUP_PATH: com/github/sanatowhite/sdk
 
 jobs:
   sdk-release:
-    name: Verify + ping JitPack
+    name: Verify, publish dry-run, ping JitPack, verify real coordinates
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,18 +26,72 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: ${{ env.JAVA_VERSION }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Test + apiCheck before tagging is trusted
-        run: ./gradlew :updatechecker:test :updatechecker:apiCheck --stacktrace
+      - name: Assert tag matches gradle/version.properties sdkVersion
+        # tag 是 install 命令里 -Pversion=$VERSION 的来源(JitPack 逐字把 tag 名
+        # 当 Maven version),这里断言仓库里记录的版本号和真正要发布的 tag 一致——
+        # 防止"忘记在打 tag 前更新 version.properties"这种人为疏漏被发布出去。
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PROPS_VERSION=$(grep '^sdkVersion=' gradle/version.properties | cut -d= -f2)
+          if [ "$TAG" != "$PROPS_VERSION" ]; then
+            echo "::error::Tag $TAG does not match gradle/version.properties sdkVersion=$PROPS_VERSION"
+            exit 1
+          fi
 
-      - name: Ping JitPack to pre-warm the build
+      - name: Test + apiCheck + module graph + publish-set consistency before tagging is trusted
+        run: ./gradlew :updatechecker:test apiCheckAll verifyModuleGraph verifySdkModuleList verifySdkBomConstraints --stacktrace
+
+      - name: Dry-run the exact JitPack install command locally
+        # JitPack 的 tag 一旦构建就不可变(同一个 tag 失败了只能作废、浪费一个
+        # 版本号重新打)——在真的推给 JitPack 之前,先在 CI 自己的环境里把
+        # jitpack.yml 会跑的命令逐字跑一遍,失败就在这里失败,不浪费 tag。
+        run: JITPACK=true ./gradlew publishSdkToMavenLocal -Pversion=${{ github.ref_name }} --stacktrace
+
+      - name: consumer-smoke (local mode, against this dry-run's mavenLocal artifacts)
+        working-directory: checks/consumer-smoke
+        run: ./gradlew :app:assembleDebug -PsmokeVersion=${{ github.ref_name }} --stacktrace
+
+      - name: Ping JitPack to trigger the real build
         # 消费方第一次 sync 这个 tag 时,如果 JitPack 还没构建过,会卡住等 JitPack
         # 现场构建——提前 ping 一次触发它,避免"发布了但第一个用的人要等好几分钟"。
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          curl -sf "https://jitpack.io/api/builds/com.github.sanatowhite/version-check-sdk/${TAG}" || true
-          echo "Triggered JitPack build for ${TAG} — check https://jitpack.io/com/github/sanatowhite/version-check-sdk/${TAG}/build.log"
+          curl -sf "https://jitpack.io/api/builds/com.github.sanatowhite.sdk/updatechecker/${{ github.ref_name }}" || true
+
+      - name: Poll every module's POM until JitPack has actually built it
+        # 不是 fire-and-forget:逐个坐标轮询,直到全部 200 或超时——这才是"发布
+        # 真的成功了"的唯一证据,ping 本身只是触发构建,不代表构建已完成。
+        # 模块清单从上面 dry-run 发布出的 mavenLocal 目录名直接读,不在这个
+        # workflow 里再手写一份(第三处清单只会带来新的漂移风险)。
+        run: |
+          TAG="${{ github.ref_name }}"
+          MODULES=$(find ~/.m2/repository/${SDK_GROUP_PATH} -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort)
+          echo "Modules to verify: $MODULES"
+          for module in $MODULES; do
+            URL="https://jitpack.io/${SDK_GROUP_PATH}/${module}/${TAG}/${module}-${TAG}.pom"
+            echo "Polling $URL"
+            ok=false
+            for i in $(seq 1 60); do
+              status=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+              if [ "$status" = "200" ]; then
+                echo "  $module: 200 after $((i * 10))s"
+                ok=true
+                break
+              fi
+              sleep 10
+            done
+            if [ "$ok" != "true" ]; then
+              echo "::error::$module did not return 200 within 10 minutes (last status: $status)"
+              exit 1
+            fi
+          done
+
+      - name: consumer-smoke (remote mode, against the real JitPack coordinates)
+        # 唯一能验证"tag 发布之后坐标真的能被外部消费方解析"的手段——上面的
+        # dry-run 只证明构建产物长这样,不证明 JitPack 真的把它们发出去了。
+        working-directory: checks/consumer-smoke
+        run: ./gradlew :app:assembleDebug -PsmokeRemote=true -PsmokeVersion=${{ github.ref_name }} --stacktrace

@@ -1,8 +1,8 @@
 package io.sanato.apptemplate.debug
 
 import androidx.compose.runtime.Composable
-import io.sanato.apptemplate.core.telemetry.RingLogBuffer
-import io.sanato.apptemplate.debugtools.DebugDrawer
+import io.sanato.appkit.core.telemetry.RingLogBuffer
+import io.sanato.appkit.debugtools.DebugDrawer
 
 /**
  * debug 门面:真的包一层 Debug Drawer。`:app` 唯一依赖 `:debug-tools` 的入口——

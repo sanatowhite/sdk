@@ -1,0 +1,14 @@
+Compiled from "DataModule.kt"
+public final class io.sanato.appkit.core.data.hilt.DataStoreModule {
+  public static final io.sanato.appkit.core.data.hilt.DataStoreModule INSTANCE;
+  public final androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences> provideUserSettingsDataStore(android.app.Application);
+}
+
+
+Compiled from "DataModule.kt"
+public abstract class io.sanato.appkit.core.data.hilt.RepositoryModule {
+  public io.sanato.appkit.core.data.hilt.RepositoryModule();
+  public abstract io.sanato.appkit.core.data.UserSettingsRepository bindUserSettingsRepository(io.sanato.appkit.core.data.DataStoreUserSettingsRepository);
+}
+
+

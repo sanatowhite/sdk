@@ -1,0 +1,29 @@
+Compiled from "TelemetryApplication.kt"
+public abstract class io.sanato.appkit.core.telemetry.hilt.TelemetryApplication extends io.sanato.appkit.core.init.hilt.HiltInitializingApplication {
+  public io.sanato.appkit.core.telemetry.hilt.TelemetryApplication();
+}
+
+
+Compiled from "TelemetryBackendsModule.kt"
+public abstract class io.sanato.appkit.core.telemetry.hilt.TelemetryBackendsModule {
+  public io.sanato.appkit.core.telemetry.hilt.TelemetryBackendsModule();
+  public abstract java.util.Set<io.sanato.appkit.core.telemetry.Telemetry> telemetryBackends();
+  public abstract io.sanato.appkit.core.init.AppInitializer bindStartupTrackerInitializer(io.sanato.appkit.core.telemetry.StartupTrackerInitializer);
+  public abstract io.sanato.appkit.core.init.AppInitializer bindAnrCheckInitializer(io.sanato.appkit.core.telemetry.AnrCheckInitializer);
+  public abstract io.sanato.appkit.core.init.AppInitializer bindCrashReportingInitializer(io.sanato.appkit.core.telemetry.CrashReportingInitializer);
+  public abstract io.sanato.appkit.core.init.AppInitializer bindMemorySamplerInitializer(io.sanato.appkit.core.telemetry.MemorySamplerInitializer);
+}
+
+
+Compiled from "TelemetryModule.kt"
+public final class io.sanato.appkit.core.telemetry.hilt.TelemetryModule {
+  public static final io.sanato.appkit.core.telemetry.hilt.TelemetryModule INSTANCE;
+  public final io.sanato.appkit.core.telemetry.Telemetry provideLogcatOrNoOpTelemetry(android.app.Application);
+  public final io.sanato.appkit.core.telemetry.RingLogBuffer provideRingLogBuffer();
+  public final io.sanato.appkit.core.telemetry.Telemetry provideRingLogBufferAsTelemetry(io.sanato.appkit.core.telemetry.RingLogBuffer);
+  public final io.sanato.appkit.core.telemetry.Telemetry provideTelemetry(java.util.Set<io.sanato.appkit.core.telemetry.Telemetry>);
+  public final io.sanato.appkit.core.telemetry.AppForegroundState provideAppForegroundState(android.app.Application);
+  public final io.sanato.appkit.core.telemetry.memory.MemorySampler provideMemorySampler(android.app.Application, io.sanato.appkit.core.telemetry.AppForegroundState, io.sanato.appkit.core.telemetry.Telemetry);
+}
+
+

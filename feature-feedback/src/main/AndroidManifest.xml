@@ -1,0 +1,26 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ACTION_SEND_MULTIPLE 在 API 30+ 需要显式声明包可见性才能解析到邮件客户端。 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+    <application>
+        <!-- 用 .feedback.fileprovider 而不是通用的 .fileprovider——避免和消费方
+             自己声明的 FileProvider 撞 authority(:updatechecker 自己的
+             ${applicationId}.versioncheck.fileprovider 是同一个约定的另一个例子:
+             每个功能一个 authority,不共用)。manifest merge 自动生效,消费方零配置。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.feedback.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/appkit_feedback_file_paths" />
+        </provider>
+    </application>
+</manifest>

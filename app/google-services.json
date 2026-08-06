@@ -1,0 +1,68 @@
+{
+  "_comment": "占位文件——project_id/api_key 都是假的,指向一个不存在的 Firebase 项目。它的唯一作用是让 google-services 插件在 :app:assembleDebug 等构建里找到匹配 applicationId 的 client 条目从而不报错,FirebaseAnalytics/Crashlytics 会正常初始化但真实上报不到任何地方。fork 这个仓库后,去 https://console.firebase.google.com 建一个自己的项目,下载它的 google-services.json 覆盖这个文件即可——不需要改任何 Kotlin/Gradle 代码。",
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "sanato-app-template-placeholder",
+    "storage_bucket": "sanato-app-template-placeholder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "android_client_info": {
+          "package_name": "io.sanato.apptemplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000001",
+        "android_client_info": {
+          "package_name": "io.sanato.apptemplate.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000002",
+        "android_client_info": {
+          "package_name": "io.sanato.apptemplate.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

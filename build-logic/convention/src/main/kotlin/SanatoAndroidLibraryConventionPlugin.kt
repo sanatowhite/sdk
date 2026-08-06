@@ -33,10 +33,20 @@ class SanatoAndroidLibraryConventionPlugin : Plugin<Project> {
                     // library 模块不设 targetSdk —— AGP 9 已弃用，且默认跟随 compileSdk。
                 }
 
+                // Java 11（不是 :app 用的 17）：这些模块现在要发布出去给外部消费方用。
+                // 17 的语言特性 Kotlin 代码一个都用不上（Kotlin 不发 record/sealed 字节码），
+                // 但 class file version 61（17）比 55（11）对消费方的 AGP/JDK 版本要求更严；
+                // 11 是 :updatechecker 一直在用的字节码版本，这里统一成同一条家规而不是让
+                // updatechecker 继续做仓库里唯一的例外。
+                //
+                // 同时刻意不开 isCoreLibraryDesugaringEnabled：全仓零处使用
+                // java.time/java.util.stream/Optional（已 grep 确认），开着是纯白开销；
+                // 更重要的是，它会给消费方留下隐性契约——库字节码一旦引用了被 desugar 的
+                // API，消费方不开同款开关就是运行期 NoClassDefFoundError。只有 :app
+                // （sanato.android.application）保留这个开关，依赖也只在那里声明。
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                    isCoreLibraryDesugaringEnabled = true
+                    sourceCompatibility = JavaVersion.VERSION_11
+                    targetCompatibility = JavaVersion.VERSION_11
                 }
                 // 不设 kotlin.compilerOptions.jvmTarget —— 内置 Kotlin 下它默认跟随
                 // compileOptions.targetCompatibility。
