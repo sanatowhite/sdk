@@ -10,4 +10,8 @@ dependencies {
     implementation(project(":core-common"))
 
     implementation(libs.androidx.metrics.performance)
+
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.ext.junit)
 }

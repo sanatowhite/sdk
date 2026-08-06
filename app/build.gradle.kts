@@ -13,6 +13,19 @@ android {
     }
 }
 
+// 唯一的开关来源是 gradle.properties 的 telemetryFirebaseEnabled——settings.gradle.kts
+// 用它决定要不要 include(":telemetry-firebase"),这里必须读同一个值来决定要不要
+// 依赖它 + apply 两个 Firebase 插件,两处不一致会导致"模块没被 include 但这里
+// 硬编码依赖了它"这种直接失败的配置错误。
+val telemetryFirebaseEnabled = providers.gradleProperty("telemetryFirebaseEnabled").getOrElse("false") == "true"
+
+if (telemetryFirebaseEnabled) {
+    // 条件 apply,不放进 plugins{} 块——google-services/crashlytics 插件的 classpath
+    // 本身也是条件添加的(见根 build.gradle.kts 的 buildscript{}),两边必须一起开关。
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+}
+
 dependencies {
     implementation(project(":core-common"))
     implementation(project(":core-ui"))
@@ -20,6 +33,10 @@ dependencies {
     implementation(project(":core-data"))
     implementation(project(":core-telemetry"))
     implementation(project(":updatechecker"))
+
+    if (telemetryFirebaseEnabled) {
+        implementation(project(":telemetry-firebase"))
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

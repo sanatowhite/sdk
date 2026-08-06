@@ -26,7 +26,9 @@ dependencies {
 - `suspend fun <T> safeApiCall(block: suspend () -> T): AppResult<T>` — 把 Retrofit 的裸异常转换成 `AppResult`,内部按 `HttpException`/`SocketTimeoutException`/`UnknownHostException`/`SSLException`/`SerializationException`/`IOException` 依次分类,`CancellationException` 原样重新抛出(绝不吞取消)。
 - `RetryInterceptor(maxRetries, baseDelayMillis, maxDelayMillis)` — OkHttp `Interceptor`:5xx/429 指数退避重试,429 优先读 `Retry-After` 头;**只重试幂等方法**(GET/HEAD/OPTIONS/PUT/DELETE),POST/PATCH 不重试。
 - `NetworkMonitor(context).isOnline(): Flow<Boolean>` — 基于 `registerDefaultNetworkCallback`(API 24 起可用,等于 minSdk,无需版本分支)。
-- `HttpClientFactory.okHttpClient(enableLogging, additionalInterceptors)` / `.retrofit(baseUrl, client, json)` — 组装入口,超时用 `kotlin.time.Duration`(OkHttp 5 起 Builder 直接接受)。
+- `HttpClientFactory.okHttpClient(enableLogging, additionalInterceptors, metricsSink)` / `.retrofit(baseUrl, client, json)` — 组装入口,超时用 `kotlin.time.Duration`(OkHttp 5 起 Builder 直接接受)。
+- `NetworkMetricsSink` — `fun interface`,网络耗时上报的落点,**归本模块所有**(不是 `:core-telemetry`),这样 `core-net` 不需要依赖 `core-telemetry`;`:app` 提供桥接实现连接两边(见 `core-telemetry` 的 README)。
+- `TelemetryEventListenerFactory(sink)` — OkHttp `EventListener.Factory`,per-call 无状态共享;URL 走路由模板化(优先读 Retrofit `Invocation` tag,拿不到才退回 `encodedPath`),避免指标基数爆炸。
 
 ## 已知限制 / 不要做的事
 

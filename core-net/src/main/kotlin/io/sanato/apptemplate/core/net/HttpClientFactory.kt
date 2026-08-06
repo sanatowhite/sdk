@@ -27,6 +27,7 @@ object HttpClientFactory {
     fun okHttpClient(
         enableLogging: Boolean = false,
         additionalInterceptors: List<Interceptor> = emptyList(),
+        metricsSink: NetworkMetricsSink? = null,
     ): OkHttpClient =
         OkHttpClient
             .Builder()
@@ -40,6 +41,9 @@ object HttpClientFactory {
                     addInterceptor(
                         HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC },
                     )
+                }
+                if (metricsSink != null) {
+                    eventListenerFactory(TelemetryEventListenerFactory(metricsSink))
                 }
             }.build()
 

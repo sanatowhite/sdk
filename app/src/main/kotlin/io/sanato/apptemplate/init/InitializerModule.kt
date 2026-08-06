@@ -1,14 +1,20 @@
 package io.sanato.apptemplate.init
 
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
+import io.sanato.apptemplate.telemetry.AnrCheckInitializer
+import io.sanato.apptemplate.telemetry.CrashReportingInitializer
+import io.sanato.apptemplate.telemetry.MemorySamplerInitializer
+import io.sanato.apptemplate.telemetry.StartupTrackerInitializer
 
 /**
- * 目前两个集合都是空的——Phase 6 加入 core-telemetry 的采集器之后才会有真正的
- * `@IntoSet` 绑定。`Set<AppInitializer>` 空集在 Hilt 里默认是编译错误,必须
- * 显式 `@Multibinds` 声明,否则"Firebase 关闭且无其他初始化任务"时直接编译失败。
+ * `@Multibinds` 声明本身不依赖是否存在具体绑定——即使下面已经有真正的 `@Binds`
+ * 贡献者,保留这两行仍然安全:哪天所有具体绑定都被移除,Hilt 也会安全地退化成
+ * 空集而不是编译报错。
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -20,4 +26,24 @@ abstract class InitializerModule {
     @Multibinds
     @Deferred
     abstract fun deferredInitializers(): Set<AppInitializer>
+
+    @Binds
+    @IntoSet
+    @Eager
+    abstract fun bindStartupTrackerInitializer(impl: StartupTrackerInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    @Eager
+    abstract fun bindAnrCheckInitializer(impl: AnrCheckInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    @Deferred
+    abstract fun bindCrashReportingInitializer(impl: CrashReportingInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    @Deferred
+    abstract fun bindMemorySamplerInitializer(impl: MemorySamplerInitializer): AppInitializer
 }

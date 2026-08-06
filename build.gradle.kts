@@ -12,6 +12,16 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:${libs.versions.ksp.get()}")
+
+        // 条件 classpath,不用 plugins { apply false } —— 后者即使 apply false 也会
+        // 解析下载 plugin marker,走这里才能做到"开关关着时零 Firebase 网络请求"。
+        // （`buildscript {}` 和 `pluginManagement {}` 一样是提前抽取编译的独立片段,
+        // 这里不引用外部顶层 val,直接内联判断表达式,避免重蹈 settings.gradle.kts
+        // 那次"Unresolved reference"的覆辙。）
+        if (providers.gradleProperty("telemetryFirebaseEnabled").getOrElse("false") == "true") {
+            classpath("com.google.gms:google-services:${libs.versions.googleServices.get()}")
+            classpath("com.google.firebase:firebase-crashlytics-gradle:${libs.versions.crashlyticsPlugin.get()}")
+        }
     }
 }
 
@@ -54,8 +64,3 @@ spotless {
         ktlint(libs.versions.ktlint.get())
     }
 }
-
-// Firebase 三个插件（google-services / crashlytics-gradle）走条件 buildscript
-// classpath，不在这里的 plugins{} 块声明——即使 apply false 也会解析下载 plugin
-// marker，走条件 classpath 才能做到"开关关着时零 Firebase 网络请求"。见
-// `:telemetry-firebase` 模块（Phase 6）引入时的具体写法。

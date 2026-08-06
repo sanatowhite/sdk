@@ -2,11 +2,14 @@ package io.sanato.apptemplate
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewTreeObserver
 import dagger.hilt.android.HiltAndroidApp
+import io.sanato.apptemplate.core.telemetry.crash.CrashRecorder
+import io.sanato.apptemplate.core.telemetry.startup.AppStartTime
 import io.sanato.apptemplate.init.AppInitializers
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -15,6 +18,17 @@ import javax.inject.Inject
 class AppTemplateApp : Application() {
     @Inject
     lateinit var appInitializers: AppInitializers
+
+    /**
+     * 崩溃 handler 和启动计时是唯二必须在 `attachBaseContext` 里做的事——
+     * 比 Hilt 组装更早,也是 `AppInitializers` 那套 Eager/Deferred 分组机制
+     * 覆盖不到的两个例外。
+     */
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        AppStartTime.record(this)
+        CrashRecorder.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()

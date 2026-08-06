@@ -53,4 +53,12 @@ if (System.getenv("JITPACK") != "true") {
         ":benchmark",
         ":baselineprofile",
     )
+
+    // :telemetry-firebase 只在 gradle.properties 的 telemetryFirebaseEnabled=true
+    // 时才参与构建——关闭时这个模块连编译都不会被触发，是真正的零 Firebase 依赖，
+    // 不是"依赖还在只是不生效"。开关同时控制 :app 是否 implementation(project(...))
+    // 它（见 app/build.gradle.kts），两处必须保持一致。
+    if (providers.gradleProperty("telemetryFirebaseEnabled").getOrElse("false") == "true") {
+        include(":telemetry-firebase")
+    }
 }
