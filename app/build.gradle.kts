@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.sanato.android.application)
     alias(libs.plugins.sanato.android.hilt)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -19,6 +20,11 @@ dependencies {
     implementation(project(":core-data"))
     implementation(project(":core-telemetry"))
     implementation(project(":updatechecker"))
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

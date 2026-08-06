@@ -1,0 +1,24 @@
+<resources>
+    <!--
+        MainActivity 继承 AppCompatActivity(应用内语言切换的 pre-T 兼容实现需要
+        AppCompat),所以最终主题必须是 AppCompat 派生,不能直接用 Theme.Material3.*。
+        页面内容全部走 Compose + AppTemplateTheme(core-ui),这里的 XML 主题只
+        负责启动窗口和系统级外观,不影响 Compose 内容的取色。
+    -->
+    <style name="Theme.AppTemplate" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!--
+        core-splashscreen 要求的启动主题:必须继承 Theme.SplashScreen,
+        MainActivity 在 super.onCreate() 之前调用 installSplashScreen() 后,
+        会自动切到 postSplashScreenTheme。
+    -->
+    <style name="Theme.AppTemplate.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.AppTemplate</item>
+    </style>
+</resources>

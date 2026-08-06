@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    模板只提供矢量自适应图标(见 bootstrap.sh 设计:Step 5 不做二进制图片处理)。
+    fork 出去的项目应该用 Android Studio 的 Image Asset 工具替换成真实品牌图标——
+    这里的简单圆形只是让 assembleDebug/assembleRelease 有图标可用,不是最终产物。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 圆形落在 66dp 安全区(21..87)内,不会被任意形状的 mask 裁掉 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,54 a24,24 0 1,0 48,0 a24,24 0 1,0 -48,0" />
+</vector>

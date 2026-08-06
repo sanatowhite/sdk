@@ -1,0 +1,28 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{kt,kts}]
+# @Composable 函数名用 PascalCase 是 Jetpack Compose 官方约定,不是命名错误——
+# ktlint 默认的 function-naming 规则不知道这条约定,必须显式豁免。
+ktlint_function_naming_ignore_when_annotated_with = Composable
+# 像 Routes.kt/AppInitializer.kt 这类按"主题"而非"单个声明"分组的文件很常见
+# (一个文件放多个小的 sealed route / qualifier annotation),不強制文件名与
+# 首个 top-level 声明同名。
+ktlint_standard_filename = disabled
+max_line_length = 120
+
+[*.{yml,yaml,json}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.toml]
+indent_size = 4
