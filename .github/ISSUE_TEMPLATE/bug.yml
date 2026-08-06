@@ -1,0 +1,46 @@
+name: Bug report
+description: Something in the template or the updatechecker SDK isn't working as expected
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the repo?
+      options:
+        - ":updatechecker (the standalone SDK)"
+        - "app template (:app or a core-* module)"
+        - "bootstrap.sh / fork workflow"
+        - "CI / release pipeline"
+        - "other / not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ./gradlew ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      description: For :updatechecker, the JitPack tag. For the template, the commit SHA (see the About screen's build info).
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / stack trace
+      render: shell
+    validations:
+      required: false

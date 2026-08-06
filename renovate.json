@@ -1,0 +1,58 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Asia/Shanghai",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Compose BOM alone, never bundled — it's the single most likely thing to break Roborazzi screenshot baselines (already happened once: M3 1.4.0 changed NavigationBarItem's active label color), needs its own PR + baseline re-record cycle.",
+      "matchPackageNames": ["androidx.compose:compose-bom"],
+      "groupName": "compose-bom",
+      "groupSlug": "compose-bom"
+    },
+    {
+      "description": "AndroidX libraries grouped together (excluding Compose BOM, handled separately above).",
+      "matchPackagePrefixes": ["androidx."],
+      "excludePackageNames": ["androidx.compose:compose-bom"],
+      "groupName": "androidx",
+      "groupSlug": "androidx"
+    },
+    {
+      "description": "Test-only dependencies grouped — lower risk, safe to bundle since they never affect the shipped app.",
+      "matchPackageNames": [
+        "org.robolectric:robolectric",
+        "io.github.takahirom.roborazzi",
+        "app.cash.turbine:turbine",
+        "io.mockk:mockk",
+        "junit:junit"
+      ],
+      "matchPackagePrefixes": [
+        "org.robolectric",
+        "io.github.takahirom.roborazzi",
+        "app.cash.turbine",
+        "io.mockk"
+      ],
+      "groupName": "test-dependencies",
+      "groupSlug": "test-dependencies"
+    },
+    {
+      "description": ":updatechecker deliberately pins coroutines to 1.9.0 (lower version = fewer constraints on consumers) — never let Renovate bump it, that's a manual, deliberate decision documented in updatechecker/README.md.",
+      "matchPackageNames": ["org.jetbrains.kotlinx:kotlinx-coroutines-core"],
+      "matchFileNames": ["updatechecker/build.gradle.kts"],
+      "enabled": false
+    },
+    {
+      "description": "AGP/Gradle wrapper/Kotlin/KSP major version bumps need manual verification (see docs/adr/0002) — auto-merge is never appropriate here even if CI passes.",
+      "matchPackageNames": [
+        "com.android.tools.build:gradle",
+        "org.jetbrains.kotlin:kotlin-gradle-plugin",
+        "com.google.devtools.ksp:symbol-processing-gradle-plugin"
+      ],
+      "groupName": "build-toolchain",
+      "groupSlug": "build-toolchain",
+      "automerge": false
+    }
+  ],
+  "prConcurrentLimit": 5,
+  "schedule": ["before 6am on monday"]
+}

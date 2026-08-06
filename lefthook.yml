@@ -1,0 +1,23 @@
+# 本地 git hook——单个二进制、零 Ruby/Node 依赖,和本模板"零传递依赖"的哲学一致。
+# CI 是最终防线,这里是第一道、免费的防线——没有 CI 时它是唯一防线。
+pre-commit:
+  parallel: false
+  commands:
+    gitleaks:
+      run: gitleaks protect --staged --config .gitleaks.toml
+    spotless:
+      glob: "*.{kt,kts}"
+      run: ./gradlew spotlessApply
+      stage_fixed: true
+    detekt:
+      glob: "*.kt"
+      # advisory,不阻塞提交——detekt 1.23.x 对 Kotlin 2.4 新语法有解析失败的已知
+      # 风险(见 pr-check.yml 里同样的 continue-on-error 处理),真正的静态检查
+      # 门禁是 CI 里的 spotlessCheck/lintDebug,这里只是本地提前看一眼。
+      run: ./gradlew detekt || true
+
+pre-push:
+  parallel: false
+  commands:
+    updatechecker-test:
+      run: ./gradlew :updatechecker:test

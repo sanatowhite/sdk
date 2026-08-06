@@ -1,0 +1,18 @@
+title = "android-app-template gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known false-positives for this repo"
+paths = [
+  # 调试签名的 keystore 密码是公开发布的 Android SDK 默认约定值(可以在任何一台
+  # 装了 Android SDK 的机器上直接推导出来),不是真正的密钥。
+  '''app/proguard-rules\.pro''',
+  '''.*/build/.*''',
+  '''.*\.lock$''',
+]
+regexes = [
+  # debug keystore 的默认 alias/密码("androiddebugkey"/"android")本身就是公开常量。
+  '''androiddebugkey''',
+]
