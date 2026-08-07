@@ -96,12 +96,57 @@ object LogKit {
 
 ## 密钥流程
 
-1. 跑 `./scripts/logkit-keygen.sh --out-dir <仓库外的目录>`,生成一份 P-256 密钥对。
-2. 把打印出来的 `PUBLIC_KEY_SPKI_DER` 常量粘进 `BuiltInRecipientKey.kt`——公钥不是秘密,可以提交。
-3. **私钥只此一份**,备份到密码管理器,绝不提交、绝不进 CI 日志、绝不发到聊天工具。丢了 = 以后所有日志永久不可读,没有恢复手段。
-4. 离线解密:`./gradlew :logkit-decrypt:installDist` 之后,`tools/logkit-decrypt/build/install/logkit-decrypt/bin/logkit-decrypt --private-key <pem> --in <file|dir> [--json] [--verify-seq]`。
-
 本仓库为了让 fork 出去的人第一次跑 debug build 就能读自己的日志,**刻意签入了一份 THROWAWAY 测试密钥对**(`logkit/keys/debug-private-key.pem` + 内置公钥)。**任何真正要发布的 App 必须换掉它**——见 `logkit/keys/README.md` 和 `TEMPLATE.md` 的 fork checklist。
+
+### 生成 / 轮换步骤(AI 可以直接照抄执行,不依赖任何仓库外部脚本——`logkit-keygen.sh` 就在本仓库里)
+
+下面每一步都是真实可执行的命令,把 `<占位符>` 换成具体值即可。
+
+**1. 生成新密钥对**(脚本内置一道安全阀:`--out-dir` 落在仓库工作树里会直接拒绝执行):
+
+```bash
+./scripts/logkit-keygen.sh --out-dir <仓库外的目录,例如 ~/.logkit-keys>
+```
+
+脚本会打印一段可以直接粘贴的 Kotlin 代码,形如:
+
+```kotlin
+val PUBLIC_KEY_SPKI_DER: ByteArray =
+    byteArrayOf(
+        48, 89, 48, 19, ...,
+    )
+```
+
+以及一个 `keyId`(十六进制,仅供人工核对,代码里是从公钥字节自己算出来的,不需要手填)。
+
+**2. 把打印出来的 `byteArrayOf(...)` 整段替换进 `BuiltInRecipientKey.kt` 的 `PUBLIC_KEY_SPKI_DER`**——公钥不是秘密,这一步的结果可以提交。
+
+**3. 删除仓库自带的 THROWAWAY 测试密钥对**(继续留着等于给自己的新公钥配了一把模板作者手上也有的私钥):
+
+```bash
+rm -rf logkit/keys
+```
+
+**4. 验证新密钥真的能用**——装一个 debug build,走一遍 debug 抽屉的 LogKit 面板导出日志,用第 1 步生成的私钥离线解密确认能读出内容:
+
+```bash
+./gradlew :logkit-decrypt:installDist
+tools/logkit-decrypt/build/install/logkit-decrypt/bin/logkit-decrypt \
+  --private-key <第1步生成的.pem路径> --in <导出的.zip或解压后的目录> --verify-seq
+```
+
+退出码 0 才算真的换成功了;退出码 2(密钥不匹配)说明 `BuiltInRecipientKey.kt` 没换对,或者手上拿的是旧私钥。
+
+**5. 私钥只此一份**,现在就备份到密码管理器,然后把生成时用的临时目录从磁盘上清掉。**绝不**提交进仓库、**绝不**进 CI 日志、**绝不**发到聊天工具——丢了 = 以后所有用这个公钥加密的日志永久不可读,没有恢复手段。
+
+> **设计决定(不要重新提议):密钥生成脚本(`scripts/logkit-keygen.sh`)留在本仓库里,不做成一个每次发布都要跑的 CI 步骤。** 密钥轮换是极低频、需要人工确认新私钥已安全备份的操作,自动化反而会制造"私钥被谁的自动化流程悄悄生成/覆盖了却没人保存"的风险。
+
+## 经验教训 / 踩过的坑
+
+这些是开发过程中真实踩过、已经修过的坑,记录下来避免以后(包括 AI)重新踩一遍或者"优化"回去:
+
+- **HKDF 测试向量抄错一位数字,而且第一次跑测试直接报错暴露了。** 写 `HkdfTest` 时手抄 RFC 5869 Test Case 1 的期望 PRK 时漏抄了最后一个十六进制字符(63 个字符,应该是 64 个),测试用的 `hex()` 转换函数按 `length/2` 取整截断,结果是拿一个被截短一字节的错误期望值去比较,报了 `ArrayComparisonFailure`。**教训不是"这个具体向量要抄对"——教训是任何手抄的密码学测试向量都必须用独立工具(比如跑一遍 Python `hmac`/`hashlib`)重新算一遍再填进代码,不能只靠肉眼核对字符串。**
+- **`seq` 唯一但入队顺序不一定和 `seq` 顺序一致——这是"打序号"和"入队"分成两个非原子步骤的必然结果,不是边缘情况。** 最初的 `LogKitCore.admit()` 实现是 `val assignedSeq = seq.getAndIncrement(); queue.offer(...)`。两个线程并发调用时,线程 A 拿到 `seq=5` 后被调度器切出去,线程 B 拿到 `seq=6` 并先完成了 `offer()`——写线程因此按 FIFO 顺序看到 `seq=6` 排在 `seq=5` 前面。`seq` 依然是唯一的(`AtomicLong.getAndIncrement()` 保证),但"并发下顺序一致"这个需求要的是**写入顺序也和 seq 顺序一致**,光有唯一性不够。这个 bug 被一个跑 20 轮、每轮 8 线程 ×200 条的 `TotalOrderingTest` 直接抓到(断言"回读严格递增",不断言具体交错顺序)。**修法是把"读队列大小做溢出判断 + 打序号 + 入队"三步合并进同一把锁(`admitLock`)**,代价是把原本无锁的 admission 路径变成有锁的,但临界区极短(一次自增 + 一次 `ArrayBlockingQueue.offer()`,没有 IO),和 `ArrayBlockingQueue` 内部本来就有的锁是同一量级。**这条经验的推广:任何"先分配一个全局递增的排序键、再把带这个键的数据放进一个共享结构"的模式,只要这两步不是同一个原子操作,就不能保证结构里的顺序和键的顺序一致——不要因为键本身唯一就假设顺序也对。**
 
 ## 已知限制 / 不要做的事
 
@@ -111,3 +156,4 @@ object LogKit {
 - **不要**在 `UpdateDownloadState.InProgress` 之类的高频进度回调里打日志——一个下载进度块记一条,几秒内就能 churn 掉整个 5MB 预算,把想留住的崩溃现场挤出去。
 - **不要**指望 Robolectric 测试证明了设备侧的加密行为——它跑在桌面 JVM 的 JCE provider 上,不是 Android 的 `AndroidOpenSSL`/Conscrypt。`EnvelopeRoundTripTest` 只证明格式自洽;真正的设备兼容性靠每文件建档时的对称自检(`Envelope.selfProbeSymmetric`)在运行时兜底,以及一次性的真机 API 24 验证。
 - **不要**认为沿用仓库自带的 debug 密钥对发布 App 是安全的——那等于把用户日志加密给了模板作者能解密的密钥。
+- **不要**把 `admit()` 里"判断溢出 + 打 seq + 入队"这三步拆开成"看起来更高性能"的无锁版本——见上面"经验教训"里的顺序一致性 bug,这把锁是这个需求的正确性前提,不是可以事后优化掉的开销。
