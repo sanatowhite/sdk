@@ -1,6 +1,7 @@
 package io.sanato.appkit.core.telemetry.hilt
 
 import dagger.Binds
+import dagger.BindsOptionalOf
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -11,6 +12,7 @@ import io.sanato.appkit.core.init.Deferred
 import io.sanato.appkit.core.init.Eager
 import io.sanato.appkit.core.telemetry.AnrCheckInitializer
 import io.sanato.appkit.core.telemetry.CrashReportingInitializer
+import io.sanato.appkit.core.telemetry.DiagnosticLogSink
 import io.sanato.appkit.core.telemetry.MemorySamplerInitializer
 import io.sanato.appkit.core.telemetry.StartupTrackerInitializer
 import io.sanato.appkit.core.telemetry.Telemetry
@@ -31,6 +33,18 @@ import io.sanato.appkit.core.telemetry.Telemetry
 abstract class TelemetryBackendsModule {
     @Multibinds
     abstract fun telemetryBackends(): Set<Telemetry>
+
+    /**
+     * `AnrCheckInitializer` 无条件绑进下面的 `Set<AppInitializer>`，因此它需要的
+     * `DiagnosticLogSink` 对任何只引了这个模块（没有像 `:app` 的 `LogKitModule`
+     * 那样另外提供桥接实现）的消费方来说必须有默认值，否则会在 `hiltJavaCompile`
+     * 直接 MissingBinding。这条声明只是把 `Optional<DiagnosticLogSink>` 变成可注入
+     * ——存在真实绑定就是 `Optional.of(...)`，不存在就是 `Optional.empty()`
+     * （`AnrCheckInitializer` 自己再 `.orElse(DiagnosticLogSink.NoOp)`），不会跟
+     * 任何下游提供的裸 `DiagnosticLogSink` 绑定冲突。
+     */
+    @BindsOptionalOf
+    abstract fun diagnosticLogSink(): DiagnosticLogSink
 
     @Binds
     @IntoSet

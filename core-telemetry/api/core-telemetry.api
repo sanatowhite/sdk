@@ -1,6 +1,6 @@
 Compiled from "TelemetryInitializers.kt"
 public final class io.sanato.appkit.core.telemetry.AnrCheckInitializer implements io.sanato.appkit.core.init.AppInitializer {
-  public io.sanato.appkit.core.telemetry.AnrCheckInitializer(io.sanato.appkit.core.telemetry.Telemetry, io.sanato.appkit.core.telemetry.AppForegroundState);
+  public io.sanato.appkit.core.telemetry.AnrCheckInitializer(io.sanato.appkit.core.telemetry.Telemetry, io.sanato.appkit.core.telemetry.AppForegroundState, java.util.Optional<io.sanato.appkit.core.telemetry.DiagnosticLogSink>);
   public void init(android.app.Application);
 }
 
@@ -54,6 +54,32 @@ Compiled from "TelemetryInitializers.kt"
 public final class io.sanato.appkit.core.telemetry.CrashReportingInitializer implements io.sanato.appkit.core.init.AppInitializer {
   public io.sanato.appkit.core.telemetry.CrashReportingInitializer(io.sanato.appkit.core.telemetry.Telemetry);
   public void init(android.app.Application);
+}
+
+
+Compiled from "DiagnosticLogSink.kt"
+public final class io.sanato.appkit.core.telemetry.DiagnosticLevel extends java.lang.Enum<io.sanato.appkit.core.telemetry.DiagnosticLevel> {
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLevel DEBUG;
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLevel INFO;
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLevel WARN;
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLevel ERROR;
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLevel FATAL;
+  public static io.sanato.appkit.core.telemetry.DiagnosticLevel[] values();
+  public static io.sanato.appkit.core.telemetry.DiagnosticLevel valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.telemetry.DiagnosticLevel> getEntries();
+}
+
+
+Compiled from "DiagnosticLogSink.kt"
+public interface io.sanato.appkit.core.telemetry.DiagnosticLogSink {
+  public static final io.sanato.appkit.core.telemetry.DiagnosticLogSink$Companion Companion;
+  public abstract void log(io.sanato.appkit.core.telemetry.DiagnosticLevel, java.lang.String, java.lang.String, java.lang.Throwable);
+}
+
+
+Compiled from "DiagnosticLogSink.kt"
+public final class io.sanato.appkit.core.telemetry.DiagnosticLogSink$Companion {
+  public final io.sanato.appkit.core.telemetry.DiagnosticLogSink getNoOp();
 }
 
 
@@ -222,15 +248,17 @@ public final class io.sanato.appkit.core.telemetry.TelemetryKt {
 
 Compiled from "AnrExitInfoReaper.kt"
 public final class io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper {
-  public static final java.lang.String PREFS_NAME;
-  public static final java.lang.String KEY_SEEN;
+  public static final io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion Companion;
   public io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper(android.content.Context);
   public final java.util.List<android.app.ApplicationExitInfo> reapNewAnrExits();
+  public final java.lang.String readAnrTrace(android.app.ApplicationExitInfo, int);
+  public static java.lang.String readAnrTrace$default(io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper, android.app.ApplicationExitInfo, int, int, java.lang.Object);
 }
 
 
 Compiled from "AnrExitInfoReaper.kt"
-final class io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion {
+public final class io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion {
+  public final java.lang.String readTruncated$core_telemetry(java.io.InputStream, int);
   public io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
 }
 
@@ -256,13 +284,14 @@ Compiled from "CrashRecorder.kt"
 public final class io.sanato.appkit.core.telemetry.crash.CrashRecorder implements java.lang.Thread$UncaughtExceptionHandler {
   public static final io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion Companion;
   public void uncaughtException(java.lang.Thread, java.lang.Throwable);
-  public io.sanato.appkit.core.telemetry.crash.CrashRecorder(java.io.File, java.lang.Thread$UncaughtExceptionHandler, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.telemetry.crash.CrashRecorder(java.io.File, java.lang.Thread$UncaughtExceptionHandler, io.sanato.appkit.core.telemetry.DiagnosticLogSink, kotlin.jvm.internal.DefaultConstructorMarker);
 }
 
 
 Compiled from "CrashRecorder.kt"
 public final class io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion {
-  public final io.sanato.appkit.core.telemetry.crash.CrashRecorder install(android.content.Context);
+  public final io.sanato.appkit.core.telemetry.crash.CrashRecorder install(android.content.Context, io.sanato.appkit.core.telemetry.DiagnosticLogSink);
+  public static io.sanato.appkit.core.telemetry.crash.CrashRecorder install$default(io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion, android.content.Context, io.sanato.appkit.core.telemetry.DiagnosticLogSink, int, java.lang.Object);
   public final java.util.List<java.lang.String> drainPendingCrashReports(android.content.Context);
   public io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
 }

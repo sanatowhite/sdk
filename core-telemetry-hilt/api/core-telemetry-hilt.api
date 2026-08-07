@@ -8,6 +8,7 @@ Compiled from "TelemetryBackendsModule.kt"
 public abstract class io.sanato.appkit.core.telemetry.hilt.TelemetryBackendsModule {
   public io.sanato.appkit.core.telemetry.hilt.TelemetryBackendsModule();
   public abstract java.util.Set<io.sanato.appkit.core.telemetry.Telemetry> telemetryBackends();
+  public abstract io.sanato.appkit.core.telemetry.DiagnosticLogSink diagnosticLogSink();
   public abstract io.sanato.appkit.core.init.AppInitializer bindStartupTrackerInitializer(io.sanato.appkit.core.telemetry.StartupTrackerInitializer);
   public abstract io.sanato.appkit.core.init.AppInitializer bindAnrCheckInitializer(io.sanato.appkit.core.telemetry.AnrCheckInitializer);
   public abstract io.sanato.appkit.core.init.AppInitializer bindCrashReportingInitializer(io.sanato.appkit.core.telemetry.CrashReportingInitializer);

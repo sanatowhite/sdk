@@ -8,6 +8,7 @@ import io.sanato.appkit.core.telemetry.anr.ForegroundExitBeacon
 import io.sanato.appkit.core.telemetry.crash.CrashRecorder
 import io.sanato.appkit.core.telemetry.memory.MemorySampler
 import io.sanato.appkit.core.telemetry.startup.StartupTracker
+import java.util.Optional
 import javax.inject.Inject
 
 /**
@@ -37,8 +38,16 @@ class AnrCheckInitializer
     constructor(
         private val telemetry: Telemetry,
         private val foregroundState: AppForegroundState,
-        private val logSink: DiagnosticLogSink,
+        // Optional，不是裸 DiagnosticLogSink：这个 initializer 无条件绑进
+        // TelemetryBackendsModule 的 AppInitializer 多重绑定，任何只引了
+        // :core-telemetry-hilt、没有另外写桥接实现（如 :app 的 LogKitModule）的
+        // 消费方都会需要它——裸类型会导致 Hilt 编译期直接 MissingBinding。
+        // TelemetryBackendsModule 用 @BindsOptionalOf 声明这个类型可选，
+        // 桥接实现存在时 Optional 里就是那个真实实例，不存在时落到 NoOp。
+        logSink: Optional<DiagnosticLogSink>,
     ) : AppInitializer {
+        private val logSink: DiagnosticLogSink = logSink.orElse(DiagnosticLogSink.NoOp)
+
         override fun init(application: Application) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 // `reaper` 提成局部变量,让下面两个调用共用同一个实例——
