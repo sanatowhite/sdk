@@ -61,6 +61,8 @@ val jitpack = System.getenv("JITPACK") == "true"
 // 开关。
 include(
     ":updatechecker",
+    ":backupkit",
+    ":backupkit-drive",
     ":core-common",
     ":core-common-hilt",
     ":core-init",

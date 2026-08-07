@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  刻意为空：:backupkit 没有 provider、没有权限、没有 res——它是纯格式/编排/SAF 存储
+  实现，不碰网络（网络 I/O 只在 :backupkit-drive）。SAF 的 DocumentsContract 调用走
+  宿主传入的 ContentResolver，不需要声明任何权限。
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
