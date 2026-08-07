@@ -12,4 +12,5 @@ Lightweight ADRs (context / decision / consequences) for the choices made while 
 - [0008 — Turn `core-*`/`feature-*` into real published SDK modules, not fork-and-copy](0008-sdk-publishing-architecture.md)
 - [0009 — The `api()` vs `implementation()` judgment rule for published modules](0009-api-vs-implementation-judgment-rule.md)
 - [0010 — `:logkit` is a log pipeline, not a detector; `:core-telemetry` still does the detecting](0010-logkit-pipeline-vs-apm-detection.md)
+- [0011 — When a published module may carry a heavyweight vendor dependency](0011-vendor-backed-backend-modules.md)
 - [spike 0000 — Hilt library-module `@Module` aggregation (empirical spike behind 0008)](spike-0000-hilt-library-module-aggregation.md)

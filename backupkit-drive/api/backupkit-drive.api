@@ -1,0 +1,66 @@
+Compiled from "DriveAuthResult.kt"
+public final class io.sanato.appkit.backup.drive.DriveAuthResult {
+  public static final io.sanato.appkit.backup.drive.DriveAuthResult$Companion Companion;
+  public final java.lang.String getAccessToken();
+  public final android.content.IntentSender getConsentIntentSender();
+  public final java.lang.String getErrorMessage();
+  public final boolean isSuccess();
+  public final boolean getNeedsConsent();
+  public io.sanato.appkit.backup.drive.DriveAuthResult(java.lang.String, android.content.IntentSender, java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DriveAuthResult.kt"
+public final class io.sanato.appkit.backup.drive.DriveAuthResult$Companion {
+  public final io.sanato.appkit.backup.drive.DriveAuthResult success(java.lang.String);
+  public final io.sanato.appkit.backup.drive.DriveAuthResult consentRequired(android.content.IntentSender);
+  public final io.sanato.appkit.backup.drive.DriveAuthResult failure(java.lang.String);
+  public io.sanato.appkit.backup.drive.DriveAuthResult$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DriveBackupStore.kt"
+public final class io.sanato.appkit.backup.drive.DriveBackupStore implements io.sanato.appkit.backup.remote.RemoteBackupStore {
+  public static final java.lang.String DEFAULT_FILES_URL;
+  public static final java.lang.String DEFAULT_UPLOAD_URL;
+  public static final java.lang.String FOLDER_MIME;
+  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public java.lang.Object list(java.lang.String, kotlin.coroutines.Continuation<? super java.util.List<io.sanato.appkit.backup.remote.RemoteFile>>);
+  public java.lang.Object uploadIfAbsent(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public java.lang.Object upload(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public java.lang.Object download(java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object delete(java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "DriveBackupStore.kt"
+final class io.sanato.appkit.backup.drive.DriveBackupStore$Companion {
+  public io.sanato.appkit.backup.drive.DriveBackupStore$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DriveTokenProvider.kt"
+public interface io.sanato.appkit.backup.drive.DriveTokenProvider {
+  public abstract java.lang.Object currentAccessToken(kotlin.coroutines.Continuation<? super java.lang.String>);
+}
+
+
+Compiled from "GmsDriveAuthorizer.kt"
+public final class io.sanato.appkit.backup.drive.GmsDriveAuthorizer {
+  public static final long TOKEN_TTL_MILLIS;
+  public io.sanato.appkit.backup.drive.GmsDriveAuthorizer(android.content.Context, java.lang.String);
+  public io.sanato.appkit.backup.drive.GmsDriveAuthorizer(android.content.Context, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.Object authorize(kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.drive.DriveAuthResult>);
+  public final io.sanato.appkit.backup.drive.DriveAuthResult handleConsentResult(android.content.Intent);
+  public final java.lang.Object clearCachedToken(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public final io.sanato.appkit.backup.drive.DriveTokenProvider asTokenProvider();
+}
+
+
+Compiled from "GmsDriveAuthorizer.kt"
+final class io.sanato.appkit.backup.drive.GmsDriveAuthorizer$Companion {
+  public io.sanato.appkit.backup.drive.GmsDriveAuthorizer$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+

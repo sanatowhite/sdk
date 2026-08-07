@@ -71,6 +71,8 @@ dependencies {
 val sdkModules =
     listOf(
         ":updatechecker",
+        ":backupkit",
+        ":backupkit-drive",
         ":core-common",
         ":core-common-hilt",
         ":core-init",
@@ -215,6 +217,11 @@ tasks.register("verifyModuleGraph") {
                 // ── 其余 ──
                 ":debug-tools" to setOf(":core-telemetry"),
                 ":updatechecker" to emptySet<String>(),
+                // :backupkit 零内部依赖(格式/编排/SAF 全部自包含)；:backupkit-drive 只依赖
+                // :backupkit 拿 RemoteBackupStore 接口，是唯一允许的边——同 :telemetry-firebase
+                // 只依赖 :core-telemetry 的形状，见 docs/adr/0011。
+                ":backupkit" to emptySet<String>(),
+                ":backupkit-drive" to setOf(":backupkit"),
                 // 和 :updatechecker 同一条铁律,但理由不同::logkit 还不在 sdkModules
                 // 发布清单里(见 CLAUDE.md ":logkit 五条铁律" #1),依赖数必须恒为
                 // 0,不是"现在恰好没依赖"——见 docs/adr/0010。

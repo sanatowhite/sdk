@@ -1,0 +1,440 @@
+Compiled from "ArchiveBuilder.kt"
+public final class io.sanato.appkit.backup.archive.ArchiveBuilder {
+  public static final io.sanato.appkit.backup.archive.ArchiveBuilder INSTANCE;
+  public static final java.lang.String MANIFEST_ENTRY;
+  public static final java.lang.String MEDIA_DIR;
+  public final java.lang.Object build(java.io.File, java.lang.String, int, java.lang.String, long, java.util.List<io.sanato.appkit.backup.core.BackupRecord>, boolean, kotlin.jvm.functions.Function2<? super java.lang.String, ? super kotlin.coroutines.Continuation<? super java.io.File>, ? extends java.lang.Object>, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.archive.ArchiveBuilder$BuildResult>);
+}
+
+
+Compiled from "ArchiveBuilder.kt"
+public final class io.sanato.appkit.backup.archive.ArchiveBuilder$BuildResult {
+  public io.sanato.appkit.backup.archive.ArchiveBuilder$BuildResult(java.util.List<? extends java.io.File>);
+  public final java.util.List<java.io.File> getMediaFiles();
+}
+
+
+Compiled from "ArchiveReader.kt"
+public final class io.sanato.appkit.backup.archive.ArchiveReader {
+  public static final io.sanato.appkit.backup.archive.ArchiveReader INSTANCE;
+  public final io.sanato.appkit.backup.archive.ParsedManifest peekManifest(java.io.File, java.lang.String);
+  public final io.sanato.appkit.backup.archive.ArchiveReader$ReadResult extract(java.io.File, java.io.File, java.lang.String, io.sanato.appkit.backup.core.BackupLogger);
+  public static io.sanato.appkit.backup.archive.ArchiveReader$ReadResult extract$default(io.sanato.appkit.backup.archive.ArchiveReader, java.io.File, java.io.File, java.lang.String, io.sanato.appkit.backup.core.BackupLogger, int, java.lang.Object);
+}
+
+
+Compiled from "ArchiveReader.kt"
+public final class io.sanato.appkit.backup.archive.ArchiveReader$ReadResult {
+  public io.sanato.appkit.backup.archive.ArchiveReader$ReadResult(io.sanato.appkit.backup.archive.ParsedManifest, java.util.Map<java.lang.String, ? extends java.io.File>);
+  public final io.sanato.appkit.backup.archive.ParsedManifest getManifest();
+  public final java.util.Map<java.lang.String, java.io.File> getExtractedMedia();
+}
+
+
+Compiled from "ManifestCodec.kt"
+public final class io.sanato.appkit.backup.archive.ManifestCodec {
+  public static final io.sanato.appkit.backup.archive.ManifestCodec INSTANCE;
+  public final java.lang.String encode(java.lang.String, int, java.lang.String, long, java.util.List<java.lang.String>, java.util.List<io.sanato.appkit.backup.core.BackupRecord>);
+  public final io.sanato.appkit.backup.archive.ParsedManifest decode(java.lang.String, java.lang.String, java.lang.String);
+}
+
+
+Compiled from "ParsedManifest.kt"
+public final class io.sanato.appkit.backup.archive.ParsedManifest {
+  public io.sanato.appkit.backup.archive.ParsedManifest(io.sanato.appkit.backup.core.ManifestHeader, java.util.List<java.lang.String>, java.util.List<io.sanato.appkit.backup.core.BackupRecord>);
+  public final io.sanato.appkit.backup.core.ManifestHeader getHeader();
+  public final java.util.List<java.lang.String> getMediaNames();
+  public final java.util.List<io.sanato.appkit.backup.core.BackupRecord> getRecords();
+}
+
+
+Compiled from "BackupRecord.kt"
+public interface io.sanato.appkit.backup.core.BackupDataSource {
+  public abstract java.lang.String getPayloadSchema();
+  public abstract int getPayloadSchemaVersion();
+  public abstract java.lang.Object listRecordSummaries(kotlin.coroutines.Continuation<? super java.util.List<io.sanato.appkit.backup.core.RecordSummary>>);
+  public abstract java.lang.Object loadRecord(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.core.BackupRecord>);
+  public abstract java.lang.Object resolveLocalMedia(java.lang.String, kotlin.coroutines.Continuation<? super java.io.File>);
+}
+
+
+Compiled from "BackupLogger.kt"
+public interface io.sanato.appkit.backup.core.BackupLogger {
+  public static final io.sanato.appkit.backup.core.BackupLogger$Companion Companion;
+  public abstract void info(java.lang.String);
+  public abstract void warn(java.lang.String, java.lang.Throwable);
+  public static void warn$default(io.sanato.appkit.backup.core.BackupLogger, java.lang.String, java.lang.Throwable, int, java.lang.Object);
+}
+
+
+Compiled from "BackupLogger.kt"
+public final class io.sanato.appkit.backup.core.BackupLogger$Companion {
+  public final io.sanato.appkit.backup.core.BackupLogger getNone();
+}
+
+
+Compiled from "BackupProgress.kt"
+public final class io.sanato.appkit.backup.core.BackupProgress {
+  public io.sanato.appkit.backup.core.BackupProgress(io.sanato.appkit.backup.core.TransferPhase, int, int);
+  public final io.sanato.appkit.backup.core.TransferPhase getPhase();
+  public final int getCompleted();
+  public final int getTotal();
+}
+
+
+Compiled from "BackupRecord.kt"
+public final class io.sanato.appkit.backup.core.BackupRecord {
+  public io.sanato.appkit.backup.core.BackupRecord(java.lang.String, long, long, java.lang.String, java.util.List<java.lang.String>);
+  public final java.lang.String getId();
+  public final long getCreatedAtMillis();
+  public final long getModifiedAtMillis();
+  public final java.lang.String getBody();
+  public final java.util.List<java.lang.String> getMediaNames();
+}
+
+
+Compiled from "BackupRestoreTarget.kt"
+public interface io.sanato.appkit.backup.core.BackupRestoreTarget {
+  public abstract java.io.File mediaDirectory();
+  public default java.lang.Object onRestoreStart(io.sanato.appkit.backup.core.ManifestHeader, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public static java.lang.Object onRestoreStart$suspendImpl(io.sanato.appkit.backup.core.BackupRestoreTarget, io.sanato.appkit.backup.core.ManifestHeader, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object accept(io.sanato.appkit.backup.core.BackupRecord, java.util.Map<java.lang.String, ? extends java.io.File>, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
+  public default java.lang.Object onRestoreFinish(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public static java.lang.Object onRestoreFinish$suspendImpl(io.sanato.appkit.backup.core.BackupRestoreTarget, int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "BackupRestoreTarget.kt"
+public final class io.sanato.appkit.backup.core.ManifestHeader {
+  public io.sanato.appkit.backup.core.ManifestHeader(int, java.lang.String, int, int, long);
+  public final int getManifestVersion();
+  public final java.lang.String getPayloadSchema();
+  public final int getPayloadSchemaVersion();
+  public final int getRecordCount();
+  public final long getCreatedAtMillis();
+}
+
+
+Compiled from "PassphraseProvider.kt"
+public interface io.sanato.appkit.backup.core.PassphraseProvider {
+  public abstract java.lang.Object passphrase(kotlin.coroutines.Continuation<? super byte[]>);
+}
+
+
+Compiled from "BackupProgress.kt"
+public interface io.sanato.appkit.backup.core.ProgressListener {
+  public abstract void onProgress(io.sanato.appkit.backup.core.BackupProgress);
+}
+
+
+Compiled from "BackupRecord.kt"
+public final class io.sanato.appkit.backup.core.RecordSummary {
+  public io.sanato.appkit.backup.core.RecordSummary(java.lang.String, long, long);
+  public final java.lang.String getId();
+  public final long getCreatedAtMillis();
+  public final long getModifiedAtMillis();
+}
+
+
+Compiled from "BackupProgress.kt"
+public final class io.sanato.appkit.backup.core.TransferPhase extends java.lang.Enum<io.sanato.appkit.backup.core.TransferPhase> {
+  public static final io.sanato.appkit.backup.core.TransferPhase UPLOADING;
+  public static final io.sanato.appkit.backup.core.TransferPhase DOWNLOADING;
+  public static final io.sanato.appkit.backup.core.TransferPhase COMPRESSING;
+  public static io.sanato.appkit.backup.core.TransferPhase[] values();
+  public static io.sanato.appkit.backup.core.TransferPhase valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.backup.core.TransferPhase> getEntries();
+}
+
+
+Compiled from "BackupAlgorithms.kt"
+public final class io.sanato.appkit.backup.format.BackupAlgorithms {
+  public static final io.sanato.appkit.backup.format.BackupAlgorithms INSTANCE;
+  public static final int FORMAT_VERSION;
+  public static final int CIPHER_AES256_CTR;
+  public static final int MAC_HMAC_SHA256;
+  public static final int KDF_PBKDF2_HMAC_SHA256;
+  public static final int CONTENT_ARCHIVE_ZIP;
+  public static final int CONTENT_OPAQUE_BLOB;
+  public static final int PROFILE_FULL;
+  public static final int PROFILE_MANIFEST_ONLY;
+  public static final int PROFILE_MEDIA;
+  public static final int DEFAULT_PBKDF2_ITERATIONS;
+  public static final java.lang.String MAGIC;
+  public static final int SALT_SIZE;
+  public static final int IV_SIZE;
+  public static final int MAC_SIZE;
+  public static final int KEY_SIZE;
+  public static final int HEADER_FIXED_SIZE;
+  public static final int HEADER_ALIGNMENT;
+}
+
+
+Compiled from "BackupCodec.kt"
+public interface io.sanato.appkit.backup.format.BackupCodec {
+  public abstract io.sanato.appkit.backup.format.BackupContainerInfo inspect(java.io.File);
+  public abstract java.lang.Object seal(java.io.File, java.io.File, io.sanato.appkit.backup.core.PassphraseProvider, io.sanato.appkit.backup.format.SealOptions, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public static java.lang.Object seal$default(io.sanato.appkit.backup.format.BackupCodec, java.io.File, java.io.File, io.sanato.appkit.backup.core.PassphraseProvider, io.sanato.appkit.backup.format.SealOptions, kotlin.coroutines.Continuation, int, java.lang.Object);
+  public abstract java.lang.Object unseal(java.io.File, java.io.File, java.util.List<? extends io.sanato.appkit.backup.core.PassphraseProvider>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "BackupContainerInfo.kt"
+public final class io.sanato.appkit.backup.format.BackupContainerInfo {
+  public io.sanato.appkit.backup.format.BackupContainerInfo(int, int, int, int, int, int, int, long, long, java.lang.String, boolean);
+  public final int getFormatVersion();
+  public final int getCipherId();
+  public final int getMacId();
+  public final int getKdfId();
+  public final int getKdfIterations();
+  public final int getContentType();
+  public final int getPayloadProfile();
+  public final long getCreatedAtMillis();
+  public final long getPlaintextLength();
+  public final java.lang.String getProducer();
+  public final boolean isLegacyFormat();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public abstract class io.sanato.appkit.backup.format.BackupFormatException extends java.lang.Exception {
+  public io.sanato.appkit.backup.format.BackupFormatException(java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$AuthenticationFailed extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$AuthenticationFailed(java.lang.String);
+  public final java.lang.String getPath();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$HeaderCorrupted extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$HeaderCorrupted(java.lang.String);
+  public final java.lang.String getPath();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$NotABackupFile extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$NotABackupFile(java.lang.String);
+  public final java.lang.String getPath();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$SchemaMismatch extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$SchemaMismatch(java.lang.String, java.lang.String);
+  public final java.lang.String getExpected();
+  public final java.lang.String getFound();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$Truncated extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$Truncated(java.lang.String);
+  public final java.lang.String getPath();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$UnsupportedAlgorithm extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$UnsupportedAlgorithm(java.lang.String, int);
+  public final java.lang.String getField();
+  public final int getValue();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$UnsupportedFormatVersion extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$UnsupportedFormatVersion(int, kotlin.ranges.IntRange);
+  public final int getFound();
+  public final kotlin.ranges.IntRange getSupportedRange();
+}
+
+
+Compiled from "BackupFormatException.kt"
+public final class io.sanato.appkit.backup.format.BackupFormatException$UnsupportedManifestVersion extends io.sanato.appkit.backup.format.BackupFormatException {
+  public io.sanato.appkit.backup.format.BackupFormatException$UnsupportedManifestVersion(int, kotlin.ranges.IntRange);
+  public final int getFound();
+  public final kotlin.ranges.IntRange getSupportedRange();
+}
+
+
+Compiled from "ContainerHeader.kt"
+public final class io.sanato.appkit.backup.format.ContainerHeader {
+  public io.sanato.appkit.backup.format.ContainerHeader(int, int, int, int, int, int, int, int, int, int, int, int, long, long, java.lang.String, byte[], byte[]);
+  public final int getFormatVersion();
+  public final int getCipherId();
+  public final int getMacId();
+  public final int getKdfId();
+  public final int getHeaderLength();
+  public final int getContentType();
+  public final int getPayloadProfile();
+  public final int getKdfIterations();
+  public final int getSaltLength();
+  public final int getIvLength();
+  public final int getMacLength();
+  public final int getKeyLength();
+  public final long getCreatedAtWallMillis();
+  public final long getPlaintextLength();
+  public final java.lang.String getProducer();
+  public final byte[] getSalt();
+  public final byte[] getIv();
+}
+
+
+Compiled from "ContainerHeaderCodec.kt"
+public final class io.sanato.appkit.backup.format.ContainerHeaderCodec {
+  public static final io.sanato.appkit.backup.format.ContainerHeaderCodec INSTANCE;
+  public final byte[] encode(int, int, int, int, int, int, int, int, int, int, long, long, java.lang.String, byte[], byte[]);
+  public final io.sanato.appkit.backup.format.ContainerHeader decode(java.io.RandomAccessFile, java.lang.String);
+}
+
+
+Compiled from "Hkdf.kt"
+public final class io.sanato.appkit.backup.format.Hkdf {
+  public static final io.sanato.appkit.backup.format.Hkdf INSTANCE;
+  public final byte[] expandSha256(byte[], byte[], int);
+}
+
+
+Compiled from "KeySchedule.kt"
+public final class io.sanato.appkit.backup.format.KeySchedule {
+  public static final io.sanato.appkit.backup.format.KeySchedule INSTANCE;
+  public final byte[] deriveMasterKey(byte[], byte[], int, int);
+  public final javax.crypto.spec.SecretKeySpec deriveEncKey(byte[]);
+  public final javax.crypto.spec.SecretKeySpec deriveMacKey(byte[]);
+  public final void wipe(byte[]);
+}
+
+
+Compiled from "LegacySdbCodec.kt"
+public final class io.sanato.appkit.backup.format.LegacySdbCodec {
+  public static final io.sanato.appkit.backup.format.LegacySdbCodec INSTANCE;
+  public final io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat detect(java.io.File);
+  public final void decodeSdb1(java.io.File, java.io.File, byte[], java.lang.String);
+  public final void decodeSdb2(java.io.File, java.io.File, byte[], java.lang.String);
+}
+
+
+Compiled from "LegacySdbCodec.kt"
+public final class io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat extends java.lang.Enum<io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat> {
+  public static final io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat SDB1_GCM;
+  public static final io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat SDB2_CTR;
+  public static final io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat PLAIN_ZIP;
+  public static io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat[] values();
+  public static io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.backup.format.LegacySdbCodec$LegacyFormat> getEntries();
+}
+
+
+Compiled from "Sbk1BackupCodec.kt"
+public final class io.sanato.appkit.backup.format.Sbk1BackupCodec implements io.sanato.appkit.backup.format.BackupCodec {
+  public io.sanato.appkit.backup.format.Sbk1BackupCodec();
+  public io.sanato.appkit.backup.format.BackupContainerInfo inspect(java.io.File);
+  public java.lang.Object seal(java.io.File, java.io.File, io.sanato.appkit.backup.core.PassphraseProvider, io.sanato.appkit.backup.format.SealOptions, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object unseal(java.io.File, java.io.File, java.util.List<? extends io.sanato.appkit.backup.core.PassphraseProvider>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "BackupCodec.kt"
+public final class io.sanato.appkit.backup.format.SealOptions {
+  public io.sanato.appkit.backup.format.SealOptions(int, int, int, java.lang.String);
+  public io.sanato.appkit.backup.format.SealOptions(int, int, int, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final int getContentType();
+  public final int getPayloadProfile();
+  public final int getKdfIterations();
+  public final java.lang.String getProducer();
+  public io.sanato.appkit.backup.format.SealOptions();
+}
+
+
+Compiled from "StreamCipherPipeline.kt"
+public final class io.sanato.appkit.backup.format.StreamCipherPipeline {
+  public static final io.sanato.appkit.backup.format.StreamCipherPipeline INSTANCE;
+  public final void seal(byte[], java.io.File, java.io.File, javax.crypto.spec.SecretKeySpec, javax.crypto.spec.SecretKeySpec, byte[], int);
+  public final void unseal(java.io.File, io.sanato.appkit.backup.format.ContainerHeader, java.io.File, javax.crypto.spec.SecretKeySpec, javax.crypto.spec.SecretKeySpec, java.lang.String);
+}
+
+
+Compiled from "BackupOrchestrator.kt"
+public final class io.sanato.appkit.backup.remote.BackupOrchestrator {
+  public static final java.lang.String SNAPSHOT_PREFIX;
+  public static final java.lang.String BUNDLE_PREFIX;
+  public static final java.lang.String ENTRY_PREFIX;
+  public io.sanato.appkit.backup.remote.BackupOrchestrator(io.sanato.appkit.backup.remote.RemoteBackupStore, io.sanato.appkit.backup.core.BackupDataSource, io.sanato.appkit.backup.core.BackupRestoreTarget, io.sanato.appkit.backup.core.PassphraseProvider, java.util.List<? extends io.sanato.appkit.backup.core.PassphraseProvider>, java.io.File, io.sanato.appkit.backup.format.BackupCodec, io.sanato.appkit.backup.core.BackupLogger, java.lang.String, kotlinx.coroutines.CoroutineDispatcher);
+  public io.sanato.appkit.backup.remote.BackupOrchestrator(io.sanato.appkit.backup.remote.RemoteBackupStore, io.sanato.appkit.backup.core.BackupDataSource, io.sanato.appkit.backup.core.BackupRestoreTarget, io.sanato.appkit.backup.core.PassphraseProvider, java.util.List, java.io.File, io.sanato.appkit.backup.format.BackupCodec, io.sanato.appkit.backup.core.BackupLogger, java.lang.String, kotlinx.coroutines.CoroutineDispatcher, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final int getSnapshotRetention();
+  public final void setSnapshotRetention(int);
+  public final int getBundleRetention();
+  public final void setBundleRetention(int);
+  public final int getMaxMediaUploadRetry();
+  public final void setMaxMediaUploadRetry(int);
+  public final java.lang.Object backupEntryDelta(java.lang.String, kotlin.coroutines.Continuation<? super java.lang.Integer>);
+  public final java.lang.Object writeSnapshot(long, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation<? super java.lang.Integer>);
+  public static java.lang.Object writeSnapshot$default(io.sanato.appkit.backup.remote.BackupOrchestrator, long, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation, int, java.lang.Object);
+  public final java.lang.Object writeArchiveBundle(long, kotlin.coroutines.Continuation<? super java.lang.Integer>);
+  public final java.lang.Object restore(io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation<? super java.lang.Integer>);
+  public static java.lang.Object restore$default(io.sanato.appkit.backup.remote.BackupOrchestrator, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation, int, java.lang.Object);
+}
+
+
+Compiled from "BackupOrchestrator.kt"
+final class io.sanato.appkit.backup.remote.BackupOrchestrator$Companion {
+  public io.sanato.appkit.backup.remote.BackupOrchestrator$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "RemoteBackupStore.kt"
+public interface io.sanato.appkit.backup.remote.RemoteBackupStore {
+  public static final io.sanato.appkit.backup.remote.RemoteBackupStore$Companion Companion;
+  public static final java.lang.String FOLDER_MEDIA;
+  public static final java.lang.String FOLDER_SNAPSHOTS;
+  public static final java.lang.String FOLDER_ENTRIES;
+  public static final java.lang.String FOLDER_BUNDLES;
+  public abstract java.lang.Object list(java.lang.String, kotlin.coroutines.Continuation<? super java.util.List<io.sanato.appkit.backup.remote.RemoteFile>>);
+  public abstract java.lang.Object uploadIfAbsent(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public abstract java.lang.Object upload(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public abstract java.lang.Object download(java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object delete(java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "RemoteBackupStore.kt"
+public final class io.sanato.appkit.backup.remote.RemoteBackupStore$Companion {
+  public static final java.lang.String FOLDER_MEDIA;
+  public static final java.lang.String FOLDER_SNAPSHOTS;
+  public static final java.lang.String FOLDER_ENTRIES;
+  public static final java.lang.String FOLDER_BUNDLES;
+}
+
+
+Compiled from "RemoteBackupStore.kt"
+public final class io.sanato.appkit.backup.remote.RemoteFile {
+  public io.sanato.appkit.backup.remote.RemoteFile(java.lang.String, java.lang.String, long);
+  public final java.lang.String getId();
+  public final java.lang.String getName();
+  public final long getSize();
+}
+
+
+Compiled from "SafBackupStore.kt"
+public final class io.sanato.appkit.backup.saf.SafBackupStore implements io.sanato.appkit.backup.remote.RemoteBackupStore {
+  public static final java.lang.String MIME_OCTET_STREAM;
+  public io.sanato.appkit.backup.saf.SafBackupStore(android.content.ContentResolver, android.net.Uri);
+  public java.lang.Object list(java.lang.String, kotlin.coroutines.Continuation<? super java.util.List<io.sanato.appkit.backup.remote.RemoteFile>>);
+  public java.lang.Object uploadIfAbsent(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public java.lang.Object upload(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
+  public java.lang.Object download(java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object delete(java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "SafBackupStore.kt"
+final class io.sanato.appkit.backup.saf.SafBackupStore$Companion {
+  public io.sanato.appkit.backup.saf.SafBackupStore$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+

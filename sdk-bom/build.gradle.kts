@@ -31,6 +31,8 @@ dependencies {
     constraints {
         listOf(
             "updatechecker",
+            "backupkit",
+            "backupkit-drive",
             "core-common",
             "core-common-hilt",
             "core-init",

@@ -31,7 +31,7 @@ private data object SmokeHome
  * 占位——这里只验证编译期的类型/坐标解析,不追求运行期渲染正确(AboutLibraries
  * 生成的真实资源需要消费方自己 apply 插件,不是这个 smoke 工程的验证目标)。
  *
- * `netSmoke`/`dataSmoke`/`dispatcherSmoke` 三个 `@Inject` 字段是刻意加的:光是
+ * `netSmoke`/`dataSmoke`/`dispatcherSmoke`/`backupSmoke` 四个 `@Inject` 字段是刻意加的:光是
  * `@Inject constructor` 存在、没有任何入口点引用,Dagger 不会去校验它们的
  * provision graph(可达性剪枝),只有 Kotlin 编译器会检查类型解析。挂在
  * `@AndroidEntryPoint` 的字段上,才会真正逼 `hiltJavaCompile` 走一遍完整绑定
@@ -47,6 +47,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var dispatcherSmoke: DispatcherSmoke
+
+    @Inject
+    lateinit var backupSmoke: BackupSmoke
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

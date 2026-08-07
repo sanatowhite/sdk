@@ -42,6 +42,8 @@ dependencies {
 | Module | What it is | Notes |
 |---|---|---|
 | [`:updatechecker`](updatechecker/README.md) | In-app update check → download → SHA-256 verify → install. Zero third-party dependencies beyond `core-ktx`/`coroutines-android`. | Zero internal dependencies — usable completely on its own. |
+| [`:backupkit`](backupkit/README.md) | Self-describing encrypted backup container format (SBK1) + zip packaging + upload/snapshot/restore orchestration + a GMS-free SAF `RemoteBackupStore`. Read-only legacy decoder for three prior formats. Zero third-party dependencies beyond `coroutines-android`. | Zero internal dependencies. Passphrase is fully host-injected — the SDK never manages key material sourcing. |
+| [`:backupkit-drive`](backupkit-drive/README.md) | Google Drive REST v3 `RemoteBackupStore` implementation + GMS Authorization API wrapper. | Depends on `:backupkit`. Vendor-backed module (see its README's "为什么这个模块可以带三方依赖" and ADR 0011) — no GMS type ever appears in its public signatures. |
 | [`:logkit`](logkit/README.md) | Multi-threaded, order-consistent, compressed-and-encrypted rolling log SDK (5MB budget, oldest-first eviction) + an offline decrypt CLI (`tools/logkit-decrypt`). Zero third-party dependencies. | **Not** in the published `sdkModules` set (see CLAUDE.md's "five `:logkit` rules") — copy the module directory; run `scripts/logkit-keygen.sh` and swap the built-in public key before shipping anything real. |
 | [`:core-common`](core-common/README.md) | Shared result/UI-state types, coroutine dispatcher qualifiers, `AppBuildInfo`. | Depended on by almost everything else; depends on nothing. |
 | [`:core-init`](core-init/README.md) | `AppInitializer`/`AppInitializers`/`FirstFrame` startup orchestration, framework-agnostic. | Pairs with `:core-init-hilt` for a ready-to-use `Application` base class. |
@@ -73,6 +75,8 @@ android-app-template/
 ├── feature-settings/ feature-feedback/ feature-licenses/ feature-update/
 ├── sdk-bom/                -- java-platform version alignment
 ├── updatechecker/          -- standalone update-check SDK, zero internal dependencies
+├── backupkit/              -- standalone backup/restore SDK (SBK1 format + orchestration + SAF)
+├── backupkit-drive/        -- Google Drive RemoteBackupStore for :backupkit, vendor-backed module
 ├── logkit/                 -- second standalone SDK (encrypted rolling logs), not published yet
 ├── tools/logkit-decrypt/   -- pure-JVM offline decrypt CLI for :logkit's archive format
 ├── checks/consumer-smoke/  -- independent Gradle build verifying published coordinates actually work
@@ -89,6 +93,7 @@ android-app-template/
 ```bash
 ./gradlew :app:assembleDebug                          # the template app
 ./gradlew :updatechecker:test                         # the standalone SDK module, runs in isolation from everything else
+./gradlew :backupkit:test :backupkit-drive:test       # backup/restore SDK + its Google Drive companion
 ./gradlew :logkit:test :logkit-decrypt:test           # the second standalone SDK module + its offline decrypt tool's round-trip test
 ./gradlew lintDebug spotlessCheck verifyModuleGraph   # required PR-check gates
 JITPACK=true ./gradlew publishSdkToMavenLocal -Pversion=probe   # SDK-only build, mirrors what JitPack actually runs

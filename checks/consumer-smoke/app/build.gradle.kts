@@ -46,6 +46,8 @@ dependencies {
     implementation(platform("com.github.sanatowhite.sdk:sdk-bom:$smokeVersion"))
 
     implementation("com.github.sanatowhite.sdk:updatechecker")
+    implementation("com.github.sanatowhite.sdk:backupkit")
+    implementation("com.github.sanatowhite.sdk:backupkit-drive")
     implementation("com.github.sanatowhite.sdk:core-common")
     implementation("com.github.sanatowhite.sdk:core-common-hilt")
     implementation("com.github.sanatowhite.sdk:core-init")
