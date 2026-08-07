@@ -1,5 +1,19 @@
 # 0004 — Hilt + KSP for `:app`, `javax.inject` only in `core-*`
 
+> ⚠️ **Superseded (partially).** "All actual `@Module`/`@Binds`/`@Provides` wiring
+> lives in `:app/di/`" is no longer true — ADR 0008's SDK-publishing rework moved
+> most of it into dedicated `-hilt` companion modules (`core-common-hilt`,
+> `core-init-hilt`, `core-data-hilt`, `core-telemetry-hilt`, `net-telemetry-hilt`,
+> plus `telemetry-firebase`), published as separate artifacts so a consumer can take
+> a capability module's Hilt wiring or leave it. `:app/di/` still exists, but now only
+> for genuinely app-specific bindings (the four `@Binds @IntoSet` initializer entries
+> in `InitializerModule.kt`) — everything reusable moved out. The rest of this ADR
+> (Hilt as the DI framework, `core-*` staying `javax.inject`-only, the `@Multibinds`
+> requirement, the reasoning against per-module auto-registration) is still accurate.
+> See ADR 0008 for why the wiring had to move (Hilt library-module aggregation
+> requires the declaring module to run `hilt-compiler` itself — see
+> `docs/adr/spike-0000-hilt-library-module-aggregation.md`).
+
 ## Context
 
 The template needs dependency injection somewhere to wire together `:core-net`, `:core-data`, `:core-telemetry`, and the optional `:telemetry-firebase` backend into `:app`. Two questions: which DI framework, and where does it apply.

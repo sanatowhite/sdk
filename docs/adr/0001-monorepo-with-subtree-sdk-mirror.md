@@ -1,5 +1,16 @@
 # 0001 — Monorepo template, SDK mirrored out via `git subtree`
 
+> ⚠️ **Superseded.** The premise this ADR protected — keeping the old coordinate
+> `com.github.sanatowhite:version-check-sdk` permanently frozen by mirroring
+> `:updatechecker` out to a separate single-module repo — was deliberately abandoned.
+> The GitHub repository was renamed `sanatowhite/version-check-sdk` → `sanatowhite/sdk`,
+> `:updatechecker` now joins the unified `com.github.sanatowhite.sdk:<module>:<version>`
+> publish set alongside 17 other modules, and the old coordinate is documented as
+> deprecated with no migration bridge. The `git subtree` mirror mechanism, the
+> single-module `JITPACK` gate, and everything else this ADR describes no longer
+> exist. See ADR 0008 for the replacement decision. This record is kept for
+> historical context on why the mirror existed in the first place.
+
 ## Context
 
 `version-check-sdk` started as a single-module Android library published to JitPack as `com.github.sanatowhite:version-check-sdk` (JitPack derives that artifact coordinate from the git repository name). The goal was to turn this same repository into a fork-able app template while keeping the SDK publishable under its existing coordinate — existing consumers (the author's own 1-2 apps) must not have their dependency break.

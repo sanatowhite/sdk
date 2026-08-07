@@ -1,7 +1,7 @@
 package io.sanato.apptemplate.logging
 
-import io.sanato.apptemplate.core.telemetry.DiagnosticLevel
-import io.sanato.apptemplate.core.telemetry.DiagnosticLogSink
+import io.sanato.appkit.core.telemetry.DiagnosticLevel
+import io.sanato.appkit.core.telemetry.DiagnosticLogSink
 import io.sanato.logkit.LogKit
 
 /**
@@ -11,7 +11,7 @@ import io.sanato.logkit.LogKit
  *  2. [LogKitModule] 的 `@Provides` —— 给 `AnrCheckInitializer` 之类 DI 注入方。
  *
  * 不做成 `@Provides` 独占,是因为(1)拿不到 Hilt 图;不做成可变 static var,
- * 是因为那样就变成可变全局状态了(ADR-0008 明确否决反射/隐式后端选择的
+ * 是因为那样就变成可变全局状态了(ADR-0006 明确否决反射/隐式后端选择的
  * 同一个理由:接线错误应该是编译错误,不是运行时静默 no-op)。`object` 是
  * 唯一同时满足两者的形态。
  */

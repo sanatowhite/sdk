@@ -1,28 +1,34 @@
 // ────────────────────────────────────────────────────────────────
-// JitPack SDK-only 模式
+// JitPack 多模块发布模式
 //
-// JitPack 跑的是根级 `publishToMavenLocal` + `tasks --all`（见 jitpack.yml 与
-// 本仓库真实构建日志），会配置 settings 里 include 的【所有】模块。不 gate 的
-// 后果：将来 :app 等模块的 Firebase / 签名 / google-services 会把这条发布链路
-// 拖挂；且 ~/.m2 里出现多个 artifact 会让 JitPack 改用多模块坐标规则，把
-// com.github.sanatowhite:version-check-sdk 这个历史坐标变成一个把所有模块都
-// 当依赖的聚合 POM。
+// JitPack 跑的是根级 `publishToMavenLocal`（见 jitpack.yml）；本仓库以
+// com.github.sanatowhite.sdk:<module>:<version> 的形式发布【多个】模块——这正是
+// 想要的：JitPack 的坐标规则是"~/.m2 里恰好 1 个 artifact → com.github.User:Repo；
+// 多个 → com.github.User.Repo:Module"，多模块发布本来就需要落进第二条规则。
+// 旧的"只留 1 个 artifact 保住单一历史坐标"（`com.github.sanatowhite:version-check-sdk`）
+// 的顾虑已随本次改造作废：仓库改名 + 老坐标不再维护，见 docs/adr（原 0001，
+// 已被取代）。
+//
+// 仍然需要 gate 的是【不该发布的模块】：:app（签名/google-services/
+// aboutlibraries/baselineprofile 插件，对发布链路纯粹是失败面）、:benchmark、
+// :baselineprofile（两者都靠 targetProjectPath 指向 :app，脱离 :app 无意义）。
 //
 // JITPACK=true 是 jitpack.yml 里显式声明的环境变量（本地可用
-// `JITPACK=true ./gradlew :updatechecker:publishToMavenLocal ...` 复现）。
+// `JITPACK=true ./gradlew publishSdkToMavenLocal -Pversion=probe` 复现）。
 //
 // ⚠️ 实测踩过的坑：`pluginManagement {}` 块被 Gradle 当成独立片段提前编译，
 // 看不到在它之前声明的普通顶层 val（哪怕就在同一个文件里），报
 // "Unresolved reference"。所以这里没有共享变量，`pluginManagement` 内和
-// 文件后半段的两处判断各自内联同一个表达式。
+// 文件后半段的判断表达式各自内联。
 // ────────────────────────────────────────────────────────────────
 pluginManagement {
-    if (System.getenv("JITPACK") != "true") {
-        // sdkOnly 时连 includeBuild("build-logic") 都跳过：build-logic 的编译
-        // 本身是一个额外失败面，而 :updatechecker 刻意不使用任何 convention
-        // plugin，完全不需要它。
-        includeBuild("build-logic")
-    }
+    // 无条件 includeBuild —— 每个可发布模块现在都要用到 build-logic 提供的
+    // sanato.android.library.published / sanato.api.check 两个新 convention
+    // plugin（含 :updatechecker，它虽然不用 sanato.android.library，但这两个
+    // 是纯 mix-in，见 CLAUDE.md 的铁律调整）。"JITPACK 模式跳过 build-logic"
+    // 这条旧优化的前提（:updatechecker 是唯一存活模块且完全不碰 convention
+    // plugin）不再成立。
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -37,19 +43,48 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "version-check-sdk"
+rootProject.name = "sdk"
 
-include(":updatechecker") // 唯一在 sdkOnly 下存活的模块，永远保留
+// pluginManagement 之后的代码可以正常使用顶层 val（见上方注释里的坑）。
+val jitpack = System.getenv("JITPACK") == "true"
 
-if (System.getenv("JITPACK") != "true") {
+// ── 可发布模块：任何模式下都 include ──────────────────────────────
+// 这份清单和根 build.gradle.kts 的 sdkModules 必须一致——两处漂移由
+// `verifySdkModuleList` 任务机械检查。Phase 8-9 陆续加入 feature-* 系列时，
+// 两处要同步更新。
+//
+// :telemetry-firebase 无条件 include——它自己不 apply google-services/
+// crashlytics 插件（那两个插件的强约束是 applicationId 与 google-services.json
+// 匹配，只能挂在 :app），只提供 FirebaseTelemetryModule 的 Hilt 绑定 + Firebase
+// SDK 依赖，编译期不需要真实的 google-services.json。现在它是 :app 的默认
+// 遥测后端（见 app/build.gradle.kts），不再有 telemetryFirebaseEnabled 这个
+// 开关。
+include(
+    ":updatechecker",
+    ":core-common",
+    ":core-common-hilt",
+    ":core-init",
+    ":core-init-hilt",
+    ":core-ui",
+    ":core-net",
+    ":core-data",
+    ":core-data-hilt",
+    ":core-telemetry",
+    ":core-telemetry-hilt",
+    ":net-telemetry-hilt",
+    ":debug-tools",
+    ":telemetry-firebase",
+    ":feature-settings",
+    ":feature-feedback",
+    ":feature-licenses",
+    ":feature-update",
+    ":sdk-bom",
+)
+
+// ── 不可发布模块：JitPack 上一律排除 ──────────────────────────────
+if (!jitpack) {
     include(
         ":app",
-        ":core-common",
-        ":core-ui",
-        ":core-net",
-        ":core-data",
-        ":core-telemetry",
-        ":debug-tools",
         ":benchmark",
         ":baselineprofile",
         // :logkit 和 :updatechecker 同一条铁律(零内部依赖、零三方运行时依赖、
@@ -69,12 +104,4 @@ if (System.getenv("JITPACK") != "true") {
         ":logkit-decrypt",
     )
     project(":logkit-decrypt").projectDir = file("tools/logkit-decrypt")
-
-    // :telemetry-firebase 只在 gradle.properties 的 telemetryFirebaseEnabled=true
-    // 时才参与构建——关闭时这个模块连编译都不会被触发，是真正的零 Firebase 依赖，
-    // 不是"依赖还在只是不生效"。开关同时控制 :app 是否 implementation(project(...))
-    // 它（见 app/build.gradle.kts），两处必须保持一致。
-    if (providers.gradleProperty("telemetryFirebaseEnabled").getOrElse("false") == "true") {
-        include(":telemetry-firebase")
-    }
 }

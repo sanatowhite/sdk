@@ -1,0 +1,31 @@
+Compiled from "AppInitializer.kt"
+public interface io.sanato.appkit.core.init.AppInitializer {
+  public abstract void init(android.app.Application);
+}
+
+
+Compiled from "AppInitializers.kt"
+public final class io.sanato.appkit.core.init.AppInitializers {
+  public io.sanato.appkit.core.init.AppInitializers(java.util.Set<io.sanato.appkit.core.init.AppInitializer>, java.util.Set<io.sanato.appkit.core.init.AppInitializer>);
+  public final void runEager(android.app.Application);
+  public final void runDeferred(android.app.Application);
+}
+
+
+Compiled from "AppInitializer.kt"
+public interface io.sanato.appkit.core.init.Deferred extends java.lang.annotation.Annotation {
+}
+
+
+Compiled from "AppInitializer.kt"
+public interface io.sanato.appkit.core.init.Eager extends java.lang.annotation.Annotation {
+}
+
+
+Compiled from "FirstFrame.kt"
+public final class io.sanato.appkit.core.init.FirstFrame {
+  public static final io.sanato.appkit.core.init.FirstFrame INSTANCE;
+  public final void onFirstDraw(android.app.Application, kotlin.jvm.functions.Function0<kotlin.Unit>);
+}
+
+

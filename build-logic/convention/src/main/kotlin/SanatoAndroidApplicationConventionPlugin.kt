@@ -103,6 +103,9 @@ class SanatoAndroidApplicationConventionPlugin : Plugin<Project> {
 
             dependencies {
                 add("implementation", libs.lib("androidx-splashscreen"))
+                // 只有 :app 需要——library 模块（sanato.android.library）刻意关掉了
+                // desugaring，这个依赖跟着 isCoreLibraryDesugaringEnabled 一起只在这里声明。
+                add("coreLibraryDesugaring", libs.lib("android-desugarJdkLibs"))
             }
         }
 }

@@ -5,9 +5,11 @@ name: Generate Baseline Profile
 # baselineProfiles/*.txt)是构建输入不是输出,必须提交进库,automaticGenerationDuringBuild
 # 保持 false(见 build.gradle.kts 里 :baselineprofile 模块的说明)。
 #
-# ⚠️ 依赖 :baselineprofile 模块里的真实 BaselineProfileGenerator 测试类——
-# Phase 11 之前那个模块只有拓扑骨架,这个 workflow 现在能跑但产出的 profile
-# 内容还不代表真实的关键路径,等 Phase 11 补上测试类之后这里才有实际意义。
+# Phase 11(把 core-*/feature-* 改成发布 AAR 那次改造)里在真机上重新采集过一次
+# ——旧 profile 里 682 行含 apptemplate 的 JVM 描述符,包名迁移 + 模块搬迁后
+# 指向不存在的类,新 profile 已确认零残留、feature-settings/feedback/licenses/
+# update 四个新模块的类都正确出现在里面。这个 workflow 走 Gradle Managed Device
+# (虚拟设备),产出会和真机采的有细微差异,属于预期内正常波动。
 on:
   workflow_dispatch:
 

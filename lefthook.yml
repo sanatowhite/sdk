@@ -21,3 +21,9 @@ pre-push:
   commands:
     updatechecker-test:
       run: ./gradlew :updatechecker:test
+    # 三个 doLast 任务,不编译代码,秒级完成——本地提前抓"忘记同步 settings.gradle.kts
+    # 的 include 列表 / sdkModules / sdk-bom 约束清单"这类结构性疏漏。真正的编译期
+    # 检查(apiCheckAll、consumer-smoke)留给 CI 的 sdk-guard job,pre-push 不适合
+    # 跑那么重的东西。
+    sdk-structure:
+      run: ./gradlew verifyModuleGraph verifySdkModuleList verifySdkBomConstraints

@@ -1,0 +1,327 @@
+Compiled from "TelemetryInitializers.kt"
+public final class io.sanato.appkit.core.telemetry.AnrCheckInitializer implements io.sanato.appkit.core.init.AppInitializer {
+  public io.sanato.appkit.core.telemetry.AnrCheckInitializer(io.sanato.appkit.core.telemetry.Telemetry, io.sanato.appkit.core.telemetry.AppForegroundState);
+  public void init(android.app.Application);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.AnrReport {
+  public io.sanato.appkit.core.telemetry.AnrReport(io.sanato.appkit.core.telemetry.AnrSource);
+  public final io.sanato.appkit.core.telemetry.AnrSource getSource();
+  public final io.sanato.appkit.core.telemetry.AnrSource component1();
+  public final io.sanato.appkit.core.telemetry.AnrReport copy(io.sanato.appkit.core.telemetry.AnrSource);
+  public static io.sanato.appkit.core.telemetry.AnrReport copy$default(io.sanato.appkit.core.telemetry.AnrReport, io.sanato.appkit.core.telemetry.AnrSource, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.AnrSource extends java.lang.Enum<io.sanato.appkit.core.telemetry.AnrSource> {
+  public static final io.sanato.appkit.core.telemetry.AnrSource EXIT_INFO;
+  public static final io.sanato.appkit.core.telemetry.AnrSource FOREGROUND_BEACON;
+  public static io.sanato.appkit.core.telemetry.AnrSource[] values();
+  public static io.sanato.appkit.core.telemetry.AnrSource valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.telemetry.AnrSource> getEntries();
+}
+
+
+Compiled from "AppForegroundState.kt"
+public final class io.sanato.appkit.core.telemetry.AppForegroundState {
+  public io.sanato.appkit.core.telemetry.AppForegroundState(android.app.Application);
+  public final boolean isForeground();
+  public final void addListener(kotlin.jvm.functions.Function1<? super java.lang.Boolean, kotlin.Unit>);
+}
+
+
+Compiled from "CompositeTelemetry.kt"
+public final class io.sanato.appkit.core.telemetry.CompositeTelemetry implements io.sanato.appkit.core.telemetry.Telemetry {
+  public io.sanato.appkit.core.telemetry.CompositeTelemetry(java.util.Set<? extends io.sanato.appkit.core.telemetry.Telemetry>);
+  public boolean isEnabled();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+}
+
+
+Compiled from "TelemetryInitializers.kt"
+public final class io.sanato.appkit.core.telemetry.CrashReportingInitializer implements io.sanato.appkit.core.init.AppInitializer {
+  public io.sanato.appkit.core.telemetry.CrashReportingInitializer(io.sanato.appkit.core.telemetry.Telemetry);
+  public void init(android.app.Application);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.FrameReport {
+  public io.sanato.appkit.core.telemetry.FrameReport(java.lang.String, long, long, float);
+  public final java.lang.String getScreenName();
+  public final long getTotalFrames();
+  public final long getJankyFrames();
+  public final float getJankyFrameRatio();
+  public final java.lang.String component1();
+  public final long component2();
+  public final long component3();
+  public final float component4();
+  public final io.sanato.appkit.core.telemetry.FrameReport copy(java.lang.String, long, long, float);
+  public static io.sanato.appkit.core.telemetry.FrameReport copy$default(io.sanato.appkit.core.telemetry.FrameReport, java.lang.String, long, long, float, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.LaunchType extends java.lang.Enum<io.sanato.appkit.core.telemetry.LaunchType> {
+  public static final io.sanato.appkit.core.telemetry.LaunchType COLD;
+  public static final io.sanato.appkit.core.telemetry.LaunchType WARM;
+  public static io.sanato.appkit.core.telemetry.LaunchType[] values();
+  public static io.sanato.appkit.core.telemetry.LaunchType valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.telemetry.LaunchType> getEntries();
+}
+
+
+Compiled from "LogcatTelemetry.kt"
+public final class io.sanato.appkit.core.telemetry.LogcatTelemetry implements io.sanato.appkit.core.telemetry.Telemetry {
+  public io.sanato.appkit.core.telemetry.LogcatTelemetry(java.lang.String);
+  public io.sanato.appkit.core.telemetry.LogcatTelemetry(java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public boolean isEnabled();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+  public io.sanato.appkit.core.telemetry.LogcatTelemetry();
+}
+
+
+Compiled from "TelemetryInitializers.kt"
+public final class io.sanato.appkit.core.telemetry.MemorySamplerInitializer implements io.sanato.appkit.core.init.AppInitializer {
+  public io.sanato.appkit.core.telemetry.MemorySamplerInitializer(io.sanato.appkit.core.telemetry.memory.MemorySampler);
+  public void init(android.app.Application);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.NetworkRequestReport {
+  public io.sanato.appkit.core.telemetry.NetworkRequestReport(java.lang.String, java.lang.String, java.lang.Integer, long, boolean);
+  public final java.lang.String getRouteTemplate();
+  public final java.lang.String getMethod();
+  public final java.lang.Integer getHttpStatus();
+  public final long getTotalMillis();
+  public final boolean getFailed();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final java.lang.Integer component3();
+  public final long component4();
+  public final boolean component5();
+  public final io.sanato.appkit.core.telemetry.NetworkRequestReport copy(java.lang.String, java.lang.String, java.lang.Integer, long, boolean);
+  public static io.sanato.appkit.core.telemetry.NetworkRequestReport copy$default(io.sanato.appkit.core.telemetry.NetworkRequestReport, java.lang.String, java.lang.String, java.lang.Integer, long, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "NoOpTelemetry.kt"
+public final class io.sanato.appkit.core.telemetry.NoOpTelemetry implements io.sanato.appkit.core.telemetry.Telemetry {
+  public static final io.sanato.appkit.core.telemetry.NoOpTelemetry INSTANCE;
+  public boolean isEnabled();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+}
+
+
+Compiled from "RingLogBuffer.kt"
+public final class io.sanato.appkit.core.telemetry.RingLogBuffer implements io.sanato.appkit.core.telemetry.Telemetry {
+  public io.sanato.appkit.core.telemetry.RingLogBuffer(int);
+  public io.sanato.appkit.core.telemetry.RingLogBuffer(int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public boolean isEnabled();
+  public final java.util.List<java.lang.String> snapshot();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+  public io.sanato.appkit.core.telemetry.RingLogBuffer();
+}
+
+
+Compiled from "SamplingTelemetry.kt"
+public final class io.sanato.appkit.core.telemetry.SamplingTelemetry implements io.sanato.appkit.core.telemetry.Telemetry {
+  public io.sanato.appkit.core.telemetry.SamplingTelemetry(io.sanato.appkit.core.telemetry.Telemetry, float, float);
+  public boolean isEnabled();
+  public void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public void screenView(java.lang.String);
+  public void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public void crash(java.lang.Throwable, boolean);
+  public void anr(io.sanato.appkit.core.telemetry.AnrReport);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.StartupReport {
+  public io.sanato.appkit.core.telemetry.StartupReport(io.sanato.appkit.core.telemetry.LaunchType, long, java.lang.Long);
+  public io.sanato.appkit.core.telemetry.StartupReport(io.sanato.appkit.core.telemetry.LaunchType, long, java.lang.Long, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final io.sanato.appkit.core.telemetry.LaunchType getLaunchType();
+  public final long getTimeToInitialDisplayMillis();
+  public final java.lang.Long getTimeToFullDisplayMillis();
+  public final io.sanato.appkit.core.telemetry.LaunchType component1();
+  public final long component2();
+  public final java.lang.Long component3();
+  public final io.sanato.appkit.core.telemetry.StartupReport copy(io.sanato.appkit.core.telemetry.LaunchType, long, java.lang.Long);
+  public static io.sanato.appkit.core.telemetry.StartupReport copy$default(io.sanato.appkit.core.telemetry.StartupReport, io.sanato.appkit.core.telemetry.LaunchType, long, java.lang.Long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "TelemetryInitializers.kt"
+public final class io.sanato.appkit.core.telemetry.StartupTrackerInitializer implements io.sanato.appkit.core.init.AppInitializer {
+  public io.sanato.appkit.core.telemetry.StartupTrackerInitializer(io.sanato.appkit.core.telemetry.Telemetry);
+  public void init(android.app.Application);
+}
+
+
+Compiled from "Telemetry.kt"
+public interface io.sanato.appkit.core.telemetry.Telemetry {
+  public abstract boolean isEnabled();
+  public abstract void event(java.lang.String, java.util.Map<java.lang.String, ? extends java.lang.Object>);
+  public static void event$default(io.sanato.appkit.core.telemetry.Telemetry, java.lang.String, java.util.Map, int, java.lang.Object);
+  public abstract void screenView(java.lang.String);
+  public abstract void startup(io.sanato.appkit.core.telemetry.StartupReport);
+  public abstract void frame(io.sanato.appkit.core.telemetry.FrameReport);
+  public abstract void networkRequest(io.sanato.appkit.core.telemetry.NetworkRequestReport);
+  public abstract void crash(java.lang.Throwable, boolean);
+  public abstract void anr(io.sanato.appkit.core.telemetry.AnrReport);
+}
+
+
+Compiled from "Telemetry.kt"
+public final class io.sanato.appkit.core.telemetry.TelemetryKt {
+  public static final void eventIfEnabled(io.sanato.appkit.core.telemetry.Telemetry, java.lang.String, kotlin.jvm.functions.Function0<? extends java.util.Map<java.lang.String, ? extends java.lang.Object>>);
+}
+
+
+Compiled from "AnrExitInfoReaper.kt"
+public final class io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper {
+  public static final java.lang.String PREFS_NAME;
+  public static final java.lang.String KEY_SEEN;
+  public io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper(android.content.Context);
+  public final java.util.List<android.app.ApplicationExitInfo> reapNewAnrExits();
+}
+
+
+Compiled from "AnrExitInfoReaper.kt"
+final class io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion {
+  public io.sanato.appkit.core.telemetry.anr.AnrExitInfoReaper$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "ForegroundExitBeacon.kt"
+public final class io.sanato.appkit.core.telemetry.anr.ForegroundExitBeacon {
+  public static final java.lang.String PREFS_NAME;
+  public static final java.lang.String KEY_IN_FOREGROUND;
+  public io.sanato.appkit.core.telemetry.anr.ForegroundExitBeacon(android.content.Context);
+  public final boolean consumePreviousSessionAbnormalExit();
+  public final void markForeground();
+  public final void markBackground();
+}
+
+
+Compiled from "ForegroundExitBeacon.kt"
+final class io.sanato.appkit.core.telemetry.anr.ForegroundExitBeacon$Companion {
+  public io.sanato.appkit.core.telemetry.anr.ForegroundExitBeacon$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "CrashRecorder.kt"
+public final class io.sanato.appkit.core.telemetry.crash.CrashRecorder implements java.lang.Thread$UncaughtExceptionHandler {
+  public static final io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion Companion;
+  public void uncaughtException(java.lang.Thread, java.lang.Throwable);
+  public io.sanato.appkit.core.telemetry.crash.CrashRecorder(java.io.File, java.lang.Thread$UncaughtExceptionHandler, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "CrashRecorder.kt"
+public final class io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion {
+  public final io.sanato.appkit.core.telemetry.crash.CrashRecorder install(android.content.Context);
+  public final java.util.List<java.lang.String> drainPendingCrashReports(android.content.Context);
+  public io.sanato.appkit.core.telemetry.crash.CrashRecorder$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "ScreenJankReporter.kt"
+public final class io.sanato.appkit.core.telemetry.jank.ScreenJankReporter {
+  public static final java.lang.String SCREEN_STATE_KEY;
+  public static final java.lang.String UNKNOWN_SCREEN;
+  public io.sanato.appkit.core.telemetry.jank.ScreenJankReporter(android.view.Window, io.sanato.appkit.core.telemetry.Telemetry);
+  public final void onScreenChanged(java.lang.String);
+  public final void setTrackingEnabled(boolean);
+  public final void flush();
+}
+
+
+Compiled from "ScreenJankReporter.kt"
+final class io.sanato.appkit.core.telemetry.jank.ScreenJankReporter$Companion {
+  public io.sanato.appkit.core.telemetry.jank.ScreenJankReporter$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "MemorySampler.kt"
+public final class io.sanato.appkit.core.telemetry.memory.MemorySampler {
+  public static final long CHEAP_SAMPLE_INTERVAL_MILLIS;
+  public static final java.lang.String EVENT_CHEAP_SAMPLE;
+  public static final java.lang.String EVENT_EXPENSIVE_SAMPLE;
+  public static final java.lang.String MOMENT_COLD_START_COMPLETE;
+  public static final java.lang.String MOMENT_BACKGROUNDED;
+  public static final java.lang.String MOMENT_LOW_MEMORY;
+  public static final java.lang.String MOMENT_TRIM_CRITICAL;
+  public io.sanato.appkit.core.telemetry.memory.MemorySampler(android.app.Application, io.sanato.appkit.core.telemetry.AppForegroundState, io.sanato.appkit.core.telemetry.Telemetry);
+  public final void start();
+  public final void sampleOnColdStartComplete();
+}
+
+
+Compiled from "MemorySampler.kt"
+final class io.sanato.appkit.core.telemetry.memory.MemorySampler$Companion {
+  public io.sanato.appkit.core.telemetry.memory.MemorySampler$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "AppStartTime.kt"
+public final class io.sanato.appkit.core.telemetry.startup.AppStartTime {
+  public static final io.sanato.appkit.core.telemetry.startup.AppStartTime INSTANCE;
+  public final void record(android.content.Context);
+  public final java.lang.Long elapsedSinceStartMillis(long);
+  public static java.lang.Long elapsedSinceStartMillis$default(io.sanato.appkit.core.telemetry.startup.AppStartTime, long, int, java.lang.Object);
+  public final java.lang.Long referenceUptimeMillis();
+  public final boolean wasLikelyBackgroundLaunch();
+  public final void resetForTest$core_telemetry();
+}
+
+
+Compiled from "StartupTracker.kt"
+public final class io.sanato.appkit.core.telemetry.startup.StartupTracker {
+  public io.sanato.appkit.core.telemetry.startup.StartupTracker(android.app.Application, io.sanato.appkit.core.telemetry.Telemetry);
+  public final void start();
+}
+
+

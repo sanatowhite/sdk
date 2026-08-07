@@ -1,0 +1,38 @@
+Compiled from "AppInfoModule.kt"
+public final class io.sanato.appkit.core.common.hilt.AppBuildInfoOverride {
+  public io.sanato.appkit.core.common.hilt.AppBuildInfoOverride(java.lang.String, long);
+  public final java.lang.String getGitSha();
+  public final long getBuildTimeMillis();
+  public final java.lang.String component1();
+  public final long component2();
+  public final io.sanato.appkit.core.common.hilt.AppBuildInfoOverride copy(java.lang.String, long);
+  public static io.sanato.appkit.core.common.hilt.AppBuildInfoOverride copy$default(io.sanato.appkit.core.common.hilt.AppBuildInfoOverride, java.lang.String, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "AppInfoModule.kt"
+public final class io.sanato.appkit.core.common.hilt.AppInfoModule {
+  public static final io.sanato.appkit.core.common.hilt.AppInfoModule INSTANCE;
+  public final io.sanato.appkit.core.common.AppBuildInfo provideAppBuildInfo(android.app.Application, java.util.Optional<io.sanato.appkit.core.common.hilt.AppBuildInfoOverride>);
+}
+
+
+Compiled from "AppInfoModule.kt"
+public abstract class io.sanato.appkit.core.common.hilt.AppInfoOverrideModule {
+  public io.sanato.appkit.core.common.hilt.AppInfoOverrideModule();
+  public abstract io.sanato.appkit.core.common.hilt.AppBuildInfoOverride appBuildInfoOverride();
+}
+
+
+Compiled from "DispatchersModule.kt"
+public final class io.sanato.appkit.core.common.hilt.DispatchersModule {
+  public static final io.sanato.appkit.core.common.hilt.DispatchersModule INSTANCE;
+  public final kotlinx.coroutines.CoroutineDispatcher provideIoDispatcher();
+  public final kotlinx.coroutines.CoroutineDispatcher provideDefaultDispatcher();
+  public final kotlinx.coroutines.CoroutineDispatcher provideMainImmediateDispatcher();
+}
+
+

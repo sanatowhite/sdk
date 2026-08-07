@@ -1,10 +1,10 @@
 package io.sanato.apptemplate.logging
 
-import io.sanato.apptemplate.core.telemetry.AnrReport
-import io.sanato.apptemplate.core.telemetry.FrameReport
-import io.sanato.apptemplate.core.telemetry.NetworkRequestReport
-import io.sanato.apptemplate.core.telemetry.StartupReport
-import io.sanato.apptemplate.core.telemetry.Telemetry
+import io.sanato.appkit.core.telemetry.AnrReport
+import io.sanato.appkit.core.telemetry.FrameReport
+import io.sanato.appkit.core.telemetry.NetworkRequestReport
+import io.sanato.appkit.core.telemetry.StartupReport
+import io.sanato.appkit.core.telemetry.Telemetry
 import io.sanato.logkit.LogKit
 
 /**
@@ -15,7 +15,7 @@ import io.sanato.logkit.LogKit
  * 把"结构上能覆盖的信号"和"崩溃处理器/ANR trace 这两个例外"分开的意义。
  */
 class LogKitTelemetry : Telemetry {
-    // 本期不做同意门控(用户决定,见 docs/adr/0008)——LogKit 是否落盘完全由
+    // 本期不做同意门控(用户决定,见 docs/adr/0010)——LogKit 是否落盘完全由
     // LogKit.install() 决定,这里恒真,不额外接 UserSettings.telemetryEnabled。
     override val isEnabled: Boolean = true
 

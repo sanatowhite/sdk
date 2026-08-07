@@ -8,9 +8,13 @@
 # namespace/applicationId in Gradle, AndroidManifest, JVM descriptors inside
 # baseline profiles, proguard rules) and updates the app's display name.
 #
-# :updatechecker (io.sanato.updatechecker) and :logkit (io.sanato.logkit) are
-# never touched — see the "three-segment token" note in Step 2 below for why
-# that's true by construction, not just by carefully-written exclude globs.
+# :updatechecker (io.sanato.updatechecker), every published SDK module
+# (io.sanato.appkit.* — see PUBLISHED_MODULES below for the full current list,
+# it must stay in sync with the root build.gradle.kts sdkModules list), and
+# :logkit (io.sanato.logkit, not published yet but frozen the same way — see
+# UNPUBLISHED_PROTECTED_MODULES below) are never touched — see the
+# "three-segment token" note in Step 2 below for why that's true by
+# construction, not just by carefully-written exclude globs.
 set -euo pipefail
 
 # ── Step 0: preflight ─────────────────────────────────────────────
@@ -24,21 +28,24 @@ NEW_APP_NAME="${2:-}"
 readonly TEMPLATE_APP_ID="io.sanato.apptemplate"
 readonly TEMPLATE_APP_ID_SLASH="io/sanato/apptemplate"
 
-# 每个独立发布/可独立发布的模块——目录名:自己的包名。这个数组是唯一需要
-# 维护的地方,新增第三个这样的模块只需要在这里加一行,下面的 find/grep 全部
-# 从这个表派生,不需要逐处硬编码。
-readonly STANDALONE_MODULES=(
-  "updatechecker:io.sanato.updatechecker"
-  "logkit:io.sanato.logkit"
-)
+# Every module published as an external Maven coordinate — none of these carry
+# io.sanato.apptemplate at all (they live under io.sanato.appkit.*, structurally
+# divergent at the third path segment, same trick as updatechecker), but they
+# each get an explicit --exclude-dir / assertion below anyway: defense in depth,
+# not reliance on "the string just happens not to be there". Extend this list
+# whenever a new published module is added — it must match the root
+# build.gradle.kts `sdkModules` list (minus the leading `:`), or verifyModuleGraph's
+# smoke-test step at the end of this script would be the only thing to catch the
+# drift, and only if the missing module happens to break something.
+readonly PUBLISHED_MODULES="updatechecker core-common core-common-hilt core-init core-init-hilt core-ui core-net core-data core-data-hilt core-telemetry core-telemetry-hilt net-telemetry-hilt debug-tools telemetry-firebase feature-settings feature-feedback feature-licenses feature-update sdk-bom"
 
-STANDALONE_DIR_EXCLUDES=()
-STANDALONE_PATH_EXCLUDES=()
-for entry in "${STANDALONE_MODULES[@]}"; do
-  dir="${entry%%:*}"
-  STANDALONE_DIR_EXCLUDES+=(--exclude-dir="$dir")
-  STANDALONE_PATH_EXCLUDES+=(-not -path "./$dir/*")
-done
+# :logkit isn't in sdkModules — it isn't published yet (see CLAUDE.md's
+# ":logkit 五条铁律" #1, gated out of the JITPACK path). Kept as a separate
+# list rather than folded into PUBLISHED_MODULES so that list stays a clean
+# mirror of root build.gradle.kts's sdkModules (checked nowhere else but that
+# comment above — don't let this list drift from it either).
+readonly UNPUBLISHED_PROTECTED_MODULES="logkit"
+readonly ALL_PROTECTED_MODULES="$PUBLISHED_MODULES $UNPUBLISHED_PROTECTED_MODULES"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -98,13 +105,18 @@ rollback() {
 
 # ── Step 1: move source directories ──────────────────────────────
 # 覆盖所有 source root:main/test/androidTest/debug/release/staging/testFixtures。
-# updatechecker/ 和 logkit/ 整个不参与遍历——glob 里从不出现它们的路径。
+# 每个 ALL_PROTECTED_MODULES 里的目录整个不参与遍历——glob 里从不出现它们的路径。
 echo "==> Moving source directories to the new package path"
 OLD_PATH_SUFFIX="io/sanato/apptemplate"
 NEW_PATH_SUFFIX="$NEW_APP_ID_SLASH"
 
+FIND_PRUNE_ARGS=(-not -path "*/build/*" -not -path "./.git/*" -not -path "./tools/*")
+for m in $ALL_PROTECTED_MODULES; do
+  FIND_PRUNE_ARGS+=(-not -path "./$m/*")
+done
+
 find . -type d -path "*/$OLD_PATH_SUFFIX" \
-  "${STANDALONE_PATH_EXCLUDES[@]}" -not -path "*/build/*" -not -path "./.git/*" \
+  "${FIND_PRUNE_ARGS[@]}" \
   | while read -r old_dir; do
     new_dir="${old_dir%$OLD_PATH_SUFFIX}$NEW_PATH_SUFFIX"
     mkdir -p "$(dirname "$new_dir")"
@@ -123,7 +135,7 @@ find . -type d -path "*/$OLD_PATH_SUFFIX" \
 
 # 搬完之后清空祖先目录——只在 */java、*/kotlin 子树下做,避免误删合法的空 res 目录。
 find . \( -path "*/java/io/sanato" -o -path "*/kotlin/io/sanato" \) -type d -empty \
-  "${STANDALONE_PATH_EXCLUDES[@]}" -not -path "*/build/*" -delete 2>/dev/null || true
+  "${FIND_PRUNE_ARGS[@]}" -delete 2>/dev/null || true
 
 # ── Step 2: text replacement ──────────────────────────────────────
 # 三种形态缺一不可:
@@ -141,38 +153,57 @@ find . \( -path "*/java/io/sanato" -o -path "*/kotlin/io/sanato" \) -type d -emp
 echo "==> Rewriting $TEMPLATE_APP_ID references to $NEW_APP_ID"
 # ⚠️ 用 # 做 perl s/// 的分隔符,不用默认的 /——两个 token 本身都含 /(斜杠分形态),
 # 用 / 当分隔符会被内容里的 / 提前截断,报 "Backslash found where operator expected"。
+#
+# ⚠️ build-logic/**【不】排除:SanatoAndroidApplicationConventionPlugin.kt 里
+# `applicationId = "io.sanato.apptemplate"` 这一行的注释自己写着"bootstrap.sh
+# 唯一的替换点"——之前这里排除了整个 build-logic/,导致这一行永远替换不到,
+# 每个 fork 跑完 bootstrap.sh 后 `:app` 的 applicationId 仍然是
+# io.sanato.apptemplate,google-services 插件会直接报"找不到匹配的 client"
+# 硬失败(在隔离 clone 里跑通整个流程时抓到的真实 bug,不是假设)。
+# build-logic 下再无第二处 io.sanato.apptemplate 引用(已核实),排除它整体没有
+# 保护到任何东西,只是把这一行漏掉了。
+TEXT_PRUNE_ARGS=(-not -path "./.git/*" -not -path "*/build/*" -not -path "./tools/*")
+for m in $ALL_PROTECTED_MODULES; do
+  TEXT_PRUNE_ARGS+=(-not -path "./$m/*")
+done
+
 find . -type f \( -name "*.kt" -o -name "*.kts" -o -name "*.xml" -o -name "*.pro" \
-  -o -name "*.md" -o -name "*.txt" -o -name "*.toml" -o -name "*.properties" \) \
-  -not -path "./.git/*" -not -path "*/build/*" \
-  "${STANDALONE_PATH_EXCLUDES[@]}" -not -path "./build-logic/*" -not -path "./tools/*" \
+  -o -name "*.md" -o -name "*.txt" -o -name "*.toml" -o -name "*.properties" -o -name "*.json" \) \
+  "${TEXT_PRUNE_ARGS[@]}" \
   -print0 | xargs -0 perl -0777 -pi \
     -e "s#\Q$TEMPLATE_APP_ID_SLASH\E#$NEW_APP_ID_SLASH#g;" \
     -e "s#\Q$TEMPLATE_APP_ID\E#$NEW_APP_ID#g;"
 
 # ── Step 3: immediate assertions (abort + rollback on failure) ────
-for entry in "${STANDALONE_MODULES[@]}"; do
+echo "==> Verifying protected modules were not touched"
+for m in $ALL_PROTECTED_MODULES; do
+  if [ -n "$(git status --porcelain -- "$m")" ]; then
+    rollback "bootstrap.sh modified files under $m/ — protected modules must never be rewritten."
+  fi
+done
+
+echo "==> Verifying :updatechecker and :logkit still reference their own package"
+for entry in "updatechecker:io.sanato.updatechecker" "logkit:io.sanato.logkit"; do
   dir="${entry%%:*}"
   own_id="${entry#*:}"
-
-  echo "==> Verifying :$dir was not touched"
-  if [ -n "$(git status --porcelain -- "$dir")" ]; then
-    rollback "bootstrap.sh modified files under $dir/ — this must never happen."
-  fi
-
   if ! grep -rq "$own_id" --include="*.kt" "$dir/" 2>/dev/null; then
     rollback "$dir/ no longer references $own_id — something went badly wrong."
   fi
+done
+
+GREP_EXCLUDE_ARGS=(--exclude-dir=build --exclude-dir=.git --exclude-dir=build-logic --exclude-dir=tools)
+for m in $ALL_PROTECTED_MODULES; do
+  GREP_EXCLUDE_ARGS+=(--exclude-dir="$m")
 done
 
 # `|| true` on the whole assignment: grep legitimately returns exit 1 when it finds
 # zero matches, which is the PASSING case here — under `pipefail` that would
 # otherwise trip `set -e` and abort the script on the success path.
 REMAINING_TEMPLATE_REFS=$(grep -rl "$TEMPLATE_APP_ID" --include="*.kt" --include="*.kts" \
-  --include="*.xml" --include="*.md" --exclude-dir=build --exclude-dir=.git \
-  "${STANDALONE_DIR_EXCLUDES[@]}" --exclude-dir=build-logic . 2>/dev/null | wc -l | tr -d ' ') || true
+  --include="*.xml" --include="*.md" --include="*.json" "${GREP_EXCLUDE_ARGS[@]}" . 2>/dev/null | wc -l | tr -d ' ') || true
 if [ "$REMAINING_TEMPLATE_REFS" != "0" ]; then
-  grep -rl "$TEMPLATE_APP_ID" --include="*.kt" --include="*.kts" --include="*.xml" --include="*.md" \
-    --exclude-dir=build --exclude-dir=.git "${STANDALONE_DIR_EXCLUDES[@]}" --exclude-dir=build-logic . 2>/dev/null >&2
+  grep -rl "$TEMPLATE_APP_ID" --include="*.kt" --include="*.kts" --include="*.xml" --include="*.md" --include="*.json" \
+    "${GREP_EXCLUDE_ARGS[@]}" . 2>/dev/null >&2
   rollback "$REMAINING_TEMPLATE_REFS file(s) still reference $TEMPLATE_APP_ID after replacement."
 fi
 
@@ -190,10 +221,13 @@ if [ -n "$NEW_APP_NAME" ]; then
   done
 fi
 
-cat > gradle/version.properties <<EOF
-versionCode=1
-versionName=0.1.0
-EOF
+# ⚠️ 只替换这两行,不能整份覆盖——这个文件同时还带着 sdkGroup=/sdkVersion=
+# 两个 key(SDK 模块发布坐标用,和这里的 app versionCode/versionName 是两条独立
+# 的轴,见 ADR 0005/0008)。早期版本用 `cat > ... <<EOF` 整份覆盖过这个文件,
+# 会把 sdkGroup/sdkVersion 一起删掉,导致任何 apply 了
+# sanato.android.library.published 的模块在配置期直接崩——这个脚本自己的
+# smoke test 步骤会当场抓到,但抓到时已经晚了,不如从根上不产生这个 bug。
+perl -pi -e 's/^versionCode=.*$/versionCode=1/; s/^versionName=.*$/versionName=0.1.0/' gradle/version.properties
 
 # ── Step 5: launcher icon (honest limitation, not a silent no-op) ─
 echo ""
@@ -217,8 +251,8 @@ git rm -f --cached scripts/bootstrap.sh >/dev/null 2>&1 || true
 rm -f scripts/bootstrap.sh
 git add -A
 
-echo "==> Smoke test: assembling debug + running :updatechecker/:logkit tests + verifying module graph"
-if ./gradlew :app:assembleDebug :updatechecker:test :logkit:test verifyModuleGraph --stacktrace; then
+echo "==> Smoke test: assembling debug + running :updatechecker/:logkit tests + verifying module/publish-set graphs"
+if ./gradlew :app:assembleDebug :updatechecker:test :logkit:test verifyModuleGraph verifySdkModuleList verifySdkBomConstraints --stacktrace; then
   git commit -m "Bootstrap: rename $TEMPLATE_APP_ID -> $NEW_APP_ID"
   echo ""
   echo "✅ Bootstrap complete on branch $BRANCH_NAME. Review the diff, then merge to main:"

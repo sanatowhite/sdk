@@ -1,0 +1,9 @@
+<resources>
+    <string name="appkit_feedback_title">Send feedback</string>
+    <string name="appkit_feedback_description">Description</string>
+    <string name="appkit_feedback_description_hint">What happened? What did you expect?</string>
+    <string name="appkit_feedback_include_screenshot">Include a screenshot</string>
+    <string name="appkit_feedback_include_logs">Include recent app logs</string>
+    <string name="appkit_feedback_send">Send</string>
+    <string name="appkit_feedback_email_subject">Feedback — %1$s %2$s</string>
+</resources>

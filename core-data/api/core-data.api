@@ -1,0 +1,79 @@
+Compiled from "DataStoreUserSettingsRepository.kt"
+public final class io.sanato.appkit.core.data.DataStoreUserSettingsRepository implements io.sanato.appkit.core.data.UserSettingsRepository {
+  public io.sanato.appkit.core.data.DataStoreUserSettingsRepository(androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences>);
+  public kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.data.UserSettings> getSettings();
+  public java.lang.Object setThemeMode(io.sanato.appkit.core.data.ThemeMode, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object setDynamicColorEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object setNotificationsEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object setTelemetryEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object setConsentVersion(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object setLastSeenWhatsNewVersionCode(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "DataStoreUserSettingsRepository.kt"
+final class io.sanato.appkit.core.data.DataStoreUserSettingsRepository$Keys {
+  public static final io.sanato.appkit.core.data.DataStoreUserSettingsRepository$Keys INSTANCE;
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.String> getTHEME_MODE();
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.Boolean> getDYNAMIC_COLOR();
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.Boolean> getNOTIFICATIONS();
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.Boolean> getTELEMETRY();
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.Integer> getCONSENT_VERSION();
+  public final androidx.datastore.preferences.core.Preferences$Key<java.lang.Integer> getLAST_SEEN_WHATS_NEW();
+}
+
+
+Compiled from "UserSettings.kt"
+public final class io.sanato.appkit.core.data.ThemeMode extends java.lang.Enum<io.sanato.appkit.core.data.ThemeMode> {
+  public static final io.sanato.appkit.core.data.ThemeMode SYSTEM;
+  public static final io.sanato.appkit.core.data.ThemeMode LIGHT;
+  public static final io.sanato.appkit.core.data.ThemeMode DARK;
+  public static io.sanato.appkit.core.data.ThemeMode[] values();
+  public static io.sanato.appkit.core.data.ThemeMode valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.data.ThemeMode> getEntries();
+}
+
+
+Compiled from "UserSettings.kt"
+public final class io.sanato.appkit.core.data.UserSettings {
+  public io.sanato.appkit.core.data.UserSettings(io.sanato.appkit.core.data.ThemeMode, boolean, boolean, boolean, int, int);
+  public io.sanato.appkit.core.data.UserSettings(io.sanato.appkit.core.data.ThemeMode, boolean, boolean, boolean, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final io.sanato.appkit.core.data.ThemeMode getThemeMode();
+  public final boolean getDynamicColorEnabled();
+  public final boolean getNotificationsEnabled();
+  public final boolean getTelemetryEnabled();
+  public final int getConsentVersion();
+  public final int getLastSeenWhatsNewVersionCode();
+  public final io.sanato.appkit.core.data.ThemeMode component1();
+  public final boolean component2();
+  public final boolean component3();
+  public final boolean component4();
+  public final int component5();
+  public final int component6();
+  public final io.sanato.appkit.core.data.UserSettings copy(io.sanato.appkit.core.data.ThemeMode, boolean, boolean, boolean, int, int);
+  public static io.sanato.appkit.core.data.UserSettings copy$default(io.sanato.appkit.core.data.UserSettings, io.sanato.appkit.core.data.ThemeMode, boolean, boolean, boolean, int, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.data.UserSettings();
+}
+
+
+Compiled from "UserSettingsDataStore.kt"
+public final class io.sanato.appkit.core.data.UserSettingsDataStoreKt {
+  public static final androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences> getUserSettingsDataStore(android.content.Context);
+}
+
+
+Compiled from "UserSettingsRepository.kt"
+public interface io.sanato.appkit.core.data.UserSettingsRepository {
+  public abstract kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.data.UserSettings> getSettings();
+  public abstract java.lang.Object setThemeMode(io.sanato.appkit.core.data.ThemeMode, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object setDynamicColorEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object setNotificationsEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object setTelemetryEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object setConsentVersion(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public abstract java.lang.Object setLastSeenWhatsNewVersionCode(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+

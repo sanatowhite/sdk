@@ -5,8 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import io.sanato.apptemplate.core.telemetry.DiagnosticLogSink
-import io.sanato.apptemplate.core.telemetry.Telemetry
+import io.sanato.appkit.core.telemetry.DiagnosticLogSink
+import io.sanato.appkit.core.telemetry.Telemetry
 import javax.inject.Singleton
 
 /**

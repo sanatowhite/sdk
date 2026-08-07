@@ -2,7 +2,7 @@
 
 ## 这是什么 / 不是什么
 
-一个轻量级 Android 日志 SDK:分级(V/D/I/W/E)、多线程写入不阻塞调用方、并发下顺序一致、压缩后加密落盘、总量 5MB 上限滚动淘汰,支持把日志文件分享出来给开发者离线排查问题。仿 `:updatechecker` 的四条铁律(见 `CLAUDE.md` "The five `:logkit` rules"),本期**不对外发布**——见 `docs/adr/0008-logkit-pipeline-vs-apm-detection.md`。
+一个轻量级 Android 日志 SDK:分级(V/D/I/W/E)、多线程写入不阻塞调用方、并发下顺序一致、压缩后加密落盘、总量 5MB 上限滚动淘汰,支持把日志文件分享出来给开发者离线排查问题。仿 `:updatechecker` 的四条铁律(见 `CLAUDE.md` "The five `:logkit` rules"),本期**不对外发布**——见 `docs/adr/0010-logkit-pipeline-vs-apm-detection.md`。
 
 **不是**:不检测崩溃/ANR/卡顿——那是 `:core-telemetry` 的活,它检测到之后通过两条通道把信号写进这里(见同一份 ADR)。不做用户同意门控——本期决定日志无条件落盘,`UserSettings.telemetryEnabled` 没有接进来,若要用于面向消费者的生产 App,这是上线前必须先解决的一项。不做 PII 过滤或脱敏——加密保护的是传输/静态存储,挡不住开发者自己把 token/邮箱写进日志。
 
@@ -150,7 +150,7 @@ tools/logkit-decrypt/build/install/logkit-decrypt/bin/logkit-decrypt \
 
 ## 已知限制 / 不要做的事
 
-- **不要**在 `:logkit` 里装 `Thread.UncaughtExceptionHandler`、跑 ANR 看门狗、或注册 `ContentProvider`——它是管道不是探测器,见 `docs/adr/0008`。
+- **不要**在 `:logkit` 里装 `Thread.UncaughtExceptionHandler`、跑 ANR 看门狗、或注册 `ContentProvider`——它是管道不是探测器,见 `docs/adr/0010`。
 - **不要**假设它会自动做同意门控——本期没有,`UserSettings.telemetryEnabled` 没接进来。
 - **不要**往 `config.metadata` 里塞 PII——那个字段是明文,写文件头时不加密。
 - **不要**在 `UpdateDownloadState.InProgress` 之类的高频进度回调里打日志——一个下载进度块记一条,几秒内就能 churn 掉整个 5MB 预算,把想留住的崩溃现场挤出去。

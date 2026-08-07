@@ -17,7 +17,7 @@ env:
 
 jobs:
   sdk-guard:
-    name: sdk-guard (:updatechecker)
+    name: sdk-guard (18 SDK modules)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,8 +34,21 @@ jobs:
           key: robolectric-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Test + apiCheck
-        run: ./gradlew :updatechecker:test :updatechecker:apiCheck --stacktrace
+      - name: Test + apiCheck + module graph + publish-set consistency
+        run: ./gradlew :updatechecker:test apiCheckAll verifyModuleGraph verifySdkModuleList verifySdkBomConstraints --stacktrace
+      - name: Dry-run the exact JitPack install command
+        # 逐字复刻 jitpack.yml 的 install 命令——把"JITPACK gate 每次拓扑变化需要
+        # 手动验证"变成每个 PR 自动验证。0.0.0-smoke 只是本地探测版本号,不会真的
+        # 发布到任何地方。
+        run: JITPACK=true ./gradlew publishSdkToMavenLocal -Pversion=0.0.0-smoke --stacktrace
+      - name: List published artifacts for manual diffing in the log
+        run: find ~/.m2/repository/com/github/sanatowhite/sdk -type f | sort
+      - name: consumer-smoke (local mode, against the mavenLocal artifacts just published)
+        # 完全独立的 Gradle build(见 checks/consumer-smoke/README.md)——唯一能
+        # 捕获 api()/implementation 判定错误和 Hilt 跨模块聚合在真实 AAR 消费下
+        # 是否依然成立的机制,project() 依赖的 :app 测不出这类问题。
+        working-directory: checks/consumer-smoke
+        run: ./gradlew :app:assembleDebug -PsmokeVersion=0.0.0-smoke --stacktrace
 
   logkit-guard:
     name: logkit-guard (:logkit)

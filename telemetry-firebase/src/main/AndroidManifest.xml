@@ -1,1 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- FirebaseAnalytics.getInstance() 需要这三个权限——lint 的 MissingPermission
+         检查会盯着这个。core-net 已经声明了 INTERNET/ACCESS_NETWORK_STATE，但这
+         两条不会跨模块生效到这里(每个 library 模块的 lint 只看自己的 merged
+         manifest)，且 WAKE_LOCK 是 Firebase Analytics 后台调度专属、其它模块都
+         不需要，所以三条都在这里声明一遍。合并到消费方 APK 时这几条会和
+         core-net/其它模块的声明去重，不会重复。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+</manifest>

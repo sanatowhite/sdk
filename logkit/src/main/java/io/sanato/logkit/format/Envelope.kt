@@ -20,7 +20,7 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * ECIES 风格混合信封：每个日志文件一个随机 AES-256-GCM 内容密钥,用内置(或宿主
  * 配置的)P-256 公钥包裹。选 ECIES 而不是 RSA-OAEP 的理由记在 logkit/README.md
- * 和 docs/adr/0008——核心是 Android 的 JCE provider 历史上会无视请求的 OAEP
+ * 和 docs/adr/0010——核心是 Android 的 JCE provider 历史上会无视请求的 OAEP
  * MGF1 摘要而默认 SHA-1,桌面 JVM 用 SHA-256,设备上加密的文件在开发者机器上
  * 会【永久】解不开。ECIES 的曲线/KDF/AEAD 全由这里的字节钉死,没有这个参数面。
  *

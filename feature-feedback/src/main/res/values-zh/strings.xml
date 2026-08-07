@@ -1,0 +1,9 @@
+<resources>
+    <string name="appkit_feedback_title">发送反馈</string>
+    <string name="appkit_feedback_description">问题描述</string>
+    <string name="appkit_feedback_description_hint">发生了什么？你原本期望是什么？</string>
+    <string name="appkit_feedback_include_screenshot">附带截图</string>
+    <string name="appkit_feedback_include_logs">附带最近的应用日志</string>
+    <string name="appkit_feedback_send">发送</string>
+    <string name="appkit_feedback_email_subject">反馈 — %1$s %2$s</string>
+</resources>

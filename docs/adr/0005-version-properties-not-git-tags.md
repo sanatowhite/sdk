@@ -12,6 +12,8 @@ Git-tag-derived versioning also complicates CI: GitHub Actions checkouts are sha
 
 `bootstrap.sh` resets this file to `versionCode=1` / `versionName=0.1.0` as part of forking, since a fresh fork has no meaningful version history to preserve.
 
+This ADR covers app versioning only. `gradle/version.properties` also carries `sdkGroup`/`sdkVersion`, a separate, independent axis for the SDK modules published under ADR 0008 — same "checked-in file, not derived from a tag" philosophy, but its own tag namespace (bare semver `*.*.*`, vs. the app's `app-v*`) and its own assertion step in `sdk-release.yml`.
+
 ## Consequences
 
 - No possible drift between the APK manifest's version and `BuildConfig`'s version — both trace back to the same `defaultConfig` read of the same file.

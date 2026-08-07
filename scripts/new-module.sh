@@ -38,11 +38,14 @@ if [ -d "$MODULE_DIR" ]; then
   exit 1
 fi
 
-# core-foo -> io.sanato.apptemplate.core.foo (hyphens become dots, matching the
+# core-foo -> io.sanato.appkit.core.foo (hyphens become dots, matching the
 # existing core-* namespace convention — see settings.gradle.kts's namespace note).
+# io.sanato.appkit.* (not io.sanato.apptemplate.*) is the published-module namespace
+# root: it's what keeps bootstrap.sh's package rename structurally unable to touch
+# any published module, the same way io.sanato.updatechecker already is.
 SUFFIX="${MODULE_NAME#core-}"
-NAMESPACE="io.sanato.apptemplate.core.${SUFFIX//-/.}"
-PACKAGE_PATH="io/sanato/apptemplate/core/${SUFFIX//-/\/}"
+NAMESPACE="io.sanato.appkit.core.${SUFFIX//-/.}"
+PACKAGE_PATH="io/sanato/appkit/core/${SUFFIX//-/\/}"
 
 echo "==> Creating $MODULE_DIR (namespace $NAMESPACE)"
 mkdir -p "$MODULE_DIR/src/main/kotlin/$PACKAGE_PATH"

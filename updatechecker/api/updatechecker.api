@@ -6,10 +6,12 @@ public final class io.sanato.updatechecker.ApkDownloader {
   public final java.io.File downloadedFile(android.content.Context, io.sanato.updatechecker.UpdateInfo);
 }
 
+
 Compiled from "ConfigFetcher.kt"
 public interface io.sanato.updatechecker.ConfigFetcher {
   public abstract java.lang.String fetch(java.lang.String);
 }
+
 
 Compiled from "CurrentVersionReader.kt"
 public final class io.sanato.updatechecker.CurrentVersionReader {
@@ -17,17 +19,20 @@ public final class io.sanato.updatechecker.CurrentVersionReader {
   public final long read(android.content.Context);
 }
 
+
 Compiled from "HttpConfigFetcher.kt"
 public final class io.sanato.updatechecker.HttpConfigFetcher implements io.sanato.updatechecker.ConfigFetcher {
   public io.sanato.updatechecker.HttpConfigFetcher();
   public java.lang.String fetch(java.lang.String);
 }
 
+
 Compiled from "Sha256Verifier.kt"
 public final class io.sanato.updatechecker.Sha256Verifier {
   public static final io.sanato.updatechecker.Sha256Verifier INSTANCE;
   public final boolean matches(java.io.File, java.lang.String);
 }
+
 
 Compiled from "UpdateCheckPrefs.kt"
 public final class io.sanato.updatechecker.UpdateCheckPrefs {
@@ -38,21 +43,29 @@ public final class io.sanato.updatechecker.UpdateCheckPrefs {
   public static void markChecked$default(io.sanato.updatechecker.UpdateCheckPrefs, android.content.Context, long, int, java.lang.Object);
 }
 
+
 Compiled from "UpdateChecker.kt"
 public final class io.sanato.updatechecker.UpdateChecker {
   public static final io.sanato.updatechecker.UpdateChecker$Companion Companion;
   public io.sanato.updatechecker.UpdateChecker(android.content.Context, java.lang.String, io.sanato.updatechecker.ConfigFetcher);
   public io.sanato.updatechecker.UpdateChecker(android.content.Context, java.lang.String);
   public final java.lang.Object check(kotlin.coroutines.Continuation<? super io.sanato.updatechecker.UpdateResult>);
-  public static final io.sanato.updatechecker.ConfigFetcher access$getFetcher$p(io.sanato.updatechecker.UpdateChecker);
-  public static final java.lang.String access$getConfigUrl$p(io.sanato.updatechecker.UpdateChecker);
-  public static final android.content.Context access$getContext$p(io.sanato.updatechecker.UpdateChecker);
 }
+
+
+Compiled from "UpdateChecker.kt"
+public final class io.sanato.updatechecker.UpdateChecker$Companion {
+  public final boolean shouldAutoCheck(android.content.Context);
+  public final void showUpdateDialog(android.app.Activity, io.sanato.updatechecker.UpdateInfo);
+  public io.sanato.updatechecker.UpdateChecker$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
 
 Compiled from "UpdateCheckerFileProvider.kt"
 public final class io.sanato.updatechecker.UpdateCheckerFileProvider extends androidx.core.content.FileProvider {
   public io.sanato.updatechecker.UpdateCheckerFileProvider();
 }
+
 
 Compiled from "UpdateConfigParser.kt"
 public final class io.sanato.updatechecker.UpdateConfigParser {
@@ -60,11 +73,19 @@ public final class io.sanato.updatechecker.UpdateConfigParser {
   public final io.sanato.updatechecker.UpdateInfo parse(java.lang.String);
 }
 
+
+Compiled from "UpdateConfigParser.kt"
+public final class io.sanato.updatechecker.UpdateConfigParser$MalformedConfigException extends java.lang.Exception {
+  public io.sanato.updatechecker.UpdateConfigParser$MalformedConfigException(java.lang.String);
+}
+
+
 Compiled from "UpdateDialogPresenter.kt"
 public final class io.sanato.updatechecker.UpdateDialogPresenter {
   public static final io.sanato.updatechecker.UpdateDialogPresenter INSTANCE;
   public final void show(android.app.Activity, io.sanato.updatechecker.UpdateInfo);
 }
+
 
 Compiled from "UpdateDownloadReceiver.kt"
 public final class io.sanato.updatechecker.UpdateDownloadReceiver extends android.content.BroadcastReceiver {
@@ -72,10 +93,72 @@ public final class io.sanato.updatechecker.UpdateDownloadReceiver extends androi
   public void onReceive(android.content.Context, android.content.Intent);
 }
 
+
 Compiled from "UpdateDownloadState.kt"
 public abstract class io.sanato.updatechecker.UpdateDownloadState {
   public io.sanato.updatechecker.UpdateDownloadState(kotlin.jvm.internal.DefaultConstructorMarker);
 }
+
+
+Compiled from "UpdateDownloadState.kt"
+public final class io.sanato.updatechecker.UpdateDownloadState$Failed extends io.sanato.updatechecker.UpdateDownloadState {
+  public io.sanato.updatechecker.UpdateDownloadState$Failed(java.lang.String);
+  public final java.lang.String getReason();
+  public final java.lang.String component1();
+  public final io.sanato.updatechecker.UpdateDownloadState$Failed copy(java.lang.String);
+  public static io.sanato.updatechecker.UpdateDownloadState$Failed copy$default(io.sanato.updatechecker.UpdateDownloadState$Failed, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "UpdateDownloadState.kt"
+public final class io.sanato.updatechecker.UpdateDownloadState$Idle extends io.sanato.updatechecker.UpdateDownloadState {
+  public static final io.sanato.updatechecker.UpdateDownloadState$Idle INSTANCE;
+}
+
+
+Compiled from "UpdateDownloadState.kt"
+public final class io.sanato.updatechecker.UpdateDownloadState$InProgress extends io.sanato.updatechecker.UpdateDownloadState {
+  public io.sanato.updatechecker.UpdateDownloadState$InProgress(long, long);
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final long component1();
+  public final long component2();
+  public final io.sanato.updatechecker.UpdateDownloadState$InProgress copy(long, long);
+  public static io.sanato.updatechecker.UpdateDownloadState$InProgress copy$default(io.sanato.updatechecker.UpdateDownloadState$InProgress, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "UpdateDownloadState.kt"
+public final class io.sanato.updatechecker.UpdateDownloadState$ReadyToInstall extends io.sanato.updatechecker.UpdateDownloadState {
+  public io.sanato.updatechecker.UpdateDownloadState$ReadyToInstall(java.io.File);
+  public final java.io.File getFile();
+  public final java.io.File component1();
+  public final io.sanato.updatechecker.UpdateDownloadState$ReadyToInstall copy(java.io.File);
+  public static io.sanato.updatechecker.UpdateDownloadState$ReadyToInstall copy$default(io.sanato.updatechecker.UpdateDownloadState$ReadyToInstall, java.io.File, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "UpdateDownloadState.kt"
+public final class io.sanato.updatechecker.UpdateDownloadState$Verifying extends io.sanato.updatechecker.UpdateDownloadState {
+  public io.sanato.updatechecker.UpdateDownloadState$Verifying(java.io.File);
+  public final java.io.File getFile();
+  public final java.io.File component1();
+  public final io.sanato.updatechecker.UpdateDownloadState$Verifying copy(java.io.File);
+  public static io.sanato.updatechecker.UpdateDownloadState$Verifying copy$default(io.sanato.updatechecker.UpdateDownloadState$Verifying, java.io.File, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
 
 Compiled from "UpdateDownloader.kt"
 public final class io.sanato.updatechecker.UpdateDownloader {
@@ -83,9 +166,31 @@ public final class io.sanato.updatechecker.UpdateDownloader {
   public io.sanato.updatechecker.UpdateDownloader(android.content.Context);
   public final kotlinx.coroutines.flow.Flow<io.sanato.updatechecker.UpdateDownloadState> download(io.sanato.updatechecker.UpdateInfo);
   public final void install(java.io.File);
-  public static final android.content.Context access$getContext$p(io.sanato.updatechecker.UpdateDownloader);
-  public static final io.sanato.updatechecker.UpdateDownloader$DownloadProgress access$queryProgress(io.sanato.updatechecker.UpdateDownloader, android.app.DownloadManager, long);
 }
+
+
+Compiled from "UpdateDownloader.kt"
+final class io.sanato.updatechecker.UpdateDownloader$Companion {
+  public io.sanato.updatechecker.UpdateDownloader$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "UpdateDownloader.kt"
+final class io.sanato.updatechecker.UpdateDownloader$DownloadProgress {
+  public io.sanato.updatechecker.UpdateDownloader$DownloadProgress(int, long, long);
+  public final int getStatus();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final int component1();
+  public final long component2();
+  public final long component3();
+  public final io.sanato.updatechecker.UpdateDownloader$DownloadProgress copy(int, long, long);
+  public static io.sanato.updatechecker.UpdateDownloader$DownloadProgress copy$default(io.sanato.updatechecker.UpdateDownloader$DownloadProgress, int, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
 
 Compiled from "UpdateInfo.kt"
 public final class io.sanato.updatechecker.UpdateInfo {
@@ -109,14 +214,49 @@ public final class io.sanato.updatechecker.UpdateInfo {
   public boolean equals(java.lang.Object);
 }
 
+
 Compiled from "UpdateResult.kt"
 public abstract class io.sanato.updatechecker.UpdateResult {
   public io.sanato.updatechecker.UpdateResult(kotlin.jvm.internal.DefaultConstructorMarker);
 }
+
+
+Compiled from "UpdateResult.kt"
+public final class io.sanato.updatechecker.UpdateResult$Available extends io.sanato.updatechecker.UpdateResult {
+  public io.sanato.updatechecker.UpdateResult$Available(io.sanato.updatechecker.UpdateInfo);
+  public final io.sanato.updatechecker.UpdateInfo getInfo();
+  public final io.sanato.updatechecker.UpdateInfo component1();
+  public final io.sanato.updatechecker.UpdateResult$Available copy(io.sanato.updatechecker.UpdateInfo);
+  public static io.sanato.updatechecker.UpdateResult$Available copy$default(io.sanato.updatechecker.UpdateResult$Available, io.sanato.updatechecker.UpdateInfo, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "UpdateResult.kt"
+public final class io.sanato.updatechecker.UpdateResult$Error extends io.sanato.updatechecker.UpdateResult {
+  public io.sanato.updatechecker.UpdateResult$Error(java.lang.String);
+  public final java.lang.String getMessage();
+  public final java.lang.String component1();
+  public final io.sanato.updatechecker.UpdateResult$Error copy(java.lang.String);
+  public static io.sanato.updatechecker.UpdateResult$Error copy$default(io.sanato.updatechecker.UpdateResult$Error, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "UpdateResult.kt"
+public final class io.sanato.updatechecker.UpdateResult$UpToDate extends io.sanato.updatechecker.UpdateResult {
+  public static final io.sanato.updatechecker.UpdateResult$UpToDate INSTANCE;
+}
+
 
 Compiled from "VersionCompare.kt"
 public final class io.sanato.updatechecker.VersionCompare {
   public static final io.sanato.updatechecker.VersionCompare INSTANCE;
   public final boolean isNewerVersion(long, long);
 }
+
 

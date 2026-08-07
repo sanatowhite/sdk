@@ -7,7 +7,7 @@ import java.util.zip.CRC32
 
 /**
  * `.logkit` 文件头:64 字节固定部分 + 变长尾(processTag / wrappedKey / metadata),
- * 对齐到 16 的倍数。完整字节布局见 logkit/README.md 和 docs/adr/0008。
+ * 对齐到 16 的倍数。完整字节布局见 logkit/README.md 和 docs/adr/0010。
  *
  * 头是明文——不含密钥,只含"用哪个密钥包裹了内容密钥"。这样即使没有私钥,
  * 支持工程师也能看 `metadata` 分诊(⚠️ 所以 metadata 绝不能塞 PII)。
