@@ -27,8 +27,9 @@ android {
         }
     }
 
-    // Java 保持 11（不是其余模块用的 17）：这个库仍在对外发布，消费方可能还在
-    // 更旧的 AGP/JDK 上，11 字节码兼容面更宽。AGP 9 默认也已经是 11，这里显式
+    // Java 11——现在是每个发布模块的统一家规（Phase 2 起 core-*/feature-* 也都
+    // 是 11，不再只是这个模块的例外），因为它们都对外发布，消费方可能还在更旧的
+    // AGP/JDK 上。只有不发布的 :app 保留 17。AGP 9 默认也已经是 11，这里显式
     // 写出来防止未来默认值再变。
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

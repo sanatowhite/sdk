@@ -25,6 +25,19 @@ class MyApp : HiltInitializingApplication() {
 
 单独用这个模块时 `onPreDiSetup` 默认什么都不做——大多数消费方会直接依赖 `:core-telemetry-hilt` 的 `TelemetryApplication`(它是这个基类的子类,已经覆盖了 `onPreDiSetup` 去装崩溃 handler + 启动计时)。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:大多数情况下**不需要直接依赖它**——如果已经在用 `:core-telemetry-hilt`,它的 `TelemetryApplication` 已经传递依赖了这个模块,直接继承 `TelemetryApplication` 而不是这个模块的 `HiltInitializingApplication`。只有"要 `:core-init` 的启动编排但不要 `:core-telemetry` 的采集器"这种场景才直接依赖这个模块。
+
+**接入步骤**:
+1. 加坐标:`implementation("com.github.sanatowhite.sdk:core-init-hilt:1.0.0")`。
+2. 自己的 `Application` 继承 `HiltInitializingApplication`,加 `@HiltAndroidApp`;需要早于 Hilt 组装的逻辑覆盖 `onPreDiSetup`,**不要覆盖 `attachBaseContext`**(它是 `final` 的)。
+3. 具体的 `AppInitializer` 实现按 Eager/Deferred 用 `@Binds @IntoSet` 绑进对应的 `Set<AppInitializer>`。
+
+**验证**:启动 app,确认 `Eager` initializer 在 `Application.onCreate()` 期间就跑完,`Deferred` initializer 在首帧画完之后才跑——加一行 log 打印时间戳即可肉眼确认。
+
+**不要做的事**:见"已知限制"——不要覆盖 `attachBaseContext`。
+
 ## 公开 API
 
 - `AppInitializerModule` — `@Module @InstallIn(SingletonComponent::class)`,只有两条 `@Multibinds` 声明,不含任何具体绑定。

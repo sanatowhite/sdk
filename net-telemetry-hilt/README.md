@@ -20,6 +20,18 @@ dependencies {
 
 加上这一行,`HttpClientFactory.okHttpClient(metricsSink = ...)` 就能注入现成的 `NetworkMetricsSink`,网络请求耗时自动进 `Telemetry.networkRequest`。只用网络栈、不用遥测(或反过来)的消费方不需要这个模块。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:只有**同时**依赖 `:core-net` 和 `:core-telemetry-hilt` 才需要;任一边缺失都不需要加。
+
+**接入步骤**:
+1. 加坐标(见上方"一行接入"的三行)。
+2. 组装 OkHttp 客户端的地方,注入 `NetworkMetricsSink` 并传给 `HttpClientFactory.okHttpClient(metricsSink = sink)`。
+
+**验证**:发起一次网络请求,确认 `Telemetry.networkRequest` 事件出现在日志/后端(和验证 `:core-telemetry-hilt` 是否工作的方式相同)。
+
+**不要做的事**:见"已知限制"——不要把这个桥的逻辑挪回 `:core-net` 或 `:core-telemetry-hilt` 任何一边。
+
 ## 公开 API
 
 - `NetworkTelemetryBridgeModule` — `@Module`,`provideNetworkMetricsSink(telemetry: Telemetry): NetworkMetricsSink`。

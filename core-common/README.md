@@ -16,6 +16,24 @@ dependencies {
 
 不需要改我们的任何源码,`implementation` 一行就能用。无额外传递依赖需要关心——本模块只带 `androidx.core:core-ktx`、`kotlinx-coroutines-android`、`javax.inject`,都是最小化的公共基础库,不会给消费方引入任何"意外"的库。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:几乎总是要——它是其余每个 `core-*`/`feature-*` 模块的公共依赖,单独引入的场景很少见(通常是只想要 `AppResult`/`UiState` 这两个类型,不想要任何具体能力)。
+
+**接入步骤**:
+1. 在目标模块(或 `:app`)的 `build.gradle.kts` 里加:
+   ```kotlin
+   dependencies {
+       implementation("com.github.sanatowhite.sdk:core-common:1.0.0")
+   }
+   ```
+2. 需要 dispatcher 注入点时,在自己的类构造函数上标 `@IoDispatcher`/`@DefaultDispatcher`/`@MainImmediateDispatcher`(从 `io.sanato.appkit.core.common.di` 包导入)——不用 Hilt 就自己在调用处传 `Dispatchers.IO`/`Dispatchers.Default`/`Dispatchers.Main.immediate`;用 Hilt 就额外加 `:core-common-hilt`,不用写任何 provider。
+3. 需要构建信息(版本号、包名)时用 `AppBuildInfo.fromPackageManager(context)`,不要自己读 `PackageManager`/`BuildConfig`——库模块拿不到消费方的 `BuildConfig`,这个函数才是标准做法。
+
+**验证**:`./gradlew :<your-module>:compileDebugKotlin` 编译通过即完成——这个模块没有运行期副作用需要额外验证。
+
+**不要做的事**:不要在依赖它的模块里再 apply 任何 Hilt 插件或依赖 `hilt-android`——这个模块的整个存在理由就是"core-* 不认 Hilt",真正的 DI 组装收在 `:core-common-hilt`。
+
 ## 公开 API
 
 - `AppResult<T>` — sealed interface,`Success<T>` / `Failure`,附带 `map`/`onSuccess`/`onFailure` 内联扩展。

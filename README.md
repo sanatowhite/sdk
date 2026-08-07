@@ -4,7 +4,7 @@ A fork-able Android app template: Compose + Hilt + Navigation, in-app update che
 
 Every `core-*`/`feature-*` capability behind that app — plus `:updatechecker`, in-app update checking — is **also** published independently to JitPack as a real Maven coordinate under `com.github.sanatowhite.sdk:<module>:<version>`. `implementation(...)` one coordinate and get working functionality; never copy our source, never edit it in place. The app half and the SDK half share this one repo but publish on **different tag namespaces** (bare semver `*.*.*` for the SDK, `app-v*` for the app) and never depend on each other in either direction — see `docs/adr/0008-sdk-publishing-architecture.md` for the full reasoning.
 
-> **Old coordinate deprecated.** `com.github.sanatowhite:version-check-sdk` (this repo's former name and `:updatechecker`'s former standalone coordinate) is frozen — old tags `v1.0.0`/`v1.0.1`/`v1.0.2` still resolve (JitPack caches builds permanently) but receive no further updates. There is no migration bridge to the new coordinate; consumers on the old one need to switch explicitly.
+> **Old coordinate deprecated.** `com.github.sanatowhite:version-check-sdk` (this repo's former name and `:updatechecker`'s former standalone coordinate) is frozen — the `v1.0.0`/`v1.0.1`/`v1.0.2` tags backing it have been deleted (a deliberate later call, made after weighing JitPack's permanent build cache against not wanting a stale coordinate hanging around indefinitely), so it no longer resolves for anyone not already using a cached copy. There is no migration bridge to the new coordinate; consumers on the old one need to switch explicitly.
 
 ## I want the whole template
 

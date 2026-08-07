@@ -2,7 +2,7 @@
 
 ## 这是什么 / 不是什么
 
-一个轻量级 Android 应用内更新检查库:请求一个远程 JSON,和当前 `versionCode` 比较,有新版本就让消费方展示更新弹窗,下载 APK、校验 SHA256、引导安装。**唯一已经真正独立发布到 JitPack 的模块**(`com.github.sanatowhite:version-check-sdk`),模板里其他模块都还没有单独发布。
+一个轻量级 Android 应用内更新检查库:请求一个远程 JSON,和当前 `versionCode` 比较,有新版本就让消费方展示更新弹窗,下载 APK、校验 SHA256、引导安装。发布坐标是 `com.github.sanatowhite.sdk:updatechecker:<version>`——现在和仓库里其余 18 个 SDK 模块同属一个统一发布集/同一个 tag(见 ADR 0008),不再是当年那个独立镜像仓库(`com.github.sanatowhite:version-check-sdk`,已废弃且对应的 tag 已删除,不再解析)。零内部模块依赖仍然是这个模块独有的硬约束(见下面的"四条铁律")。
 
 **不是**:不含 UI(下载进度/更新弹窗由消费方自己用 `UpdateDownloadState`/`UpdateResult` 拼);不做认证;不依赖 OkHttp/Retrofit(刻意保持零第三方依赖,只用 `HttpURLConnection` + `org.json`);不依赖本仓库任何其他模块(硬约束,见下)。
 
@@ -19,11 +19,26 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.sanatowhite:version-check-sdk:v1.0.2' // 版本号对应 git tag
+    implementation 'com.github.sanatowhite.sdk:updatechecker:1.0.0' // 版本号对应仓库统一的 SDK tag(裸 semver,不带 v 前缀)
 }
 ```
 
+想一次引入多个模块并保持版本对齐,用 `:sdk-bom`(见根 README):`implementation(platform('com.github.sanatowhite.sdk:sdk-bom:1.0.0'))` 之后这里就不用再写版本号。
+
 配套的静态发行仓库是 [sanatowhite/version_check](https://github.com/sanatowhite/version_check)——一个"轻量应用商店":推 release APK + 更新 JSON 上去,已装旧版的用户通过 `raw.githubusercontent.com` 拉取 JSON 得知新版本、下载链接和 SHA256。
+
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:想要"应用内检查更新"能力,且不想自己搭一套下载/校验/安装流程时用。想要 Compose UI 而不是原生 `AlertDialog`,用 `:feature-update`(它内部就依赖这个模块,`UpdateCheckHost` 一行接入)。
+
+**接入步骤(裸用这个模块,原生 UI)**:
+1. 加坐标(见上方"独立引入"的两个代码块)。
+2. 照抄本文件"API 用法"一节的三个代码块(检查更新 / 自动检查节流 / 弹窗下载校验安装)。
+3. 把 `CONFIG_URL` 换成自己的更新配置 JSON 地址,JSON 字段按下面"远程 JSON 契约"表格来。
+
+**验证**:`./gradlew :updatechecker:test` 通过;真机上指向一个真实可访问的测试 JSON,确认 `check()` 返回 `UpdateResult.Available`/`UpToDate`/`Error` 符合预期(伪造一个比当前 `versionCode` 大的值触发 `Available`)。
+
+**不要做的事**:不要给这个模块加认证/token 刷新;不要换成 OkHttp/Retrofit(见下面"四条铁律")。
 
 ## 公开 API
 
@@ -254,11 +269,11 @@ if (UpdateChecker.shouldAutoCheck(this)) {
 
 ## 发布 SDK 新版本
 
-JitPack 直接从 git tag 构建,发布新版本不需要额外的 CI/发布步骤:
+这个模块不再单独打 tag——它和其余 18 个 SDK 模块共用同一个发布流程(`sdk-release.yml`,见 ADR 0008),发布新版本的步骤:
 
-1. 改动完成、合并到 `main`。
-2. 打 tag:`git tag v1.0.3 && git push origin v1.0.3`(tag 名要以 `v` 开头,和依赖坐标里的版本号对应)。
-3. 消费方把依赖版本改成新 tag(如 `com.github.sanatowhite:version-check-sdk:v1.0.3`)即可,JitPack 会在第一次被请求时自动构建该 tag。
+1. 改动完成、合并到 `main`,更新 `gradle/version.properties` 的 `sdkVersion=`。
+2. 打裸 semver tag(不带 `v` 前缀,例如 `1.0.1`)并推送:`git tag 1.0.1 && git push origin 1.0.1`——这会触发 `sdk-release.yml`,一次性构建、验证、发布全部 19 个模块(含 `:updatechecker`)。
+3. 消费方把依赖版本改成新 tag 即可(`com.github.sanatowhite.sdk:updatechecker:1.0.1`),JitPack 会在第一次被请求时自动构建该 tag。
 
 ## 经验教训 / 踩过的坑
 
@@ -274,10 +289,10 @@ JitPack 直接从 git tag 构建,发布新版本不需要额外的 CI/发布步�
 
 这几条不是建议,是发布出去之后不可逆的约束——CI 有 `apiCheck`(`api/updatechecker.api` 快照对比)机械检查"只许新增,不许删改",但下面这几条它检查不到,只能靠开发者自己守:
 
-1. **依赖内部模块数必须是 0**——一旦 `implementation(project(":core-xxx"))`,`JITPACK=true` 的 sdkOnly 构建会直接崩(那些模块被 gate 掉了),且发布的 POM 会带消费方拿不到的坐标。
-2. **保持零第三方依赖**(`HttpURLConnection` + `org.json`)——不要"顺手"换成 OkHttp,那会给所有消费方强塞一个依赖。
-3. **不套用 build-logic 的 convention plugin**——那些插件很可能被未来改动加上 Compose/`javax.inject`、改 `consumerProguardFiles` 甚至 `namespace`,全都会改变发布产物。保持独立最小构建文件。
-4. **Java 字节码目标保持 11**(仓库其余模块是 17)——消费方可能还在更旧的 AGP/JDK 上。
+1. **依赖内部模块数必须是 0**——这是"可发布模块不得依赖不可发布模块"这条通用规则(`verifyModuleGraph`)在这个模块上最严格的特例:不只是不能依赖不可发布模块,是压根不能有任何 `project()` 依赖,发布的 POM 不能带上消费方拿不到的坐标。
+2. **零第三方依赖只有两个,且必须声明对**——`androidx.core:core-ktx`(`implementation`,见 ADR 0009 的 `internal FileProvider` 判例)和 `kotlinx-coroutines-android`(`api`,`UpdateDownloader.download(): Flow<...>` 是真泄漏)。不要"顺手"换成 OkHttp,那会给所有消费方强塞一个依赖。
+3. **只 apply 两个纯叠加 mix-in 插件**(`sanato.android.library.published` + `sanato.api.check`),不 apply `sanato.android.library` 本身或任何其他 convention plugin——那些插件很可能被未来改动加上 Compose/`javax.inject`、改 `consumerProguardFiles` 甚至 `namespace`,全都会改变发布产物。前两个插件结构上做不到这件事(见 `SanatoPublishedLibraryConventionPlugin.kt` 的说明),这正是这条铁律能被遵守而不是被违反的原因。
+4. **Java 字节码目标保持 11**——现在是每个发布模块的统一家规(仓库里只有不发布的 `:app` 是 17),消费方可能还在更旧的 AGP/JDK 上。
 
 新增公开 API 之后的检查点(已走过一遍,记录在案供下次参考):
 

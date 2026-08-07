@@ -28,6 +28,19 @@ aboutLibraries {
 
 插件会在编译期生成一个 raw 资源(默认 `R.raw.aboutlibraries`)。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:需要一个"开源许可清单"页面时加(应用商店合规通常要求这个)。
+
+**接入步骤**:
+1. 在自己的 app 模块 apply `com.mikepenz.aboutlibraries.plugin`(见上方代码块)——这是**前置条件**,漏了这一步 `R.raw.aboutlibraries` 不存在,编译会报找不到资源。
+2. 加坐标(见上方)。
+3. `licensesGraph(navController, librariesRawRes = R.raw.aboutlibraries)` 挂进 `NavHost`,把 `onNavigateToLicenses = { navController.navigate(LicensesRoute) }` 传给 `:feature-settings` 的 `settingsGraph`(如果同时用了 `:feature-settings`)。
+
+**验证**:`./gradlew :app:assembleDebug` 编译通过;运行时进许可页,确认列表里出现真实依赖的许可信息(不是空列表——空列表通常意味着第 1 步的插件没配对)。
+
+**不要做的事**:不要跳过第 1 步直接传一个假的 `librariesRawRes` 值——运行时会崩(资源不存在)或显示空列表(资源存在但没有真实数据)。
+
 ## 挂进导航
 
 ```kotlin

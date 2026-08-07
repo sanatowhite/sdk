@@ -16,6 +16,21 @@ dependencies {
 
 默认自带 Hilt 装配(`core-data-hilt` + `core-common-hilt` 已经在依赖图里),`@HiltAndroidApp` 的 `Application` 挂进 Navigation 就能用,不需要自己写任何 `@Module`。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:需要设置/关于/隐私政策/用户协议/首启同意/What's New 里任意一个页面时加——这是一个整体,不能只要其中一个页面。
+
+**接入步骤**:
+1. 加坐标(见上方)。
+2. `Application` 用 Hilt(`@HiltAndroidApp`),因为 `SettingsRoute`/`AboutRoute` 等都是绑 `hiltViewModel()` 的 Route 层。
+3. 按下面"挂进导航"的三个代码块,把 `settingsGraph(...)` 挂进自己的 `NavHost`,`AppEntryViewModel` 接进启动页逻辑,`WhatsNewRoute` 挂进首页。
+4. `StandardPagesContent` 的三个 `@RawRes` 字段按需传:没有隐私政策/用户协议/更新日志就传 `null`(默认值),对应入口自动隐藏,不会崩。
+5. 想要设置页里出现"反馈"/"许可"/"检查更新"行,分别加 `:feature-feedback`/`:feature-licenses`/`:feature-update` 并传对应的 `onNavigateToFeedback`/`onNavigateToLicenses`/`onCheckForUpdates` 回调;不加对应模块就不传,那一行自动不显示。
+
+**验证**:`./gradlew :app:assembleDebug` 编译通过;运行时从首页进设置页,确认能看到主题切换/语言(如果传了 `supportedLanguageTags`)/隐私政策等行,且传 `null` 的项确实不显示。
+
+**不要做的事**:见下面"已知限制"——不要指望它认识 `:feature-feedback`/`:feature-licenses`/`:feature-update` 的具体类型(全靠可空回调解耦,不要试图直接 import 那三个模块的类型进这里)。
+
 ## 挂进导航
 
 ```kotlin

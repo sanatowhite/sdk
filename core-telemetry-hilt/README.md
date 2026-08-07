@@ -35,6 +35,19 @@ object MyTelemetryModule {
 
 `CompositeTelemetry` 自动 fan-out,不需要改任何我们的代码。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:用了 `:core-telemetry` 且用 Hilt 时几乎总是要加——不用 Hilt 才需要手动组装(见 `:core-telemetry` README)。
+
+**接入步骤**:
+1. 加坐标:`implementation("com.github.sanatowhite.sdk:core-telemetry-hilt:1.0.0")`。
+2. `Application` 继承 `TelemetryApplication`(不是 `:core-init-hilt` 的 `HiltInitializingApplication`——这个基类已经包含了它),加 `@HiltAndroidApp`。
+3. (可选)追加自己的后端,照抄本文件上面的 `MyTelemetryModule` 代码块。
+
+**验证**:`./gradlew :app:hiltJavaCompileDebug` 编译通过;运行时确认 Logcat 里出现 `startup`/`crash` 等 `Telemetry` 事件的日志(可调试构建下默认后端是 `Logcat`)。
+
+**不要做的事**:见"已知限制"——不要指望能 opt-out 某个默认后端(不用这个模块、自己手动构造是唯一完全绕过方式);不要再单独提供一条 `Telemetry` binding 试图覆盖 `CompositeTelemetry`(会撞 duplicate binding)。
+
 ## 公开 API
 
 - `TelemetryBackendsModule` — `@Module`,`Set<Telemetry>` 的 `@Multibinds` + 四个 `AppInitializer` 的 `@Binds @IntoSet` 绑定(遥测相关的启动追踪/ANR 检查/崩溃上报/内存采样)。
