@@ -51,4 +51,7 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.16.1")
     testImplementation("androidx.test:core:1.6.1")
     testImplementation("io.mockk:mockk:1.14.11")
+    // DriveBackupStoreTest 造假 Drive 响应用了 org.json；非 Robolectric 的纯 JVM 测试跑在
+    // mockable android.jar 上，JSONObject 方法默认返回 null/抛异常，需要真实实现。
+    testImplementation("org.json:json:20231013")
 }
