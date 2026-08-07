@@ -18,6 +18,32 @@ dependencies {
 
 页面跟随消费方自己的 `MaterialTheme`,不强制套 `AppTemplateTheme`——`AppTheme.spacing` 有默认值,不套主题也能用,想要品牌 seed color + 动态取色再用 `AppTemplateTheme`。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:几乎所有 Compose 页面都会间接需要它——`feature-settings`/`feature-feedback`/`feature-licenses`/`feature-update` 全部依赖它做壳层/状态组件。单独引入的场景是"只要统一的加载/空/错误状态组件和主题,不要任何具体功能页面"。
+
+**接入步骤**:
+1. 加坐标:
+   ```kotlin
+   dependencies {
+       implementation("com.github.sanatowhite.sdk:core-ui:1.0.0")
+   }
+   ```
+2. (可选)在 `setContent {}` 最外层套主题:
+   ```kotlin
+   setContent {
+       AppTemplateTheme(darkTheme = isSystemInDarkTheme()) {
+           // 你自己的 Compose 内容
+       }
+   }
+   ```
+   不套也能用,`AppTheme.spacing` 有默认值。
+3. 页面壳层用 `AppScaffold(topBar = {...}) { padding -> ... }`;加载/空/错误状态用 `StateContent(state = uiState, onRetry = {...}) { data -> ... }`。
+
+**验证**:`./gradlew :<your-module>:compileDebugKotlin` 编译通过。这个模块**没有** `apiCheck`(见下面"已知限制"),不要以为跑了 `apiCheck` 就验证了 API 兼容性——真正的兜底是 `checks/consumer-smoke`。
+
+**不要做的事**:不要引入 `material-icons-extended`(会显著拉大产物体积,`core` 集已够用);不要给这个模块加 `WindowSizeClass`/自适应布局(设计上明确排除,见 `TEMPLATE.md`)。
+
 ## 公开 API
 
 - `AppTemplateTheme(darkTheme, dynamicColor, content)` — 主题入口,`dynamicColor` 仅在 API 31+ 生效,24-30 自动回退品牌 seed color。

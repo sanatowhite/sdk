@@ -18,6 +18,19 @@ dependencies {
 
 零残留由 Gradle 的 `debugImplementation` 配置本身保证——这个模块的 class 文件结构性地不会出现在 release 的编译/运行时 classpath 上,不是"代码路径没走到"那种脆弱保证。CI 建议再加一道 `apkanalyzer dex packages app-release.apk | grep debugtools` 做双重确认。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:开发期想要一个可拖拽的调试面板(feature flag 覆写、崩溃/ANR/OOM 触发、日志查看)时加。release/staging 构建不应该看到它——必须用 `debugImplementation`,不能用 `implementation`。
+
+**接入步骤**:
+1. 加坐标:`debugImplementation("com.github.sanatowhite.sdk:debug-tools:1.0.0")`。
+2. 建三个 build-type 专属的 facade 文件(`app/src/{debug,release,staging}/.../DebugOverlay.kt`),提供同一个 `@Composable` 入口签名——debug 版本调用真正的 `DebugDrawer`,release/staging 版本是空函数体的 no-op。
+3. 在 `MainActivity` 的 `setContent {}` 里包一层 `DebugOverlay(ringLogBuffer = ringLogBuffer) { /* 你的正常内容 */ }`。
+
+**验证**:`./gradlew :app:assembleRelease` 之后跑 `apkanalyzer dex packages app-release.apk | grep -i debugtools`——**必须无输出**,有输出说明 debug-only 代码泄漏进了 release APK,是需要立刻修的严重问题。
+
+**不要做的事**:见"已知限制"——不要指望这里的 feature flag 是远程可控的;不要给日志面板加自动刷新;不要给崩溃/ANR/OOM 触发按钮加"安全模拟"逻辑。
+
 ## 公开 API
 
 - `DebugDrawer(ringLogBuffer, extraContent = {}, content)` — 顶层入口,包一层 `ModalNavigationDrawer(gesturesEnabled = false)` + 可拖拽把手。`extraContent` 渲染在抽屉内容的末尾,是消费方自带内容的挂载点——本模块对它一无所知,只负责渲染。

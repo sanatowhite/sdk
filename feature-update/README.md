@@ -27,6 +27,19 @@ object MyUpdateConfigOverrideModule {
 
 JSON schema 见 `:updatechecker` 的 `UpdateConfigParser`/`UpdateInfo`。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:想要"检查更新"用 Compose 弹窗 + 一行状态持有(而不是自己拼 `:updatechecker` 的原生 `AlertDialog` API)时用。
+
+**接入步骤**:
+1. 加坐标(见上方,会传递依赖 `:updatechecker`)。
+2. `UpdateCheckHost { onCheckForUpdates -> ... }` 包住 `setContent {}` 里的内容(见下方代码块),把 `onCheckForUpdates` 传给 `:feature-settings` 的 `settingsGraph(onCheckForUpdates = ...)`(如果同时用了 `:feature-settings`),或者自己接一个按钮调用它。
+3. **必须**提供 `UpdateConfigOverride` 才能真正检查到更新——照抄本文件上方的 `MyUpdateConfigOverrideModule` 代码块,把占位 URL 换成自己的更新配置 JSON 地址。不提供也不会崩,只是 `checkForUpdate()` 永远拿到 `Error`。
+
+**验证**:`./gradlew :app:assembleDebug` 编译通过(即使没提供 `UpdateConfigOverride` 也能过);提供真实配置地址后,把远程 JSON 里的 `versionCode` 改成比本地大的值,触发一次检查,确认弹出更新对话框。
+
+**不要做的事**:见下面"已知限制"——不要以为"检查更新返回 Error"就是坏了,先确认是不是忘了提供 `UpdateConfigOverride`。
+
 ## 挂进你的 Compose 树
 
 ```kotlin

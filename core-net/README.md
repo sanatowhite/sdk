@@ -20,6 +20,33 @@ dependencies {
 
 想把网络耗时接进 `:core-telemetry` 的 `Telemetry`?加 `:net-telemetry-hilt`,不用自己写桥接代码。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:消费方需要发起 HTTP 请求(Retrofit/OkHttp)时用。只需要 `AppResult`/`UiState` 这类通用类型、不发网络请求的话不需要这个模块。
+
+**接入步骤**:
+1. 加坐标:
+   ```kotlin
+   dependencies {
+       implementation("com.github.sanatowhite.sdk:core-net:1.0.0")
+   }
+   ```
+2. 组装客户端(在自己的 Hilt Module 或手动组装代码里):
+   ```kotlin
+   val client = HttpClientFactory.okHttpClient(enableLogging = BuildConfig.DEBUG)
+   val retrofit = HttpClientFactory.retrofit(baseUrl = "https://api.example.com/", client = client)
+   val service = retrofit.create(MyApiService::class.java)   // MyApiService 是消费方自己定义的 Retrofit 接口
+   ```
+3. 调用处用 `safeApiCall` 包一层,不要直接 try/catch Retrofit 抛出的异常:
+   ```kotlin
+   suspend fun fetchThing(): AppResult<Thing> = safeApiCall { service.getThing() }
+   ```
+4. (可选)需要网络耗时进遥测系统时,额外加 `:net-telemetry-hilt`,把 `HttpClientFactory.okHttpClient(metricsSink = ...)` 的 `metricsSink` 参数接上注入进来的 `NetworkMetricsSink`。
+
+**验证**:`./gradlew :<your-module>:compileDebugKotlin` 编译通过;运行时验证——调用一次 `fetchThing()`,确认返回 `AppResult.Success`(网络正常)或 `AppResult.Failure`(网络异常时不抛异常,不崩溃)。
+
+**不要做的事**:不要在 `service.getThing()` 外面自己再套一层 try/catch——`safeApiCall` 已经把 Retrofit 的裸异常分类进 `AppError`;不要给这个模块加认证/token 刷新逻辑,那是设计上明确排除的能力(见 `TEMPLATE.md`)。
+
 ## 公开 API
 
 - `AppError` — sealed class:`Http(code, body)` / `Timeout` / `NoConnectivity` / `Ssl` / `Serialization` / `Unknown`,都是 `Throwable` 的子类,能直接装进 `AppResult.Failure`。

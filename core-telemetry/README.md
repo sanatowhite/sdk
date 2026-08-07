@@ -35,6 +35,20 @@ class MyApp : TelemetryApplication()
 
 传递依赖:`androidx.metrics:metrics-performance`(JankStats)。没有其他重量级依赖——崩溃/ANR/内存/启动耗时采集全部基于 Android 框架自带 API,不需要任何第三方 SDK。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:需要启动耗时/卡顿/崩溃/ANR/内存采集时用。想要真实上报到某个后端(而不是只打 Logcat),额外加 `:telemetry-firebase` 或自己写一个 `Telemetry` 实现。
+
+**接入步骤(用 Hilt,推荐)**:
+1. 加坐标:`implementation("com.github.sanatowhite.sdk:core-telemetry-hilt:1.0.0")`。
+2. 自己的 `Application` 继承 `TelemetryApplication`,加 `@HiltAndroidApp`。
+3. 想采集卡顿,在每个 Activity 里手动接 `ScreenJankReporter(window, telemetry)`(需要注入 `Telemetry`),`onScreenChanged("屏幕名")` 切屏时调用,`onPause()` 里调用 `flush()`。
+4. 想要真实上报,额外加 `implementation("com.github.sanatowhite.sdk:telemetry-firebase:1.0.0")`,不需要改代码。
+
+**验证**:装 debug 包,触发一次崩溃(比如 `:debug-tools` 的 `CrashTriggers.triggerCrash()`),重启 app,确认崩溃日志出现在 Logcat(或 Firebase Crashlytics 后台,如果接了 `:telemetry-firebase` 且用了真实 `google-services.json`)。
+
+**不要做的事**:不要用 `androidx.startup` 初始化任何采集器(见下面"已知限制");不要定时采集 `Debug.MemoryInfo`;不要从崩溃 handler 内部直接调用 `Telemetry` 上报(会造成 fatal + non-fatal 双重上报,见 `CLAUDE.md` 的 telemetry 章节)。
+
 ## 公开 API
 
 - `Telemetry` — 核心接口:`event()`(逃生口)+ `screenView`/`startup`/`frame`/`networkRequest`/`crash`/`anr`(固定 schema)。`isEnabled` 配合内联的 `eventIfEnabled` 保证关闭态零分配。

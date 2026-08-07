@@ -24,6 +24,20 @@
 
 依赖坐标 `com.github.sanatowhite.sdk:telemetry-firebase:<version>`,和其余 `-hilt` 模块一样是纯 Hilt 装配模块——只提供 `FirebaseTelemetryModule` 这一个 `@Module`,没有别的可调用 API。**必须 apply Hilt Gradle 插件才能被正确聚合**(见 `docs/adr/spike-0000-hilt-library-module-aggregation.md`):库模块的 `@Module` 若只是"在 classpath 上"而不自己跑 `hilt-compiler`,聚合阶段会静默找不到它,不报任何编译错误。
 
+## AI 接入指南(可直接执行)
+
+**要不要用这个模块**:想要 Firebase Analytics/Crashlytics 作为 `Telemetry` 后端时加;不想要任何 Firebase 依赖就完全跳过它(不影响 `:core-telemetry`/`:core-telemetry-hilt` 正常工作)。
+
+**接入步骤**:
+1. 在自己的 app 模块 `plugins {}` 加 `alias(libs.plugins.google.services)` + `alias(libs.plugins.firebase.crashlytics)`(根 `build.gradle.kts` 需要先声明这两个插件版本,`apply false`)。
+2. `dependencies {}` 加 `implementation("com.github.sanatowhite.sdk:telemetry-firebase:1.0.0")`。
+3. 放一份真实的 `google-services.json` 在 app 模块根目录(去 <https://console.firebase.google.com> 建项目下载),包名必须和 `applicationId`(含各 buildType 后缀)完全匹配。
+4. 不需要写任何 `@Module`——`FirebaseTelemetryModule` 自动把 `FirebaseTelemetry` 加进 `Set<Telemetry>`。
+
+**验证**:`./gradlew :app:assembleDebug` 编译通过(即使用占位 `google-services.json` 也能过);真实上报需要用真实项目的 json,验证方式是在 Firebase 控制台 DebugView 里看到事件。
+
+**不要做的事**:见"已知限制"——不要在这个模块里加 productFlavor/多环境判断。
+
 ## 公开 API
 
 - `FirebaseTelemetry(analytics, crashlytics)` — 实现 `Telemetry`,固定 schema 方法都转换成 `FirebaseAnalytics.logEvent` + 对应 `Bundle`;`crash()`/`anr()` 走 `FirebaseCrashlytics.recordException`。
