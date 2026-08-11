@@ -106,3 +106,716 @@ public final class io.sanato.appkit.core.net.TelemetryEventListenerFactory imple
 }
 
 
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.AppHeartbeat {
+  public final long getInterval-UwyO8pc();
+  public final kotlin.jvm.functions.Function0<io.sanato.appkit.core.net.ws.WebSocketMessage> getMessage();
+  public final long component1-UwyO8pc();
+  public final kotlin.jvm.functions.Function0<io.sanato.appkit.core.net.ws.WebSocketMessage> component2();
+  public final io.sanato.appkit.core.net.ws.AppHeartbeat copy-VtjQ1oo(long, kotlin.jvm.functions.Function0<? extends io.sanato.appkit.core.net.ws.WebSocketMessage>);
+  public static io.sanato.appkit.core.net.ws.AppHeartbeat copy-VtjQ1oo$default(io.sanato.appkit.core.net.ws.AppHeartbeat, long, kotlin.jvm.functions.Function0, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.AppHeartbeat(long, kotlin.jvm.functions.Function0, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection implements io.sanato.appkit.core.net.ws.WebSocketConnection {
+  public static final int NORMAL_CLOSURE_CODE;
+  public static final long RETRY_POLL_INTERVAL_MILLIS;
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection(io.sanato.appkit.core.net.ws.WebSocketTransport, io.sanato.appkit.core.net.ws.WebSocketConfig, kotlinx.coroutines.CoroutineScope, io.sanato.appkit.core.net.ws.WebSocketTokenProvider, kotlinx.coroutines.flow.Flow<java.lang.Boolean>, io.sanato.appkit.core.net.ws.WebSocketMetricsSink, kotlin.random.Random);
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection(io.sanato.appkit.core.net.ws.WebSocketTransport, io.sanato.appkit.core.net.ws.WebSocketConfig, kotlinx.coroutines.CoroutineScope, io.sanato.appkit.core.net.ws.WebSocketTokenProvider, kotlinx.coroutines.flow.Flow, io.sanato.appkit.core.net.ws.WebSocketMetricsSink, kotlin.random.Random, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public kotlinx.coroutines.flow.StateFlow<io.sanato.appkit.core.net.ws.WebSocketState> getState();
+  public kotlinx.coroutines.flow.SharedFlow<io.sanato.appkit.core.net.ws.WebSocketMessage> getMessages();
+  public void connect();
+  public void reconnect();
+  public void close(int, java.lang.String);
+  public java.lang.Object send(io.sanato.appkit.core.net.ws.WebSocketMessage, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+interface io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome {
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$ClosedByUser implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$ClosedByUser(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$ClosedByUser copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$ClosedByUser copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$ClosedByUser, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Failed implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Failed(io.sanato.appkit.core.net.ws.WebSocketError);
+  public final io.sanato.appkit.core.net.ws.WebSocketError getError();
+  public final io.sanato.appkit.core.net.ws.WebSocketError component1();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Failed copy(io.sanato.appkit.core.net.ws.WebSocketError);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Failed copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Failed, io.sanato.appkit.core.net.ws.WebSocketError, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Opened implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome {
+  public static final io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$Opened INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$RestartRequested implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome {
+  public static final io.sanato.appkit.core.net.ws.RealWebSocketConnection$AttemptOutcome$RestartRequested INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$Companion {
+  public final java.util.Set<java.lang.Integer> getAUTH_REJECTION_CODES();
+  public final java.util.Set<java.lang.Integer> getTERMINAL_HANDSHAKE_CODES();
+  public final java.util.Set<java.lang.Integer> getTERMINAL_CLOSE_CODES();
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+interface io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$CloseRequested implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$CloseRequested(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$CloseRequested copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$CloseRequested copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$CloseRequested, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Ended implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Ended(int, int, java.lang.String);
+  public final int getGeneration();
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final int component2();
+  public final java.lang.String component3();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Ended copy(int, int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Ended copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Ended, int, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Failure implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Failure(int, java.lang.Throwable, okhttp3.Response);
+  public final int getGeneration();
+  public final java.lang.Throwable getThrowable();
+  public final okhttp3.Response getResponse();
+  public final int component1();
+  public final java.lang.Throwable component2();
+  public final okhttp3.Response component3();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Failure copy(int, java.lang.Throwable, okhttp3.Response);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Failure copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Failure, int, java.lang.Throwable, okhttp3.Response, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$ForceReconnect implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public static final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$ForceReconnect INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$OnlineChanged implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$OnlineChanged(boolean);
+  public final boolean isOnline();
+  public final boolean component1();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$OnlineChanged copy(boolean);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$OnlineChanged copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$OnlineChanged, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Open implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Open(int, okhttp3.Response);
+  public final int getGeneration();
+  public final okhttp3.Response getResponse();
+  public final int component1();
+  public final okhttp3.Response component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Open copy(int, okhttp3.Response);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Open copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Open, int, okhttp3.Response, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Overflow implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Overflow(int);
+  public final int getGeneration();
+  public final int component1();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Overflow copy(int);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Overflow copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$Overflow, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$StartRequested implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent {
+  public static final io.sanato.appkit.core.net.ws.RealWebSocketConnection$ControlEvent$StartRequested INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$Listener extends okhttp3.WebSocketListener {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$Listener(io.sanato.appkit.core.net.ws.RealWebSocketConnection, int);
+  public void onOpen(okhttp3.WebSocket, okhttp3.Response);
+  public void onMessage(okhttp3.WebSocket, java.lang.String);
+  public void onMessage(okhttp3.WebSocket, okio.ByteString);
+  public void onClosing(okhttp3.WebSocket, int, java.lang.String);
+  public void onClosed(okhttp3.WebSocket, int, java.lang.String);
+  public void onFailure(okhttp3.WebSocket, java.lang.Throwable, okhttp3.Response);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+interface io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Clean implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Clean(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Clean copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Clean copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Clean, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$ClosedByUser implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$ClosedByUser(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$ClosedByUser copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$ClosedByUser copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$ClosedByUser, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Failed implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Failed(io.sanato.appkit.core.net.ws.WebSocketError);
+  public final io.sanato.appkit.core.net.ws.WebSocketError getError();
+  public final io.sanato.appkit.core.net.ws.WebSocketError component1();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Failed copy(io.sanato.appkit.core.net.ws.WebSocketError);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Failed copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Failed, io.sanato.appkit.core.net.ws.WebSocketError, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Overflowed implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Overflowed(int);
+  public final int getCapacity();
+  public final int component1();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Overflowed copy(int);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Overflowed copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$Overflowed, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$PeerClosed implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$PeerClosed(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$PeerClosed copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$PeerClosed copy$default(io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$PeerClosed, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$RestartRequested implements io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome {
+  public static final io.sanato.appkit.core.net.ws.RealWebSocketConnection$SessionEndOutcome$RestartRequested INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "RealWebSocketConnection.kt"
+public final class io.sanato.appkit.core.net.ws.RealWebSocketConnectionKt {
+  public static final long backoffMillis(int, io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, kotlin.random.Random);
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public interface io.sanato.appkit.core.net.ws.TokenPlacement {
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.TokenPlacement$Header implements io.sanato.appkit.core.net.ws.TokenPlacement {
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Header(java.lang.String, java.lang.String);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Header(java.lang.String, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getName();
+  public final java.lang.String getPrefix();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.TokenPlacement$Header copy(java.lang.String, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.TokenPlacement$Header copy$default(io.sanato.appkit.core.net.ws.TokenPlacement$Header, java.lang.String, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Header();
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter implements io.sanato.appkit.core.net.ws.TokenPlacement {
+  public io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter(java.lang.String);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter(java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getName();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter copy(java.lang.String);
+  public static io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter copy$default(io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$QueryParameter();
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol implements io.sanato.appkit.core.net.ws.TokenPlacement {
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol(java.lang.String);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol(java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getPrefix();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol copy(java.lang.String);
+  public static io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol copy$default(io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.TokenPlacement$Subprotocol();
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketConfig {
+  public io.sanato.appkit.core.net.ws.WebSocketConfig(java.lang.String, io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, int, io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy, io.sanato.appkit.core.net.ws.TokenPlacement, java.util.Map, long, io.sanato.appkit.core.net.ws.AppHeartbeat, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getUrl();
+  public final io.sanato.appkit.core.net.ws.WebSocketRetryPolicy getRetry();
+  public final int getInboundBufferCapacity();
+  public final io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy getOverflowPolicy();
+  public final io.sanato.appkit.core.net.ws.TokenPlacement getTokenPlacement();
+  public final java.util.Map<java.lang.String, java.lang.String> getHeaders();
+  public final long getCloseTimeout-UwyO8pc();
+  public final io.sanato.appkit.core.net.ws.AppHeartbeat getAppHeartbeat();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.core.net.ws.WebSocketRetryPolicy component2();
+  public final int component3();
+  public final io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy component4();
+  public final io.sanato.appkit.core.net.ws.TokenPlacement component5();
+  public final java.util.Map<java.lang.String, java.lang.String> component6();
+  public final long component7-UwyO8pc();
+  public final io.sanato.appkit.core.net.ws.AppHeartbeat component8();
+  public final io.sanato.appkit.core.net.ws.WebSocketConfig copy-GajXJrc(java.lang.String, io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, int, io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy, io.sanato.appkit.core.net.ws.TokenPlacement, java.util.Map<java.lang.String, java.lang.String>, long, io.sanato.appkit.core.net.ws.AppHeartbeat);
+  public static io.sanato.appkit.core.net.ws.WebSocketConfig copy-GajXJrc$default(io.sanato.appkit.core.net.ws.WebSocketConfig, java.lang.String, io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, int, io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy, io.sanato.appkit.core.net.ws.TokenPlacement, java.util.Map, long, io.sanato.appkit.core.net.ws.AppHeartbeat, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.WebSocketConfig(java.lang.String, io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, int, io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy, io.sanato.appkit.core.net.ws.TokenPlacement, java.util.Map, long, io.sanato.appkit.core.net.ws.AppHeartbeat, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "WebSocketConnection.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketConnection {
+  public abstract kotlinx.coroutines.flow.StateFlow<io.sanato.appkit.core.net.ws.WebSocketState> getState();
+  public abstract kotlinx.coroutines.flow.SharedFlow<io.sanato.appkit.core.net.ws.WebSocketMessage> getMessages();
+  public abstract void connect();
+  public abstract java.lang.Object send(io.sanato.appkit.core.net.ws.WebSocketMessage, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract void close(int, java.lang.String);
+  public static void close$default(io.sanato.appkit.core.net.ws.WebSocketConnection, int, java.lang.String, int, java.lang.Object);
+  public abstract void reconnect();
+}
+
+
+Compiled from "WebSocketError.kt"
+public abstract class io.sanato.appkit.core.net.ws.WebSocketError extends java.io.IOException {
+  public io.sanato.appkit.core.net.ws.WebSocketError(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.net.ws.WebSocketError(java.lang.String, java.lang.Throwable, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$BackpressureOverflow extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$BackpressureOverflow(int);
+  public final int getCapacity();
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$ClosedByPeer extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$ClosedByPeer(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$HandshakeRejected extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$HandshakeRejected(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getBody();
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$PingTimeout extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$PingTimeout();
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$Transport extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$Transport(java.lang.Throwable);
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketError$Unauthenticated extends io.sanato.appkit.core.net.ws.WebSocketError {
+  public io.sanato.appkit.core.net.ws.WebSocketError$Unauthenticated(java.lang.Throwable);
+  public io.sanato.appkit.core.net.ws.WebSocketError$Unauthenticated(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.net.ws.WebSocketError$Unauthenticated();
+}
+
+
+Compiled from "WebSocketError.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketErrorKt {
+  public static final io.sanato.appkit.core.net.AppError toAppError(io.sanato.appkit.core.net.ws.WebSocketError);
+}
+
+
+Compiled from "WebSocketFactory.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketFactory {
+  public static final io.sanato.appkit.core.net.ws.WebSocketFactory INSTANCE;
+  public final okhttp3.OkHttpClient webSocketOkHttpClient-HG0u8IE(okhttp3.OkHttpClient, long);
+  public static okhttp3.OkHttpClient webSocketOkHttpClient-HG0u8IE$default(io.sanato.appkit.core.net.ws.WebSocketFactory, okhttp3.OkHttpClient, long, int, java.lang.Object);
+  public final io.sanato.appkit.core.net.ws.WebSocketConnection create(okhttp3.OkHttpClient, io.sanato.appkit.core.net.ws.WebSocketConfig, kotlinx.coroutines.CoroutineScope, io.sanato.appkit.core.net.ws.WebSocketTokenProvider, kotlinx.coroutines.flow.Flow<java.lang.Boolean>, io.sanato.appkit.core.net.ws.WebSocketMetricsSink);
+  public static io.sanato.appkit.core.net.ws.WebSocketConnection create$default(io.sanato.appkit.core.net.ws.WebSocketFactory, okhttp3.OkHttpClient, io.sanato.appkit.core.net.ws.WebSocketConfig, kotlinx.coroutines.CoroutineScope, io.sanato.appkit.core.net.ws.WebSocketTokenProvider, kotlinx.coroutines.flow.Flow, io.sanato.appkit.core.net.ws.WebSocketMetricsSink, int, java.lang.Object);
+}
+
+
+Compiled from "WebSocketMessage.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketMessage {
+}
+
+
+Compiled from "WebSocketMessage.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMessage$Binary implements io.sanato.appkit.core.net.ws.WebSocketMessage {
+  public io.sanato.appkit.core.net.ws.WebSocketMessage$Binary(okio.ByteString);
+  public final okio.ByteString getBytes();
+  public final okio.ByteString component1();
+  public final io.sanato.appkit.core.net.ws.WebSocketMessage$Binary copy(okio.ByteString);
+  public static io.sanato.appkit.core.net.ws.WebSocketMessage$Binary copy$default(io.sanato.appkit.core.net.ws.WebSocketMessage$Binary, okio.ByteString, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMessage.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMessage$Text implements io.sanato.appkit.core.net.ws.WebSocketMessage {
+  public io.sanato.appkit.core.net.ws.WebSocketMessage$Text(java.lang.String);
+  public final java.lang.String getValue();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.core.net.ws.WebSocketMessage$Text copy(java.lang.String);
+  public static io.sanato.appkit.core.net.ws.WebSocketMessage$Text copy$default(io.sanato.appkit.core.net.ws.WebSocketMessage$Text, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketMetricEvent {
+  public abstract java.lang.String getEndpoint();
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Closed implements io.sanato.appkit.core.net.ws.WebSocketMetricEvent {
+  public io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Closed(java.lang.String, int, long, long, long, long, long, boolean);
+  public java.lang.String getEndpoint();
+  public final int getCode();
+  public final long getSessionMillis();
+  public final long getMessagesIn();
+  public final long getMessagesOut();
+  public final long getBytesIn();
+  public final long getBytesOut();
+  public final boolean getClean();
+  public final java.lang.String component1();
+  public final int component2();
+  public final long component3();
+  public final long component4();
+  public final long component5();
+  public final long component6();
+  public final long component7();
+  public final boolean component8();
+  public final io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Closed copy(java.lang.String, int, long, long, long, long, long, boolean);
+  public static io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Closed copy$default(io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Closed, java.lang.String, int, long, long, long, long, long, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Failed implements io.sanato.appkit.core.net.ws.WebSocketMetricEvent {
+  public io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Failed(java.lang.String, java.lang.String, long, int);
+  public java.lang.String getEndpoint();
+  public final java.lang.String getReason();
+  public final long getSessionMillis();
+  public final int getAttempt();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final long component3();
+  public final int component4();
+  public final io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Failed copy(java.lang.String, java.lang.String, long, int);
+  public static io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Failed copy$default(io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Failed, java.lang.String, java.lang.String, long, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Opened implements io.sanato.appkit.core.net.ws.WebSocketMetricEvent {
+  public io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Opened(java.lang.String, long, int);
+  public java.lang.String getEndpoint();
+  public final long getHandshakeMillis();
+  public final int getAttempt();
+  public final java.lang.String component1();
+  public final long component2();
+  public final int component3();
+  public final io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Opened copy(java.lang.String, long, int);
+  public static io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Opened copy$default(io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Opened, java.lang.String, long, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Reconnecting implements io.sanato.appkit.core.net.ws.WebSocketMetricEvent {
+  public io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Reconnecting(java.lang.String, int, long, java.lang.String);
+  public java.lang.String getEndpoint();
+  public final int getAttempt();
+  public final long getDelayMillis();
+  public final java.lang.String getReason();
+  public final java.lang.String component1();
+  public final int component2();
+  public final long component3();
+  public final java.lang.String component4();
+  public final io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Reconnecting copy(java.lang.String, int, long, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Reconnecting copy$default(io.sanato.appkit.core.net.ws.WebSocketMetricEvent$Reconnecting, java.lang.String, int, long, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketMetricsSink.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketMetricsSink {
+  public abstract void onWebSocketEvent(io.sanato.appkit.core.net.ws.WebSocketMetricEvent);
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy extends java.lang.Enum<io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy> {
+  public static final io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy FAIL_CONNECTION;
+  public static final io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy DROP_OLDEST;
+  public static final io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy SUSPEND_READER;
+  public static io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy[] values();
+  public static io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.net.ws.WebSocketOverflowPolicy> getEntries();
+}
+
+
+Compiled from "WebSocketConfig.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketRetryPolicy {
+  public io.sanato.appkit.core.net.ws.WebSocketRetryPolicy(int, long, long, double, double, long, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final int getMaxAttempts();
+  public final long getInitialDelay-UwyO8pc();
+  public final long getMaxDelay-UwyO8pc();
+  public final double getMultiplier();
+  public final double getJitterRatio();
+  public final long getResetAfterConnectedFor-UwyO8pc();
+  public final int component1();
+  public final long component2-UwyO8pc();
+  public final long component3-UwyO8pc();
+  public final double component4();
+  public final double component5();
+  public final long component6-UwyO8pc();
+  public final io.sanato.appkit.core.net.ws.WebSocketRetryPolicy copy-7--AcyY(int, long, long, double, double, long);
+  public static io.sanato.appkit.core.net.ws.WebSocketRetryPolicy copy-7--AcyY$default(io.sanato.appkit.core.net.ws.WebSocketRetryPolicy, int, long, long, double, double, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.net.ws.WebSocketRetryPolicy(int, long, long, double, double, long, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "WebSocketState.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketState {
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Closed implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public io.sanato.appkit.core.net.ws.WebSocketState$Closed(int, java.lang.String);
+  public final int getCode();
+  public final java.lang.String getReason();
+  public final int component1();
+  public final java.lang.String component2();
+  public final io.sanato.appkit.core.net.ws.WebSocketState$Closed copy(int, java.lang.String);
+  public static io.sanato.appkit.core.net.ws.WebSocketState$Closed copy$default(io.sanato.appkit.core.net.ws.WebSocketState$Closed, int, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Connected implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public static final io.sanato.appkit.core.net.ws.WebSocketState$Connected INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Connecting implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public static final io.sanato.appkit.core.net.ws.WebSocketState$Connecting INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Failed implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public io.sanato.appkit.core.net.ws.WebSocketState$Failed(io.sanato.appkit.core.net.ws.WebSocketError);
+  public final io.sanato.appkit.core.net.ws.WebSocketError getError();
+  public final io.sanato.appkit.core.net.ws.WebSocketError component1();
+  public final io.sanato.appkit.core.net.ws.WebSocketState$Failed copy(io.sanato.appkit.core.net.ws.WebSocketError);
+  public static io.sanato.appkit.core.net.ws.WebSocketState$Failed copy$default(io.sanato.appkit.core.net.ws.WebSocketState$Failed, io.sanato.appkit.core.net.ws.WebSocketError, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Idle implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public static final io.sanato.appkit.core.net.ws.WebSocketState$Idle INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketState.kt"
+public final class io.sanato.appkit.core.net.ws.WebSocketState$Reconnecting implements io.sanato.appkit.core.net.ws.WebSocketState {
+  public io.sanato.appkit.core.net.ws.WebSocketState$Reconnecting(int, long, io.sanato.appkit.core.net.ws.WebSocketError);
+  public final int getAttempt();
+  public final long getDelayMillis();
+  public final io.sanato.appkit.core.net.ws.WebSocketError getCause();
+  public final int component1();
+  public final long component2();
+  public final io.sanato.appkit.core.net.ws.WebSocketError component3();
+  public final io.sanato.appkit.core.net.ws.WebSocketState$Reconnecting copy(int, long, io.sanato.appkit.core.net.ws.WebSocketError);
+  public static io.sanato.appkit.core.net.ws.WebSocketState$Reconnecting copy$default(io.sanato.appkit.core.net.ws.WebSocketState$Reconnecting, int, long, io.sanato.appkit.core.net.ws.WebSocketError, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "WebSocketTokenProvider.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketTokenProvider {
+  public abstract java.lang.Object token(boolean, kotlin.coroutines.Continuation<? super java.lang.String>);
+}
+
+
+Compiled from "WebSocketTransport.kt"
+public interface io.sanato.appkit.core.net.ws.WebSocketTransport {
+  public abstract okhttp3.WebSocket open(okhttp3.Request, okhttp3.WebSocketListener);
+}
+
+
