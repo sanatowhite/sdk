@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Two things live in one repo, on purpose, and must stay decoupled:
 
-1. **The SDK: 19 published modules** — `:updatechecker` plus 18 `core-*`/`feature-*`/`-hilt` companion/`:sdk-bom` modules, all published to JitPack under `com.github.sanatowhite.sdk:<module>:<version>` (see ADR 0008). Real, independently-versioned AARs a consumer `implementation(...)`s — never source they copy and edit. `:updatechecker` in particular keeps zero third-party deps beyond `core-ktx`/`coroutines-android`, zero internal module deps, additive-only public API.
+1. **The SDK: 25 published modules** — `:updatechecker` plus 24 `core-*`/`feature-*`/`-hilt` companion/vendor-backed/`:sdk-bom` modules, all published to JitPack under `com.github.sanatowhite.sdk:<module>:<version>` (see ADR 0008). Real, independently-versioned AARs a consumer `implementation(...)`s — never source they copy and edit. `:updatechecker` in particular keeps zero third-party deps beyond `core-ktx`/`coroutines-android`, zero internal module deps, additive-only public API.
 2. **`:logkit`** — a second standalone Android library (multi-threaded, order-preserving, encrypted-and-compressed rolling log SDK; see "The five `:logkit` rules" below). Modeled on `:updatechecker`'s rules but **not currently published** — not part of the `sdkModules` set above (it's young enough that its crypto/format hasn't earned an additive-only-forever freeze yet). If it ever needs to publish, it just joins `sdkModules` like everything else — ADR 0008 retired the old subtree-mirror escape hatch along with the single-artifact coordinate it was protecting.
 3. **`:app` + `:benchmark` + `:baselineprofile`** — a fork-able Android app template: Compose + Hilt + Navigation, performance monitoring, wired up entirely from the published SDK modules above (plus `:logkit`) via `project(...)` dependencies (see `docs/adr/` for why `project()` and not the Maven coordinates, even though `:app` lives in the same repo). Someone forks this repo, runs `scripts/bootstrap.sh`, and gets a runnable app.
 
@@ -58,35 +58,42 @@ JDK must be **17** (not 21, not the system default). If `./gradlew` can't find i
 
 ### Module graph (enforced by `verifyModuleGraph`, not just convention)
 
-Four tiers, 19 modules (see ADR 0008 for why the shape is what it is):
+Four tiers, 25 modules (see ADR 0008 for why the shape is what it is; ADR 0012 for the
+`:core-auth`/`:auth-firebase`/`:auth-net-hilt`/`:feature-auth` addition):
 
 ```
 Tier 1 (capability, zero Hilt, zero glue between each other):
   :core-common    → (nothing)
   :core-init      → (nothing)
   :core-ui        → :core-common
-  :core-net       → :core-common
+  :core-net       → :core-common   (includes WebSocket support, io.sanato.appkit.core.net.ws)
   :core-data      → :core-common
   :core-telemetry → :core-common, :core-init
+  :core-auth      → :core-common   (provider-agnostic; its one implementation is :auth-firebase, a leaf — no :core-auth-hilt, see core-auth/README.md)
 
 Tier 3 (Hilt assembly — the only tier allowed to glue across Tier-1 boundaries):
   :core-common-hilt    → :core-common
   :core-init-hilt      → :core-init
   :core-data-hilt      → :core-data
   :core-telemetry-hilt → :core-telemetry, :core-init-hilt, :core-common
-  :net-telemetry-hilt  → :core-net, :core-telemetry   (the one cross-Tier-1 bridge)
+  :net-telemetry-hilt  → :core-net, :core-telemetry   (the first cross-Tier-1 bridge)
   :telemetry-firebase  → :core-telemetry
+  :auth-net-hilt       → :core-auth, :core-net, :core-common   (the second cross-Tier-1 bridge — HTTP Authenticator/Interceptor + WebSocket token provider, one module for both)
+  :auth-firebase       → :core-auth   (vendor-backed per ADR 0011 — the only AuthRepository/AuthTokenProvider implementation)
 
 Tier 2 (standard pages — apply Hilt directly themselves, unlike Tier 1):
   :feature-settings → :core-common, :core-ui, :core-data, :core-data-hilt, :core-common-hilt
   :feature-feedback → :core-common, :core-telemetry, :core-ui, :core-common-hilt
   :feature-licenses → :core-ui
   :feature-update   → :updatechecker, :core-ui
+  :feature-auth     → :core-common, :core-ui, :core-auth
 
 Tier 0 / other:
-  :updatechecker → (nothing — hard rule, see below)
-  :debug-tools   → :core-telemetry
-  :sdk-bom       → (pure version constraints, no project() deps at all)
+  :updatechecker    → (nothing — hard rule, see below)
+  :backupkit        → (nothing — format/orchestration/SAF storage all self-contained)
+  :backupkit-drive  → :backupkit   (vendor-backed per ADR 0011 — the only RemoteBackupStore implementation)
+  :debug-tools      → :core-telemetry
+  :sdk-bom          → (pure version constraints, no project() deps at all)
 
 Not part of the published sdkModules set (see "The five :logkit rules" below):
   :logkit         → (nothing — hard rule, same reasoning as :updatechecker)
@@ -100,9 +107,18 @@ Not part of the published sdkModules set (see "The five :logkit rules" below):
 
 Two sibling drift-checks guard the other hand-written lists this graph depends on: `verifySdkModuleList` (the `sdkModules` array in `build.gradle.kts` vs. which subprojects actually apply `maven-publish`) and `verifySdkBomConstraints` (`sdk-bom`'s constraint list vs. `sdkModules`).
 
+### Every new module ships with its own `CLAUDE.md` + an AI-executable README
+
+This repo defaults to being built for AI consumption first, not just human developers — a convention that predates this rule as informal practice (`:updatechecker/README.md`'s "完整发布步骤(AI 可以直接照抄执行)" section, replicated for `:logkit`) and is now a hard requirement for every new module, published or not:
+
+1. **A per-module `<module>/CLAUDE.md`.** Claude Code auto-loads directory-scoped `CLAUDE.md` files when working inside that directory, so this is the mechanism that gets a future AI session the module's specific gotchas (its convention-plugin choice, its dependency-direction rules, its testing quirks) without that AI having to first rediscover them by reading source or by this root file growing an ever-longer per-module digression. Keep it scoped to what's specific to that module — anything already true repo-wide (JDK version, spotless, the four gate commands) belongs here in the root file, not duplicated in every module's copy.
+2. **An AI-executable section in `<module>/README.md`.** Not just a human-oriented description — concrete copy-pasteable commands/steps, explicit exit-code/success criteria, and callouts for "don't do X" design decisions so a future AI doesn't silently "optimize" them away. `:updatechecker/README.md`'s "完整发布步骤" and `:auth-firebase/README.md`'s "为什么这个模块可以带三方依赖" (walking through ADR 0011's four conditions against this module's actual code) are the two shapes to imitate — a runnable recipe, and a reasoning trail for a non-obvious constraint.
+
+Both are checked by hand at PR review time, not mechanically — there is no `verifyModuleDocs` task. When scaffolding a new `core-*` module via `scripts/new-module.sh`, fill in both files it generates before considering the module done; for module shapes that script doesn't cover (`feature-*`, `-hilt` companions, vendor-backed leaves), copy the nearest existing module's `CLAUDE.md`/README structure as the starting point rather than writing from a blank page.
+
 ### The four `:updatechecker` rules
 
-`:updatechecker` predates the app template, and unlike every other SDK module, has never applied any `build-logic` convention plugin. It now shares the same publish set, tag, and version as the other 18 modules (ADR 0008) rather than being mirrored out separately, but its own four rules are unchanged in spirit:
+`:updatechecker` predates the app template, and unlike every other SDK module, has never applied any `build-logic` convention plugin. It now shares the same publish set, tag, and version as the other 24 modules (ADR 0008) rather than being mirrored out separately, but its own four rules are unchanged in spirit:
 
 1. **Zero internal module dependencies** — the general "publishable module must not depend on a non-publishable one" rule from `verifyModuleGraph` applies to every SDK module, but `:updatechecker` is the strictest case: it must have **zero** project dependencies at all, publishable or not.
 2. **Zero third-party dependencies beyond `androidx.core:core-ktx` (kept `implementation` — see ADR 0009 on why the `FileProvider` superclass doesn't leak) and `kotlinx-coroutines-android` (kept `api` — a genuine leak via `UpdateDownloader.download(): Flow<...>`).** Don't "helpfully" swap in OkHttp; that forces OkHttp onto every consumer.
@@ -127,7 +143,7 @@ If you touch anything under `logkit/` or `tools/logkit-decrypt/`, run `./gradlew
 
 ### DI boundary
 
-`core-*` (Tier 1) modules only use `javax.inject` annotations — no Hilt, no `@Module`/`@Component` anywhere. Default Hilt wiring for each one lives in a separate published `-hilt` companion module (`core-common-hilt`, `core-init-hilt`, `core-data-hilt`, `core-telemetry-hilt`, `net-telemetry-hilt`, plus `telemetry-firebase`) — this split exists because Hilt's `@Module @InstallIn(...)` installs unconditionally the moment its declaring module is on the classpath **and has itself run `hilt-compiler`**; see `docs/adr/spike-0000-hilt-library-module-aggregation.md` for the empirical spike behind that claim, and ADR 0008/0004 for the full reasoning. Tier-2 `feature-*` modules apply Hilt directly themselves (their Route composables require it). `:app/di/` still exists, but now only for genuinely app-specific bindings (the `@Binds @IntoSet` initializer entries in `InitializerModule.kt`) — everything reusable moved into a `-hilt` module. This split means a consumer can take a capability module's Hilt wiring or `exclude()` it and provide their own binding (documented per-module in each `-hilt` module's README), without dragging Hilt onto the capability module itself.
+`core-*` (Tier 1) modules only use `javax.inject` annotations — no Hilt, no `@Module`/`@Component` anywhere. Default Hilt wiring for each one lives in a separate published `-hilt` companion module (`core-common-hilt`, `core-init-hilt`, `core-data-hilt`, `core-telemetry-hilt`, `net-telemetry-hilt`, plus `telemetry-firebase`) — this split exists because Hilt's `@Module @InstallIn(...)` installs unconditionally the moment its declaring module is on the classpath **and has itself run `hilt-compiler`**; see `docs/adr/spike-0000-hilt-library-module-aggregation.md` for the empirical spike behind that claim, and ADR 0008/0004 for the full reasoning. `:core-auth` is the one Tier-1 module that deliberately breaks this pattern — it has no `:core-auth-hilt` companion, because it has only one real implementation (`:auth-firebase`) and the Hilt bindings live directly there instead of in a separate near-empty shim (see `core-auth/README.md`). Tier-2 `feature-*` modules apply Hilt directly themselves (their Route composables require it). `:app/di/` still exists, but now only for genuinely app-specific bindings (the `@Binds @IntoSet` initializer entries in `InitializerModule.kt`) — everything reusable moved into a `-hilt` module. This split means a consumer can take a capability module's Hilt wiring or `exclude()` it and provide their own binding (documented per-module in each `-hilt` module's README), without dragging Hilt onto the capability module itself.
 
 ### `Telemetry` abstraction (`:core-telemetry`)
 

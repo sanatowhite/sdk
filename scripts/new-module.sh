@@ -97,6 +97,15 @@ TODO:一句话职责边界 + 明确排除的能力。
 换成"只要一并引入 core-common 就行,它很小,做的是 XXX";如果后续加了别的模块
 依赖,这里要同步更新。
 
+## AI 接入指南(可直接执行)
+
+TODO:替换成这个模块真实的、可直接照抄执行的接入步骤——命令、期望的退出码/输出、
+以及"不要做 XXX"的设计取舍(防止未来的 AI 会话把它当成可以"优化掉"的东西)。
+参照 \`:updatechecker/README.md\`"完整发布步骤"或 \`:auth-firebase/README.md\`
+"为什么这个模块可以带三方依赖"的形状——一份是可跑的操作清单,一份是不明显的
+约束背后的推理链。见根 \`CLAUDE.md\`"Every new module ships with its own
+CLAUDE.md + an AI-executable README"一节。
+
 ## 公开 API
 
 TODO:入口类列表,每个方法一行说明。
@@ -104,6 +113,27 @@ TODO:入口类列表,每个方法一行说明。
 ## 已知限制 / 不要做的事
 
 TODO。
+EOF
+
+cat >"$MODULE_DIR/CLAUDE.md" <<EOF
+# CLAUDE.md — \`:$MODULE_NAME\`
+
+Directory-scoped guidance for Claude Code when working inside this module.
+Only put things here that are **specific to this module** — anything true
+repo-wide (JDK version, spotless, the four gate commands) belongs in the root
+\`CLAUDE.md\`, not duplicated here.
+
+TODO: fill in before considering this module done (see root \`CLAUDE.md\`'s
+"Every new module ships with its own CLAUDE.md + an AI-executable README"):
+
+- What this module is for, and its one-sentence boundary (mirror the README's
+  "这是什么 / 不是什么").
+- Its dependency-direction rule, if it has one narrower than
+  \`verifyModuleGraph\`'s general rule (e.g. "never depend on :core-net").
+- Anything about its testing setup that isn't obvious from \`build.gradle.kts\`
+  (Robolectric SDK override, a fake it ships via \`testFixtures\`, etc).
+- The one command to run after touching this module, if it's not just
+  \`./gradlew :$MODULE_NAME:test\`.
 EOF
 
 # 追加到 settings.gradle.kts 的非-JITPACK include 列表——按字母序插入到
@@ -114,7 +144,9 @@ perl -0777 -pi -e "s/(\"\:core-telemetry\",\n)/\${1}        \":$MODULE_NAME\",\n
 echo ""
 echo "✅ Created $MODULE_DIR and registered it in settings.gradle.kts."
 echo "   Next steps:"
-echo "   1. Fill in $MODULE_DIR/README.md (this repo's per-module docs are meant to be AI-readable, not skipped)."
+echo "   1. Fill in $MODULE_DIR/README.md AND $MODULE_DIR/CLAUDE.md — this repo requires"
+echo "      both for every module, not just a human-oriented description (see root"
+echo "      CLAUDE.md's \"Every new module ships with its own CLAUDE.md + an AI-executable README\")."
 echo "   2. If :app needs to consume it: add implementation(project(\":$MODULE_NAME\")) to app/build.gradle.kts"
 echo "      and wire any Hilt bindings under app/di/."
 echo "   3. Run ./gradlew :$MODULE_NAME:assembleDebug verifyModuleGraph to confirm it configures cleanly."

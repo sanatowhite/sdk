@@ -51,13 +51,16 @@ dependencies {
 | [`:core-net`](core-net/README.md) | OkHttp/Retrofit setup, retry policy, `NetworkMonitor`, `safeApiCall` error wrapping. | Only depends on `:core-common`. |
 | [`:core-data`](core-data/README.md) | DataStore Preferences-backed user settings (theme, notifications, telemetry opt-in, consent version). | Interface-only (`UserSettingsRepository`); pair with `:core-data-hilt` for the default DataStore implementation. |
 | [`:core-telemetry`](core-telemetry/README.md) | Startup timing, jank (JankStats), crash/ANR capture, memory sampling, behind a pluggable `Telemetry` abstraction. | Only depends on `:core-common`/`:core-init`. Firebase backend is a separate, optional module. |
-| **`-hilt` companion modules** | [`core-common-hilt`](core-common-hilt/README.md), [`core-init-hilt`](core-init-hilt/README.md), [`core-data-hilt`](core-data-hilt/README.md), [`core-telemetry-hilt`](core-telemetry-hilt/README.md), [`net-telemetry-hilt`](net-telemetry-hilt/README.md) | Default Hilt wiring for the capability modules above, as **separate artifacts** — take a capability module without any DI framework lock-in, or add its `-hilt` companion for working Hilt bindings out of the box. See "DI boundary" in `CLAUDE.md` for why this split exists. |
-| [`:telemetry-firebase`](telemetry-firebase/README.md) | Firebase Analytics/Crashlytics implementation of `Telemetry`. `:app`'s default backend. | Needs your own `google-services.json` to report anywhere real; compiles/runs fine with the placeholder one. |
+| [`:core-auth`](core-auth/README.md) | Provider-agnostic login interfaces — `AuthRepository`/`AuthUser`/`AuthState`/`AuthError`/`AuthTokenProvider` for email+password, Google, Apple, and phone-SMS-code sign-in. | Only depends on `:core-common`. No `:core-auth-hilt` companion — its one implementation (`:auth-firebase`) provides the Hilt bindings directly (see ADR 0012). |
+| **`-hilt` companion modules** | [`core-common-hilt`](core-common-hilt/README.md), [`core-init-hilt`](core-init-hilt/README.md), [`core-data-hilt`](core-data-hilt/README.md), [`core-telemetry-hilt`](core-telemetry-hilt/README.md), [`net-telemetry-hilt`](net-telemetry-hilt/README.md), [`auth-net-hilt`](auth-net-hilt/README.md) | Default Hilt wiring for the capability modules above, as **separate artifacts** — take a capability module without any DI framework lock-in, or add its `-hilt` companion for working Hilt bindings out of the box. `auth-net-hilt` is the second cross-Tier-1 bridge (after `net-telemetry-hilt`): authenticated `OkHttpClient` + WebSocket token provider, bridging `:core-auth` and `:core-net`. See "DI boundary" in `CLAUDE.md` for why this split exists. |
+| [`:telemetry-firebase`](telemetry-firebase/README.md) | Firebase Analytics/Crashlytics implementation of `Telemetry`. `:app`'s default backend. | `:app` ships with a real, working `google-services.json` for a shared demo project by default (see `TEMPLATE.md`) — swap in your own before shipping anything real. |
+| [`:auth-firebase`](auth-firebase/README.md) | Firebase Auth implementation of `:core-auth`'s interfaces — email+password, Google (Credential Manager), Apple (`OAuthProvider`), phone SMS code. | Depends on `:core-auth`. Vendor-backed module (see its README's "为什么这个模块可以带三方依赖" and ADR 0011) — no Firebase/Credential-Manager type ever appears in its public signatures. |
 | [`:debug-tools`](debug-tools/README.md) | In-app Debug Drawer (feature flag overrides, crash/ANR/OOM triggers, log viewer). `debugImplementation` only. | Depends on `:core-telemetry`. |
-| [`:feature-settings`](feature-settings/README.md) | Settings/about/privacy-policy/terms-of-service/consent/What's New pages. Screen (stateless)/Route (Hilt) split. | Standalone import; cross-feature callbacks to `:feature-feedback`/`:feature-licenses`/`:feature-update` are all optional. |
+| [`:feature-settings`](feature-settings/README.md) | Settings/about/privacy-policy/terms-of-service/consent/What's New pages. Screen (stateless)/Route (Hilt) split. | Standalone import; cross-feature callbacks to `:feature-feedback`/`:feature-licenses`/`:feature-update`/`:feature-auth` are all optional. |
 | [`:feature-feedback`](feature-feedback/README.md) | Feedback page — local email compose with optional screenshot + log attachment. | Own `FileProvider` authority (`${applicationId}.feedback.fileprovider`), self-contained manifest entries. |
 | [`:feature-licenses`](feature-licenses/README.md) | Open-source licenses page, backed by the AboutLibraries Gradle plugin's offline-generated data. | You apply the AboutLibraries plugin yourself; this module only renders. |
 | [`:feature-update`](feature-update/README.md) | Update-check dialog + `UpdateCheckHost` one-line state holder, wired to `:updatechecker`. | Ships with a placeholder update-config URL; override via an optional Hilt binding. |
+| [`:feature-auth`](feature-auth/README.md) | Login UI — sign-in/sign-up/forgot-password/phone-number/phone-code/account screens, `authGraph()` nav entry, `AuthSessionHost` sign-out handling. | Depends on `:core-auth`/`:core-ui`; needs an `AuthRepository` implementation (e.g. `:auth-firebase`) wired in to actually authenticate. |
 | [`:sdk-bom`](sdk-bom/README.md) | `java-platform` — version alignment for every module above. | No code, purely a version constraint list. |
 | [`:benchmark`](benchmark/README.md) / [`:baselineprofile`](baselineprofile/README.md) | Macrobenchmark smoke tests + Baseline Profile generation for `:app`. | Not independently useful, not published — these target `:app` specifically via `targetProjectPath`. |
 
@@ -68,11 +71,12 @@ dependencies {
 ```
 android-app-template/
 ├── app/                    -- the template shell; most of what you customize after forking
-├── core-common/ core-init/ core-ui/ core-net/ core-data/ core-telemetry/
-├── core-common-hilt/ core-init-hilt/ core-data-hilt/ core-telemetry-hilt/ net-telemetry-hilt/
+├── core-common/ core-init/ core-ui/ core-net/ core-data/ core-telemetry/ core-auth/
+├── core-common-hilt/ core-init-hilt/ core-data-hilt/ core-telemetry-hilt/ net-telemetry-hilt/ auth-net-hilt/
 ├── debug-tools/            -- debugImplementation only, zero release residue
 ├── telemetry-firebase/     -- :app's default telemetry backend
-├── feature-settings/ feature-feedback/ feature-licenses/ feature-update/
+├── auth-firebase/          -- :app's Firebase Auth implementation of :core-auth
+├── feature-settings/ feature-feedback/ feature-licenses/ feature-update/ feature-auth/
 ├── sdk-bom/                -- java-platform version alignment
 ├── updatechecker/          -- standalone update-check SDK, zero internal dependencies
 ├── backupkit/              -- standalone backup/restore SDK (SBK1 format + orchestration + SAF)
