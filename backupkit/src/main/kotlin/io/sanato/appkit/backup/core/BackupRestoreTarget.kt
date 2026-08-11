@@ -35,6 +35,25 @@ public interface BackupRestoreTarget {
     public suspend fun onRestoreStart(header: ManifestHeader) {}
 
     /**
+     * 宿主可选实现：为一条记录声明"除了 [BackupRecord.mediaNames] 之外还需要哪些媒体名"。
+     *
+     * 存在原因：legacy manifest（`ManifestCodec.decodeLegacy()` 产出的记录）的
+     * [BackupRecord.mediaNames] 恒为空——这是刻意的设计（SDK 不解析宿主自定义的 legacy
+     * body 格式）。对本地/SAF 的自包含归档来说这不是问题：包内 media/ 条目已被
+     * `ArchiveReader.extract()` 无条件解到 [mediaDirectory]，宿主在 [accept] 内部按正文
+     * 扫描 + 本地目录查找也能找到。但对 Google Drive 这类"媒体单独存一个远端库、按需下载"
+     * 的场景，[BackupOrchestrator][io.sanato.appkit.backup.remote.BackupOrchestrator] 只会
+     * 下载 [BackupRecord.mediaNames] 里列出的名字——legacy 记录该字段为空，导致远端明明
+     * 有对应媒体文件，也永远不会触发下载。
+     *
+     * 只有宿主知道 [BackupRecord.body] 里怎么引用媒体（backupkit 对 body 完全不透明），
+     * 所以这个缺口只能由宿主实现补上：从 body 里扫出实际引用到的媒体名返回，
+     * backupkit 会把这些名字并入 [accept] 的按需下载范围。默认空集，不影响新格式记录
+     * （mediaNames 已经声明齐全）和不需要这个能力的宿主。
+     */
+    public suspend fun additionalMediaNames(record: BackupRecord): Set<String> = emptySet()
+
+    /**
      * 逐条交付一条记录。[resolvedMedia] 的 key 是 manifest 里的媒体名，value 是已经落到
      * 本机的文件——backupkit 已经从包内解出、或按需从远端存储补齐好（补齐过程全程
      * suspend，不存在任何 runBlocking 桥接）。

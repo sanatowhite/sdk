@@ -31,6 +31,13 @@ public class GmsDriveAuthorizer(
 
     /** 发起一次授权。已有有效静默 token 时直接返回；否则可能返回 needsConsent，宿主 Activity 需要发起 `startIntentSenderForResult`。 */
     public suspend fun authorize(): DriveAuthResult {
+        // 根因排查记录：断网时不做这层前置检查，`Identity.getAuthorizationClient` 仍然会
+        // 返回 hasResolution=true（本地判断，不需要网络），宿主弹出同意界面后 GMS 内部换
+        // token 才失败——用户会看到同意弹窗一闪而过、体验成"授权失败"，实际是断网。提前拦
+        // 一道，直接不发起这次注定失败的授权流程。
+        if (!isNetworkAvailable(context)) {
+            return DriveAuthResult.noConnectivity()
+        }
         val request = AuthorizationRequest.builder().setRequestedScopes(listOf(Scope(scope))).build()
         return try {
             val result = Identity.getAuthorizationClient(context).authorize(request).await()

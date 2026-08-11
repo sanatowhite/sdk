@@ -14,3 +14,7 @@
 logkit-private-*.pem
 logkit-public-*.der
 /logkit-keys/
+
+# 真实 Firebase 项目配置，只本地自测用——仓库里 app/google-services.json 必须保持占位，
+# 见该文件里的 _comment 说明。
+/.local/

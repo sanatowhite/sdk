@@ -1,12 +1,19 @@
+Compiled from "Connectivity.kt"
+public final class io.sanato.appkit.backup.drive.ConnectivityKt {
+  public static final boolean isNetworkAvailable(android.content.Context);
+}
+
+
 Compiled from "DriveAuthResult.kt"
 public final class io.sanato.appkit.backup.drive.DriveAuthResult {
   public static final io.sanato.appkit.backup.drive.DriveAuthResult$Companion Companion;
   public final java.lang.String getAccessToken();
   public final android.content.IntentSender getConsentIntentSender();
   public final java.lang.String getErrorMessage();
+  public final boolean isNoConnectivity();
   public final boolean isSuccess();
   public final boolean getNeedsConsent();
-  public io.sanato.appkit.backup.drive.DriveAuthResult(java.lang.String, android.content.IntentSender, java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.backup.drive.DriveAuthResult(java.lang.String, android.content.IntentSender, java.lang.String, boolean, kotlin.jvm.internal.DefaultConstructorMarker);
 }
 
 
@@ -15,6 +22,7 @@ public final class io.sanato.appkit.backup.drive.DriveAuthResult$Companion {
   public final io.sanato.appkit.backup.drive.DriveAuthResult success(java.lang.String);
   public final io.sanato.appkit.backup.drive.DriveAuthResult consentRequired(android.content.IntentSender);
   public final io.sanato.appkit.backup.drive.DriveAuthResult failure(java.lang.String);
+  public final io.sanato.appkit.backup.drive.DriveAuthResult noConnectivity();
   public io.sanato.appkit.backup.drive.DriveAuthResult$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
 }
 
@@ -37,6 +45,12 @@ public final class io.sanato.appkit.backup.drive.DriveBackupStore implements io.
 Compiled from "DriveBackupStore.kt"
 final class io.sanato.appkit.backup.drive.DriveBackupStore$Companion {
   public io.sanato.appkit.backup.drive.DriveBackupStore$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "Connectivity.kt"
+public final class io.sanato.appkit.backup.drive.DriveNoConnectivityException extends java.io.IOException {
+  public io.sanato.appkit.backup.drive.DriveNoConnectivityException();
 }
 
 

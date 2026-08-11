@@ -98,6 +98,8 @@ public interface io.sanato.appkit.backup.core.BackupRestoreTarget {
   public abstract java.io.File mediaDirectory();
   public default java.lang.Object onRestoreStart(io.sanato.appkit.backup.core.ManifestHeader, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public static java.lang.Object onRestoreStart$suspendImpl(io.sanato.appkit.backup.core.BackupRestoreTarget, io.sanato.appkit.backup.core.ManifestHeader, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public default java.lang.Object additionalMediaNames(io.sanato.appkit.backup.core.BackupRecord, kotlin.coroutines.Continuation<? super java.util.Set<java.lang.String>>);
+  public static java.lang.Object additionalMediaNames$suspendImpl(io.sanato.appkit.backup.core.BackupRestoreTarget, io.sanato.appkit.backup.core.BackupRecord, kotlin.coroutines.Continuation<? super java.util.Set<java.lang.String>>);
   public abstract java.lang.Object accept(io.sanato.appkit.backup.core.BackupRecord, java.util.Map<java.lang.String, ? extends java.io.File>, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
   public default java.lang.Object onRestoreFinish(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public static java.lang.Object onRestoreFinish$suspendImpl(io.sanato.appkit.backup.core.BackupRestoreTarget, int, kotlin.coroutines.Continuation<? super kotlin.Unit>);

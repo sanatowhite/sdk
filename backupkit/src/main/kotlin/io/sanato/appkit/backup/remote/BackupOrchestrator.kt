@@ -221,7 +221,9 @@ public class BackupOrchestrator(
                 val remoteMediaIndex =
                     runCatching {
                         store.list(RemoteBackupStore.FOLDER_MEDIA).filter { it.size > 0 }.associateBy { it.name }
-                    }.getOrDefault(emptyMap())
+                    }.onFailure { logger.warn("restore: listing remote media library failed", it) }
+                        .getOrDefault(emptyMap())
+                logger.info("restore: remote media library has ${remoteMediaIndex.size} file(s)")
 
                 val latestSnapshot =
                     store
@@ -283,9 +285,12 @@ public class BackupOrchestrator(
         val parsed = ArchiveReader.extract(zipFile, mediaDir, dataSource.payloadSchema, logger)
         restoreTarget.onRestoreStart(parsed.manifest.header)
 
+        // record.mediaNames 对 legacy 记录恒为空（见 BackupRestoreTarget.additionalMediaNames
+        // 的 KDoc）——并入宿主按正文扫描出的补充名单，否则 Drive/SAF 这类媒体单独存远端库的
+        // 场景，legacy 记录的媒体永远不会被下载。
         val neededNames =
             parsed.manifest.records
-                .flatMap { it.mediaNames }
+                .flatMap { record -> record.mediaNames + restoreTarget.additionalMediaNames(record) }
                 .distinct()
         val toDownload =
             if (remoteMediaIndex != null) {
@@ -301,7 +306,7 @@ public class BackupOrchestrator(
         var accepted = 0
         for (record in parsed.manifest.records) {
             val resolvedMedia = mutableMapOf<String, File>()
-            for (name in record.mediaNames) {
+            for (name in record.mediaNames + restoreTarget.additionalMediaNames(record)) {
                 val embedded = parsed.extractedMedia[name]
                 val local = if (embedded == null) localMediaFileOrNull(mediaDir, name) else null
                 val file =
@@ -326,7 +331,14 @@ public class BackupOrchestrator(
         remoteMediaIndex: Map<String, RemoteFile>,
         mediaDir: File,
     ): File? {
-        val remote = remoteMediaIndex[name + sealedSuffix] ?: return null
+        val remote =
+            remoteMediaIndex[name + sealedSuffix] ?: run {
+                logger.warn(
+                    "restore: media '$name' referenced but not found in remote media library (index size=${remoteMediaIndex.size})",
+                    null,
+                )
+                return null
+            }
         val sealed = File(workDir, "media_dl_${System.nanoTime()}$sealedSuffix")
         val plain = File(mediaDir, name)
         return try {
