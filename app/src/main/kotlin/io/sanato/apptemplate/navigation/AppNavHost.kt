@@ -23,6 +23,7 @@ import io.sanato.appkit.feature.settings.StandardPagesContent
 import io.sanato.appkit.feature.settings.settingsGraph
 import io.sanato.appkit.feature.update.UpdateCheckHost
 import io.sanato.apptemplate.R
+import io.sanato.apptemplate.ui.download.DownloadDemoRoute
 import io.sanato.apptemplate.ui.home.HomeScreen
 import io.sanato.apptemplate.ui.websocket.WebSocketDemoRoute
 import io.sanato.logkit.LogKit
@@ -104,10 +105,14 @@ fun AppNavHost(
                         onCheckForUpdates = onCheckForUpdates,
                         onNavigateToAccount = onNavigateToAccount,
                         onNavigateToWebSocketDemo = { navController.navigate(WebSocketDemoRoute) },
+                        onNavigateToDownloadDemo = { navController.navigate(DownloadDemoRoute) },
                     )
                 }
                 composable<WebSocketDemoRoute> {
                     WebSocketDemoRoute(onNavigateBack = { navController.popBackStack() })
+                }
+                composable<DownloadDemoRoute> {
+                    DownloadDemoRoute(onNavigateBack = { navController.popBackStack() })
                 }
                 settingsGraph(
                     navController = navController,

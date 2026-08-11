@@ -11,6 +11,23 @@
     <string name="home_account_signed_out_hint">Not signed in — tap to sign in</string>
     <string name="home_websocket_demo">WebSocket demo</string>
     <string name="home_websocket_demo_subtitle">Connect to a public echo server, send/receive messages</string>
+    <string name="home_download_demo">Download demo</string>
+    <string name="home_download_demo_subtitle">Resumable downloads with concurrency limit and notification progress</string>
+
+    <string name="download_demo_title">Download demo</string>
+    <string name="download_demo_add_sample">Add sample download</string>
+    <string name="download_demo_cancel_all">Cancel all</string>
+    <string name="download_demo_pause">Pause</string>
+    <string name="download_demo_resume">Resume</string>
+    <string name="download_demo_cancel">Cancel</string>
+    <string name="download_demo_empty">No downloads yet — tap \"Add sample download\" to start one</string>
+    <string name="download_demo_unknown_size">…</string>
+    <string name="download_demo_state_queued">Queued</string>
+    <string name="download_demo_state_running">Downloading %1$s</string>
+    <string name="download_demo_state_paused">Paused</string>
+    <string name="download_demo_state_completed">Completed</string>
+    <string name="download_demo_state_failed">Failed: %1$s</string>
+    <string name="download_demo_state_canceled">Canceled</string>
 
     <string name="ws_demo_title">WebSocket demo</string>
     <string name="ws_demo_connect">Connect</string>

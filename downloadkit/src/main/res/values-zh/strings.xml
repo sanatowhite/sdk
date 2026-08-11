@@ -1,0 +1,8 @@
+<resources>
+    <string name="download_notification_channel_name">下载</string>
+    <string name="download_notification_title_progress">正在下载 %1$d/%2$d · %3$d%%</string>
+    <string name="download_notification_title_paused_timeout">下载已暂停，重新打开 App 可继续</string>
+    <string name="download_notification_action_pause">暂停</string>
+    <string name="download_notification_action_resume">继续</string>
+    <string name="download_notification_action_cancel_all">全部取消</string>
+</resources>

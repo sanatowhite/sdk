@@ -56,6 +56,8 @@ dependencies {
 | [`:telemetry-firebase`](telemetry-firebase/README.md) | Firebase Analytics/Crashlytics implementation of `Telemetry`. `:app`'s default backend. | `:app` ships with a real, working `google-services.json` for a shared demo project by default (see `TEMPLATE.md`) — swap in your own before shipping anything real. |
 | [`:auth-firebase`](auth-firebase/README.md) | Firebase Auth implementation of `:core-auth`'s interfaces — email+password, Google (Credential Manager), Apple (`OAuthProvider`), phone SMS code. | Depends on `:core-auth`. Vendor-backed module (see its README's "为什么这个模块可以带三方依赖" and ADR 0011) — no Firebase/Credential-Manager type ever appears in its public signatures. |
 | [`:debug-tools`](debug-tools/README.md) | In-app Debug Drawer (feature flag overrides, crash/ANR/OOM triggers, log viewer). `debugImplementation` only. | Depends on `:core-telemetry`. |
+| [`:downloadkit`](downloadkit/README.md) | Resumable downloads — HTTP Range resume, bounded-concurrency queue, on-disk checkpointing, optional foreground-service + notification progress. `Downloader.getInstance(context)` entry point. | Depends on `:core-net` — the only `*kit` module that isn't zero-dependency (see ADR 0013). |
+| [`:downloadkit-hilt`](downloadkit-hilt/README.md) | Default Hilt wiring for `Downloader` (`@Singleton`, `@BindsOptionalOf` config/notifier overrides). | Depends on `:downloadkit`/`:core-net`/`:core-common`. |
 | [`:feature-settings`](feature-settings/README.md) | Settings/about/privacy-policy/terms-of-service/consent/What's New pages. Screen (stateless)/Route (Hilt) split. | Standalone import; cross-feature callbacks to `:feature-feedback`/`:feature-licenses`/`:feature-update`/`:feature-auth` are all optional. |
 | [`:feature-feedback`](feature-feedback/README.md) | Feedback page — local email compose with optional screenshot + log attachment. | Own `FileProvider` authority (`${applicationId}.feedback.fileprovider`), self-contained manifest entries. |
 | [`:feature-licenses`](feature-licenses/README.md) | Open-source licenses page, backed by the AboutLibraries Gradle plugin's offline-generated data. | You apply the AboutLibraries plugin yourself; this module only renders. |
@@ -81,6 +83,7 @@ android-app-template/
 ├── updatechecker/          -- standalone update-check SDK, zero internal dependencies
 ├── backupkit/              -- standalone backup/restore SDK (SBK1 format + orchestration + SAF)
 ├── backupkit-drive/        -- Google Drive RemoteBackupStore for :backupkit, vendor-backed module
+├── downloadkit/ downloadkit-hilt/  -- resumable download SDK (depends on :core-net, see ADR 0013) + its Hilt wiring
 ├── logkit/                 -- second standalone SDK (encrypted rolling logs), not published yet
 ├── tools/logkit-decrypt/   -- pure-JVM offline decrypt CLI for :logkit's archive format
 ├── checks/consumer-smoke/  -- independent Gradle build verifying published coordinates actually work

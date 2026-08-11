@@ -43,6 +43,7 @@ fun HomeScreen(
     onCheckForUpdates: () -> Unit,
     onNavigateToAccount: () -> Unit,
     onNavigateToWebSocketDemo: () -> Unit,
+    onNavigateToDownloadDemo: () -> Unit,
 ) {
     AppScaffold(
         topBar = {
@@ -75,6 +76,13 @@ fun HomeScreen(
                     headlineContent = { Text(stringResource(R.string.home_websocket_demo)) },
                     supportingContent = { Text(stringResource(R.string.home_websocket_demo_subtitle)) },
                     modifier = Modifier.clickable(onClick = onNavigateToWebSocketDemo),
+                )
+            }
+            item {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.home_download_demo)) },
+                    supportingContent = { Text(stringResource(R.string.home_download_demo_subtitle)) },
+                    modifier = Modifier.clickable(onClick = onNavigateToDownloadDemo),
                 )
             }
             item {

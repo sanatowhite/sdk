@@ -16,3 +16,7 @@ data object Home
 /** `:core-net` WebSocket 长连接能力的可玩 demo——纯 `:app` 内代码,不是发布的 SDK 一部分。 */
 @Serializable
 data object WebSocketDemoRoute
+
+/** `:downloadkit` 断点续传下载能力的可玩 demo——纯 `:app` 内代码,不是发布的 SDK 一部分。 */
+@Serializable
+data object DownloadDemoRoute

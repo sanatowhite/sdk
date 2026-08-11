@@ -67,6 +67,10 @@ dependencies {
     implementation(project(":auth-firebase"))
     implementation(project(":auth-net-hilt"))
     implementation(project(":feature-auth"))
+    // 断点续传下载库(并发上限/后台前台服务/通知栏进度)——demo 页在
+    // ui/download/，见 downloadkit/README.md、downloadkit-hilt/README.md。
+    implementation(project(":downloadkit"))
+    implementation(project(":downloadkit-hilt"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

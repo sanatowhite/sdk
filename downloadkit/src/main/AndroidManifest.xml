@@ -1,0 +1,20 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <application>
+        <!--
+          exported=false: 只由本模块自己的 Downloader 通过显式 Intent 拉起，
+          不接受外部应用启动。foregroundServiceType="dataSync" 是 API 34+ 的
+          强制要求——声明的类型必须和调用 startForeground() 时传入的类型位掩码
+          匹配，否则抛 MissingForegroundServiceTypeException。
+        -->
+        <service
+            android:name="io.sanato.appkit.download.notify.DownloadService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+    </application>
+</manifest>

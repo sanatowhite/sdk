@@ -84,6 +84,8 @@ include(
     ":feature-licenses",
     ":feature-update",
     ":feature-auth",
+    ":downloadkit",
+    ":downloadkit-hilt",
     ":sdk-bom",
 )
 

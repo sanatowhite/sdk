@@ -94,6 +94,8 @@ val sdkModules =
         ":feature-licenses",
         ":feature-update",
         ":feature-auth",
+        ":downloadkit",
+        ":downloadkit-hilt",
         ":sdk-bom",
     )
 
@@ -235,6 +237,13 @@ tasks.register("verifyModuleGraph") {
                 ":feature-licenses" to setOf(":core-ui"),
                 ":feature-update" to setOf(":updatechecker", ":core-ui"),
                 ":feature-auth" to setOf(":core-common", ":core-ui", ":core-auth"),
+                // :downloadkit is the first *kit module that depends on :core-net instead
+                // of being zero-dependency like :updatechecker/:backupkit/:logkit — it
+                // needs OkHttp's streaming body + connection pooling for range-resumable
+                // transfers. See docs/adr/0013 for why this is a deliberate exception, not
+                // a precedent for every future *kit module to start pulling in :core-net.
+                ":downloadkit" to setOf(":core-net"),
+                ":downloadkit-hilt" to setOf(":downloadkit", ":core-net", ":core-common"),
                 // ── 其余 ──
                 ":debug-tools" to setOf(":core-telemetry"),
                 ":updatechecker" to emptySet<String>(),

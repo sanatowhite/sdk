@@ -37,7 +37,7 @@ readonly TEMPLATE_APP_ID_SLASH="io/sanato/apptemplate"
 # build.gradle.kts `sdkModules` list (minus the leading `:`), or verifyModuleGraph's
 # smoke-test step at the end of this script would be the only thing to catch the
 # drift, and only if the missing module happens to break something.
-readonly PUBLISHED_MODULES="updatechecker backupkit backupkit-drive core-common core-common-hilt core-init core-init-hilt core-ui core-net core-data core-data-hilt core-telemetry core-telemetry-hilt net-telemetry-hilt core-auth auth-firebase auth-net-hilt debug-tools telemetry-firebase feature-settings feature-feedback feature-licenses feature-update feature-auth sdk-bom"
+readonly PUBLISHED_MODULES="updatechecker backupkit backupkit-drive core-common core-common-hilt core-init core-init-hilt core-ui core-net core-data core-data-hilt core-telemetry core-telemetry-hilt net-telemetry-hilt core-auth auth-firebase auth-net-hilt debug-tools telemetry-firebase feature-settings feature-feedback feature-licenses feature-update feature-auth downloadkit downloadkit-hilt sdk-bom"
 
 # :logkit isn't in sdkModules — it isn't published yet (see CLAUDE.md's
 # ":logkit 五条铁律" #1, gated out of the JITPACK path). Kept as a separate

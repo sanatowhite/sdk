@@ -14,4 +14,5 @@ Lightweight ADRs (context / decision / consequences) for the choices made while 
 - [0010 — `:logkit` is a log pipeline, not a detector; `:core-telemetry` still does the detecting](0010-logkit-pipeline-vs-apm-detection.md)
 - [0011 — When a published module may carry a heavyweight vendor dependency](0011-vendor-backed-backend-modules.md)
 - [0012 — Firebase-hosted auth + WebSocket-in-`:core-net`, supersedes 0007's "No authentication"](0012-firebase-auth-and-websocket.md)
+- [0013 — `:downloadkit` depends on `:core-net`, breaking the zero-dependency `*kit` pattern](0013-downloadkit-depends-on-core-net.md)
 - [spike 0000 — Hilt library-module `@Module` aggregation (empirical spike behind 0008)](spike-0000-hilt-library-module-aggregation.md)

@@ -1,0 +1,9 @@
+<resources>
+    <string name="download_notification_channel_name">Downloads</string>
+    <!-- %1$d = completed task count, %2$d = total task count, %3$d = overall percent -->
+    <string name="download_notification_title_progress">Downloading %1$d/%2$d · %3$d%%</string>
+    <string name="download_notification_title_paused_timeout">Downloads paused — reopen the app to continue</string>
+    <string name="download_notification_action_pause">Pause</string>
+    <string name="download_notification_action_resume">Resume</string>
+    <string name="download_notification_action_cancel_all">Cancel all</string>
+</resources>

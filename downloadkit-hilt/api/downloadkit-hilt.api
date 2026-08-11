@@ -1,0 +1,29 @@
+Compiled from "DownloadModule.kt"
+public abstract class io.sanato.appkit.download.hilt.DownloadBindsModule {
+  public io.sanato.appkit.download.hilt.DownloadBindsModule();
+  public abstract io.sanato.appkit.core.net.NetworkMetricsSink networkMetricsSink();
+  public abstract io.sanato.appkit.download.hilt.DownloadConfigOverride downloadConfigOverride();
+  public abstract io.sanato.appkit.download.notify.DownloadNotifier downloadNotifierOverride();
+}
+
+
+Compiled from "DownloadModule.kt"
+public final class io.sanato.appkit.download.hilt.DownloadConfigOverride {
+  public io.sanato.appkit.download.hilt.DownloadConfigOverride(io.sanato.appkit.download.DownloadConfig);
+  public final io.sanato.appkit.download.DownloadConfig getConfig();
+  public final io.sanato.appkit.download.DownloadConfig component1();
+  public final io.sanato.appkit.download.hilt.DownloadConfigOverride copy(io.sanato.appkit.download.DownloadConfig);
+  public static io.sanato.appkit.download.hilt.DownloadConfigOverride copy$default(io.sanato.appkit.download.hilt.DownloadConfigOverride, io.sanato.appkit.download.DownloadConfig, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadModule.kt"
+public final class io.sanato.appkit.download.hilt.DownloadModule {
+  public static final io.sanato.appkit.download.hilt.DownloadModule INSTANCE;
+  public final io.sanato.appkit.download.Downloader provideDownloader(android.content.Context, java.util.Optional<io.sanato.appkit.core.net.NetworkMetricsSink>, java.util.Optional<io.sanato.appkit.download.hilt.DownloadConfigOverride>, java.util.Optional<io.sanato.appkit.download.notify.DownloadNotifier>);
+}
+
+

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Two things live in one repo, on purpose, and must stay decoupled:
 
-1. **The SDK: 25 published modules** — `:updatechecker` plus 24 `core-*`/`feature-*`/`-hilt` companion/vendor-backed/`:sdk-bom` modules, all published to JitPack under `com.github.sanatowhite.sdk:<module>:<version>` (see ADR 0008). Real, independently-versioned AARs a consumer `implementation(...)`s — never source they copy and edit. `:updatechecker` in particular keeps zero third-party deps beyond `core-ktx`/`coroutines-android`, zero internal module deps, additive-only public API.
+1. **The SDK: 27 published modules** — `:updatechecker` plus 26 `core-*`/`feature-*`/`-hilt` companion/vendor-backed/`:downloadkit`/`:sdk-bom` modules, all published to JitPack under `com.github.sanatowhite.sdk:<module>:<version>` (see ADR 0008). Real, independently-versioned AARs a consumer `implementation(...)`s — never source they copy and edit. `:updatechecker` in particular keeps zero third-party deps beyond `core-ktx`/`coroutines-android`, zero internal module deps, additive-only public API.
 2. **`:logkit`** — a second standalone Android library (multi-threaded, order-preserving, encrypted-and-compressed rolling log SDK; see "The five `:logkit` rules" below). Modeled on `:updatechecker`'s rules but **not currently published** — not part of the `sdkModules` set above (it's young enough that its crypto/format hasn't earned an additive-only-forever freeze yet). If it ever needs to publish, it just joins `sdkModules` like everything else — ADR 0008 retired the old subtree-mirror escape hatch along with the single-artifact coordinate it was protecting.
 3. **`:app` + `:benchmark` + `:baselineprofile`** — a fork-able Android app template: Compose + Hilt + Navigation, performance monitoring, wired up entirely from the published SDK modules above (plus `:logkit`) via `project(...)` dependencies (see `docs/adr/` for why `project()` and not the Maven coordinates, even though `:app` lives in the same repo). Someone forks this repo, runs `scripts/bootstrap.sh`, and gets a runnable app.
 
@@ -58,8 +58,9 @@ JDK must be **17** (not 21, not the system default). If `./gradlew` can't find i
 
 ### Module graph (enforced by `verifyModuleGraph`, not just convention)
 
-Four tiers, 25 modules (see ADR 0008 for why the shape is what it is; ADR 0012 for the
-`:core-auth`/`:auth-firebase`/`:auth-net-hilt`/`:feature-auth` addition):
+Four tiers, 27 modules (see ADR 0008 for why the shape is what it is; ADR 0012 for the
+`:core-auth`/`:auth-firebase`/`:auth-net-hilt`/`:feature-auth` addition; ADR 0013 for
+the `:downloadkit`/`:downloadkit-hilt` addition):
 
 ```
 Tier 1 (capability, zero Hilt, zero glue between each other):
@@ -93,6 +94,8 @@ Tier 0 / other:
   :backupkit        → (nothing — format/orchestration/SAF storage all self-contained)
   :backupkit-drive  → :backupkit   (vendor-backed per ADR 0011 — the only RemoteBackupStore implementation)
   :debug-tools      → :core-telemetry
+  :downloadkit      → :core-net   (the only *kit module that isn't zero-dependency — see ADR 0013)
+  :downloadkit-hilt → :downloadkit, :core-net, :core-common
   :sdk-bom          → (pure version constraints, no project() deps at all)
 
 Not part of the published sdkModules set (see "The five :logkit rules" below):

@@ -69,6 +69,8 @@ dependencies {
     implementation("com.github.sanatowhite.sdk:auth-firebase")
     implementation("com.github.sanatowhite.sdk:auth-net-hilt")
     implementation("com.github.sanatowhite.sdk:feature-auth")
+    implementation("com.github.sanatowhite.sdk:downloadkit")
+    implementation("com.github.sanatowhite.sdk:downloadkit-hilt")
 
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.activity:activity-compose:1.13.0")

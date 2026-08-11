@@ -1,0 +1,794 @@
+Compiled from "DownloadConfig.kt"
+public final class io.sanato.appkit.download.DownloadConfig {
+  public static final io.sanato.appkit.download.DownloadConfig$Companion Companion;
+  public io.sanato.appkit.download.DownloadConfig(java.io.File, int, io.sanato.appkit.download.DownloadRetryPolicy, boolean);
+  public io.sanato.appkit.download.DownloadConfig(java.io.File, int, io.sanato.appkit.download.DownloadRetryPolicy, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.io.File getDownloadDir();
+  public final int getMaxConcurrent();
+  public final io.sanato.appkit.download.DownloadRetryPolicy getRetryPolicy();
+  public final boolean getNotificationsEnabled();
+  public final java.io.File component1();
+  public final int component2();
+  public final io.sanato.appkit.download.DownloadRetryPolicy component3();
+  public final boolean component4();
+  public final io.sanato.appkit.download.DownloadConfig copy(java.io.File, int, io.sanato.appkit.download.DownloadRetryPolicy, boolean);
+  public static io.sanato.appkit.download.DownloadConfig copy$default(io.sanato.appkit.download.DownloadConfig, java.io.File, int, io.sanato.appkit.download.DownloadRetryPolicy, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadConfig.kt"
+public final class io.sanato.appkit.download.DownloadConfig$Companion {
+  public final io.sanato.appkit.download.DownloadConfig default(android.content.Context);
+  public io.sanato.appkit.download.DownloadConfig$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadError.kt"
+public abstract class io.sanato.appkit.download.DownloadError extends java.lang.Exception {
+  public io.sanato.appkit.download.DownloadError(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.download.DownloadError(java.lang.String, java.lang.Throwable, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$Canceled extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$Canceled();
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$ChecksumMismatch extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$ChecksumMismatch(java.lang.String, java.lang.String);
+  public final java.lang.String getExpected();
+  public final java.lang.String getActual();
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$Http extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$Http(int);
+  public final int getCode();
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$Io extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$Io(java.lang.Throwable);
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$MaxRetriesExceeded extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$MaxRetriesExceeded(int, java.lang.Throwable);
+  public final int getAttempts();
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$Network extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$Network(java.lang.Throwable);
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$UnexpectedResponse extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$UnexpectedResponse(int, java.lang.String);
+  public final int getHttpCode();
+}
+
+
+Compiled from "DownloadError.kt"
+public final class io.sanato.appkit.download.DownloadError$Unknown extends io.sanato.appkit.download.DownloadError {
+  public io.sanato.appkit.download.DownloadError$Unknown(java.lang.Throwable);
+}
+
+
+Compiled from "DownloadRequest.kt"
+public final class io.sanato.appkit.download.DownloadRequest {
+  public io.sanato.appkit.download.DownloadRequest(java.lang.String, java.lang.String, java.io.File, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, boolean, int);
+  public io.sanato.appkit.download.DownloadRequest(java.lang.String, java.lang.String, java.io.File, java.lang.String, java.util.Map, boolean, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getUrl();
+  public final java.lang.String getFileName();
+  public final java.io.File getDestDir();
+  public final java.lang.String getSha256();
+  public final java.util.Map<java.lang.String, java.lang.String> getHeaders();
+  public final boolean getAllowMetered();
+  public final int getPriority();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final java.io.File component3();
+  public final java.lang.String component4();
+  public final java.util.Map<java.lang.String, java.lang.String> component5();
+  public final boolean component6();
+  public final int component7();
+  public final io.sanato.appkit.download.DownloadRequest copy(java.lang.String, java.lang.String, java.io.File, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, boolean, int);
+  public static io.sanato.appkit.download.DownloadRequest copy$default(io.sanato.appkit.download.DownloadRequest, java.lang.String, java.lang.String, java.io.File, java.lang.String, java.util.Map, boolean, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadRetryPolicy.kt"
+public final class io.sanato.appkit.download.DownloadRetryPolicy {
+  public io.sanato.appkit.download.DownloadRetryPolicy(int, long, long, double, double, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final int getMaxAttempts();
+  public final long getInitialDelay-UwyO8pc();
+  public final long getMaxDelay-UwyO8pc();
+  public final double getMultiplier();
+  public final double getJitterRatio();
+  public final int component1();
+  public final long component2-UwyO8pc();
+  public final long component3-UwyO8pc();
+  public final double component4();
+  public final double component5();
+  public final io.sanato.appkit.download.DownloadRetryPolicy copy-jKevqZI(int, long, long, double, double);
+  public static io.sanato.appkit.download.DownloadRetryPolicy copy-jKevqZI$default(io.sanato.appkit.download.DownloadRetryPolicy, int, long, long, double, double, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.download.DownloadRetryPolicy(int, long, long, double, double, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadState.kt"
+public interface io.sanato.appkit.download.DownloadState {
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Canceled implements io.sanato.appkit.download.DownloadState {
+  public static final io.sanato.appkit.download.DownloadState$Canceled INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Completed implements io.sanato.appkit.download.DownloadState {
+  public io.sanato.appkit.download.DownloadState$Completed(java.io.File, long);
+  public final java.io.File getFile();
+  public final long getTotalBytes();
+  public final java.io.File component1();
+  public final long component2();
+  public final io.sanato.appkit.download.DownloadState$Completed copy(java.io.File, long);
+  public static io.sanato.appkit.download.DownloadState$Completed copy$default(io.sanato.appkit.download.DownloadState$Completed, java.io.File, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Failed implements io.sanato.appkit.download.DownloadState {
+  public io.sanato.appkit.download.DownloadState$Failed(io.sanato.appkit.download.DownloadError, long, long);
+  public final io.sanato.appkit.download.DownloadError getError();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final io.sanato.appkit.download.DownloadError component1();
+  public final long component2();
+  public final long component3();
+  public final io.sanato.appkit.download.DownloadState$Failed copy(io.sanato.appkit.download.DownloadError, long, long);
+  public static io.sanato.appkit.download.DownloadState$Failed copy$default(io.sanato.appkit.download.DownloadState$Failed, io.sanato.appkit.download.DownloadError, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Paused implements io.sanato.appkit.download.DownloadState {
+  public io.sanato.appkit.download.DownloadState$Paused(long, long);
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final long component1();
+  public final long component2();
+  public final io.sanato.appkit.download.DownloadState$Paused copy(long, long);
+  public static io.sanato.appkit.download.DownloadState$Paused copy$default(io.sanato.appkit.download.DownloadState$Paused, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Queued implements io.sanato.appkit.download.DownloadState {
+  public static final io.sanato.appkit.download.DownloadState$Queued INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadState$Running implements io.sanato.appkit.download.DownloadState {
+  public io.sanato.appkit.download.DownloadState$Running(long, long);
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final float getProgress();
+  public final long component1();
+  public final long component2();
+  public final io.sanato.appkit.download.DownloadState$Running copy(long, long);
+  public static io.sanato.appkit.download.DownloadState$Running copy$default(io.sanato.appkit.download.DownloadState$Running, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadState.kt"
+public final class io.sanato.appkit.download.DownloadTask {
+  public io.sanato.appkit.download.DownloadTask(java.lang.String, io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.DownloadState);
+  public final java.lang.String getId();
+  public final io.sanato.appkit.download.DownloadRequest getRequest();
+  public final io.sanato.appkit.download.DownloadState getState();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.download.DownloadRequest component2();
+  public final io.sanato.appkit.download.DownloadState component3();
+  public final io.sanato.appkit.download.DownloadTask copy(java.lang.String, io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.DownloadState);
+  public static io.sanato.appkit.download.DownloadTask copy$default(io.sanato.appkit.download.DownloadTask, java.lang.String, io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.DownloadState, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "Downloader.kt"
+public final class io.sanato.appkit.download.Downloader {
+  public static final io.sanato.appkit.download.Downloader$Companion Companion;
+  public io.sanato.appkit.download.Downloader(android.content.Context, io.sanato.appkit.download.queue.DownloadQueue, io.sanato.appkit.download.notify.DownloadNotifier, boolean);
+  public final io.sanato.appkit.download.notify.DownloadNotifier getNotifier$downloadkit();
+  public final kotlinx.coroutines.flow.StateFlow<java.util.List<io.sanato.appkit.download.DownloadTask>> getTasks();
+  public final java.lang.String enqueue(io.sanato.appkit.download.DownloadRequest);
+  public final void pause(java.lang.String);
+  public final void resume(java.lang.String);
+  public final void cancel(java.lang.String);
+  public final void cancelAll();
+  public final kotlinx.coroutines.flow.Flow<io.sanato.appkit.download.DownloadState> observe(java.lang.String);
+  public final boolean hasNotificationPermission();
+}
+
+
+Compiled from "Downloader.kt"
+public final class io.sanato.appkit.download.Downloader$Companion {
+  public final void resetForTesting$downloadkit();
+  public final io.sanato.appkit.download.Downloader getInstance(android.content.Context, io.sanato.appkit.download.DownloadConfig, okhttp3.OkHttpClient, io.sanato.appkit.download.notify.DownloadNotifier);
+  public static io.sanato.appkit.download.Downloader getInstance$default(io.sanato.appkit.download.Downloader$Companion, android.content.Context, io.sanato.appkit.download.DownloadConfig, okhttp3.OkHttpClient, io.sanato.appkit.download.notify.DownloadNotifier, int, java.lang.Object);
+  public final okhttp3.OkHttpClient downloadOkHttpClient(okhttp3.OkHttpClient);
+  public io.sanato.appkit.download.Downloader$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "HashUtils.kt"
+public final class io.sanato.appkit.download.HashUtilsKt {
+  public static final java.lang.String taskIdFor(java.lang.String, java.lang.String);
+}
+
+
+Compiled from "HashUtils.kt"
+public final class io.sanato.appkit.download.Sha256 {
+  public static final io.sanato.appkit.download.Sha256 INSTANCE;
+  public final java.lang.String hex(java.io.File);
+  public final java.lang.String hex(byte[]);
+}
+
+
+Compiled from "DownloadEngine.kt"
+public interface io.sanato.appkit.download.engine.DownloadEngine {
+  public abstract java.lang.Object download(java.lang.String, java.util.Map<java.lang.String, java.lang.String>, java.io.File, io.sanato.appkit.download.engine.ResumeInfo, kotlin.jvm.functions.Function1<? super io.sanato.appkit.download.engine.ResponseInfo, kotlin.Unit>, kotlin.jvm.functions.Function1<? super java.lang.Long, kotlin.Unit>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "OkHttpDownloadEngine.kt"
+public final class io.sanato.appkit.download.engine.OkHttpDownloadEngine implements io.sanato.appkit.download.engine.DownloadEngine {
+  public static final int BUFFER_SIZE;
+  public io.sanato.appkit.download.engine.OkHttpDownloadEngine(okhttp3.OkHttpClient);
+  public java.lang.Object download(java.lang.String, java.util.Map<java.lang.String, java.lang.String>, java.io.File, io.sanato.appkit.download.engine.ResumeInfo, kotlin.jvm.functions.Function1<? super io.sanato.appkit.download.engine.ResponseInfo, kotlin.Unit>, kotlin.jvm.functions.Function1<? super java.lang.Long, kotlin.Unit>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "OkHttpDownloadEngine.kt"
+final class io.sanato.appkit.download.engine.OkHttpDownloadEngine$Companion {
+  public final kotlin.text.Regex getCONTENT_RANGE_REGEX();
+  public io.sanato.appkit.download.engine.OkHttpDownloadEngine$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "OkHttpDownloadEngine.kt"
+final class io.sanato.appkit.download.engine.OkHttpDownloadEngine$RestartSignal {
+  public static final io.sanato.appkit.download.engine.OkHttpDownloadEngine$RestartSignal INSTANCE;
+}
+
+
+Compiled from "DownloadEngine.kt"
+public final class io.sanato.appkit.download.engine.ResponseInfo {
+  public io.sanato.appkit.download.engine.ResponseInfo(long, java.lang.String, java.lang.String, boolean);
+  public final long getTotalBytes();
+  public final java.lang.String getEtag();
+  public final java.lang.String getLastModified();
+  public final boolean getAcceptRanges();
+  public final long component1();
+  public final java.lang.String component2();
+  public final java.lang.String component3();
+  public final boolean component4();
+  public final io.sanato.appkit.download.engine.ResponseInfo copy(long, java.lang.String, java.lang.String, boolean);
+  public static io.sanato.appkit.download.engine.ResponseInfo copy$default(io.sanato.appkit.download.engine.ResponseInfo, long, java.lang.String, java.lang.String, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadEngine.kt"
+public final class io.sanato.appkit.download.engine.ResumeInfo {
+  public io.sanato.appkit.download.engine.ResumeInfo(long, java.lang.String, java.lang.String, boolean);
+  public final long getBytesDownloaded();
+  public final java.lang.String getEtag();
+  public final java.lang.String getLastModified();
+  public final boolean getAcceptRanges();
+  public final long component1();
+  public final java.lang.String component2();
+  public final java.lang.String component3();
+  public final boolean component4();
+  public final io.sanato.appkit.download.engine.ResumeInfo copy(long, java.lang.String, java.lang.String, boolean);
+  public static io.sanato.appkit.download.engine.ResumeInfo copy$default(io.sanato.appkit.download.engine.ResumeInfo, long, java.lang.String, java.lang.String, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "AndroidDownloadNotifier.kt"
+public final class io.sanato.appkit.download.notify.AndroidDownloadNotifier implements io.sanato.appkit.download.notify.DownloadNotifier {
+  public static final io.sanato.appkit.download.notify.AndroidDownloadNotifier$Companion Companion;
+  public static final java.lang.String CHANNEL_ID;
+  public static final int NOTIFICATION_ID;
+  public io.sanato.appkit.download.notify.AndroidDownloadNotifier(android.content.Context);
+  public int getNotificationId();
+  public android.app.Notification buildForegroundNotification(io.sanato.appkit.download.notify.DownloadSummary);
+  public void notifyProgress(io.sanato.appkit.download.notify.DownloadSummary);
+  public void notifyPausedByTimeout();
+  public void clear();
+}
+
+
+Compiled from "AndroidDownloadNotifier.kt"
+public final class io.sanato.appkit.download.notify.AndroidDownloadNotifier$Companion {
+  public io.sanato.appkit.download.notify.AndroidDownloadNotifier$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadNotifier.kt"
+public interface io.sanato.appkit.download.notify.DownloadNotifier {
+  public abstract int getNotificationId();
+  public abstract android.app.Notification buildForegroundNotification(io.sanato.appkit.download.notify.DownloadSummary);
+  public abstract void notifyProgress(io.sanato.appkit.download.notify.DownloadSummary);
+  public abstract void notifyPausedByTimeout();
+  public abstract void clear();
+}
+
+
+Compiled from "DownloadService.kt"
+public final class io.sanato.appkit.download.notify.DownloadService extends android.app.Service {
+  public static final io.sanato.appkit.download.notify.DownloadService$Companion Companion;
+  public static final java.lang.String ACTION_PAUSE_ALL;
+  public static final java.lang.String ACTION_RESUME_ALL;
+  public static final java.lang.String ACTION_CANCEL_ALL;
+  public io.sanato.appkit.download.notify.DownloadService();
+  public final io.sanato.appkit.download.Downloader getDownloaderOverride$downloadkit();
+  public final void setDownloaderOverride$downloadkit(io.sanato.appkit.download.Downloader);
+  public void onCreate();
+  public int onStartCommand(android.content.Intent, int, int);
+  public android.os.IBinder onBind(android.content.Intent);
+  public void onTimeout(int, int);
+  public void onDestroy();
+  public final io.sanato.appkit.download.notify.DownloadSummary summarize$downloadkit(java.util.List<io.sanato.appkit.download.DownloadTask>);
+}
+
+
+Compiled from "DownloadService.kt"
+public final class io.sanato.appkit.download.notify.DownloadService$Companion {
+  public final void ensureStarted(android.content.Context);
+  public io.sanato.appkit.download.notify.DownloadService$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadNotifier.kt"
+public final class io.sanato.appkit.download.notify.DownloadSummary {
+  public io.sanato.appkit.download.notify.DownloadSummary(int, int, int, boolean, boolean);
+  public final int getActiveCount();
+  public final int getTotalCount();
+  public final int getOverallPercent();
+  public final boolean getCanPause();
+  public final boolean getCanResume();
+  public final int component1();
+  public final int component2();
+  public final int component3();
+  public final boolean component4();
+  public final boolean component5();
+  public final io.sanato.appkit.download.notify.DownloadSummary copy(int, int, int, boolean, boolean);
+  public static io.sanato.appkit.download.notify.DownloadSummary copy$default(io.sanato.appkit.download.notify.DownloadSummary, int, int, int, boolean, boolean, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue {
+  public static final long PROGRESS_EVENT_INTERVAL_BYTES;
+  public static final long CHECKPOINT_INTERVAL_BYTES;
+  public io.sanato.appkit.download.queue.DownloadQueue(kotlinx.coroutines.CoroutineScope, io.sanato.appkit.download.DownloadConfig, io.sanato.appkit.download.store.TaskStore, io.sanato.appkit.download.engine.DownloadEngine, java.util.List<io.sanato.appkit.download.store.TaskMetadata>, kotlin.random.Random, kotlinx.coroutines.CoroutineDispatcher);
+  public io.sanato.appkit.download.queue.DownloadQueue(kotlinx.coroutines.CoroutineScope, io.sanato.appkit.download.DownloadConfig, io.sanato.appkit.download.store.TaskStore, io.sanato.appkit.download.engine.DownloadEngine, java.util.List, kotlin.random.Random, kotlinx.coroutines.CoroutineDispatcher, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final kotlinx.coroutines.flow.StateFlow<java.util.List<io.sanato.appkit.download.DownloadTask>> getTasks();
+  public final java.lang.String enqueue(io.sanato.appkit.download.DownloadRequest);
+  public final void pause(java.lang.String);
+  public final void resume(java.lang.String);
+  public final void cancel(java.lang.String);
+  public final void cancelAll();
+}
+
+
+Compiled from "DownloadQueue.kt"
+final class io.sanato.appkit.download.queue.DownloadQueue$Companion {
+  public io.sanato.appkit.download.queue.DownloadQueue$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadQueue.kt"
+final class io.sanato.appkit.download.queue.DownloadQueue$Entry {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Entry$Companion Companion;
+  public io.sanato.appkit.download.queue.DownloadQueue$Entry(io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.queue.DownloadQueue$Phase, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.DownloadError, int);
+  public io.sanato.appkit.download.queue.DownloadQueue$Entry(io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.queue.DownloadQueue$Phase, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.DownloadError, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final io.sanato.appkit.download.DownloadRequest getRequest();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Phase getPhase();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final java.lang.String getEtag();
+  public final java.lang.String getLastModified();
+  public final boolean getAcceptRanges();
+  public final io.sanato.appkit.download.DownloadError getLastError();
+  public final int getGeneration();
+  public final io.sanato.appkit.download.DownloadState toPublicState();
+  public final io.sanato.appkit.download.DownloadRequest component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Phase component2();
+  public final long component3();
+  public final long component4();
+  public final java.lang.String component5();
+  public final java.lang.String component6();
+  public final boolean component7();
+  public final io.sanato.appkit.download.DownloadError component8();
+  public final int component9();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Entry copy(io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.queue.DownloadQueue$Phase, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.DownloadError, int);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Entry copy$default(io.sanato.appkit.download.queue.DownloadQueue$Entry, io.sanato.appkit.download.DownloadRequest, io.sanato.appkit.download.queue.DownloadQueue$Phase, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.DownloadError, int, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Entry$Companion {
+  public final io.sanato.appkit.download.queue.DownloadQueue$Entry fromMetadata(io.sanato.appkit.download.store.TaskMetadata);
+  public io.sanato.appkit.download.queue.DownloadQueue$Entry$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "DownloadQueue.kt"
+interface io.sanato.appkit.download.queue.DownloadQueue$Event {
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$AttemptFailed implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$AttemptFailed(java.lang.String, int, io.sanato.appkit.download.DownloadError, long);
+  public final java.lang.String getId();
+  public final int getGeneration();
+  public final io.sanato.appkit.download.DownloadError getError();
+  public final long getBytesDownloaded();
+  public final java.lang.String component1();
+  public final int component2();
+  public final io.sanato.appkit.download.DownloadError component3();
+  public final long component4();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$AttemptFailed copy(java.lang.String, int, io.sanato.appkit.download.DownloadError, long);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$AttemptFailed copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$AttemptFailed, java.lang.String, int, io.sanato.appkit.download.DownloadError, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Cancel implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Cancel(java.lang.String);
+  public final java.lang.String getId();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Cancel copy(java.lang.String);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Cancel copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Cancel, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$CancelAll implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Event$CancelAll INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Enqueue implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Enqueue(io.sanato.appkit.download.DownloadRequest);
+  public final io.sanato.appkit.download.DownloadRequest getRequest();
+  public final io.sanato.appkit.download.DownloadRequest component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Enqueue copy(io.sanato.appkit.download.DownloadRequest);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Enqueue copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Enqueue, io.sanato.appkit.download.DownloadRequest, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$GaveUp implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$GaveUp(java.lang.String, int, io.sanato.appkit.download.DownloadError, long, long);
+  public final java.lang.String getId();
+  public final int getGeneration();
+  public final io.sanato.appkit.download.DownloadError getError();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final java.lang.String component1();
+  public final int component2();
+  public final io.sanato.appkit.download.DownloadError component3();
+  public final long component4();
+  public final long component5();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$GaveUp copy(java.lang.String, int, io.sanato.appkit.download.DownloadError, long, long);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$GaveUp copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$GaveUp, java.lang.String, int, io.sanato.appkit.download.DownloadError, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Headers implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Headers(java.lang.String, int, io.sanato.appkit.download.engine.ResponseInfo);
+  public final java.lang.String getId();
+  public final int getGeneration();
+  public final io.sanato.appkit.download.engine.ResponseInfo getInfo();
+  public final java.lang.String component1();
+  public final int component2();
+  public final io.sanato.appkit.download.engine.ResponseInfo component3();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Headers copy(java.lang.String, int, io.sanato.appkit.download.engine.ResponseInfo);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Headers copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Headers, java.lang.String, int, io.sanato.appkit.download.engine.ResponseInfo, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Pause implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Pause(java.lang.String);
+  public final java.lang.String getId();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Pause copy(java.lang.String);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Pause copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Pause, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Progress implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Progress(java.lang.String, int, long, long);
+  public final java.lang.String getId();
+  public final int getGeneration();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final java.lang.String component1();
+  public final int component2();
+  public final long component3();
+  public final long component4();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Progress copy(java.lang.String, int, long, long);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Progress copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Progress, java.lang.String, int, long, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Resume implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Resume(java.lang.String);
+  public final java.lang.String getId();
+  public final java.lang.String component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Resume copy(java.lang.String);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Resume copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Resume, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Schedule implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Event$Schedule INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Event$Succeeded implements io.sanato.appkit.download.queue.DownloadQueue$Event {
+  public io.sanato.appkit.download.queue.DownloadQueue$Event$Succeeded(java.lang.String, int, java.io.File, long);
+  public final java.lang.String getId();
+  public final int getGeneration();
+  public final java.io.File getFile();
+  public final long getTotalBytes();
+  public final java.lang.String component1();
+  public final int component2();
+  public final java.io.File component3();
+  public final long component4();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Event$Succeeded copy(java.lang.String, int, java.io.File, long);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Event$Succeeded copy$default(io.sanato.appkit.download.queue.DownloadQueue$Event$Succeeded, java.lang.String, int, java.io.File, long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+interface io.sanato.appkit.download.queue.DownloadQueue$Phase {
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$CANCELED implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Phase$CANCELED INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$COMPLETED implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public io.sanato.appkit.download.queue.DownloadQueue$Phase$COMPLETED(java.io.File);
+  public final java.io.File getFile();
+  public final java.io.File component1();
+  public final io.sanato.appkit.download.queue.DownloadQueue$Phase$COMPLETED copy(java.io.File);
+  public static io.sanato.appkit.download.queue.DownloadQueue$Phase$COMPLETED copy$default(io.sanato.appkit.download.queue.DownloadQueue$Phase$COMPLETED, java.io.File, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$FAILED implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Phase$FAILED INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$PAUSED implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Phase$PAUSED INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$QUEUED implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Phase$QUEUED INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "DownloadQueue.kt"
+public final class io.sanato.appkit.download.queue.DownloadQueue$Phase$RUNNING implements io.sanato.appkit.download.queue.DownloadQueue$Phase {
+  public static final io.sanato.appkit.download.queue.DownloadQueue$Phase$RUNNING INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "TaskMetadata.kt"
+public final class io.sanato.appkit.download.store.PersistedState extends java.lang.Enum<io.sanato.appkit.download.store.PersistedState> {
+  public static final io.sanato.appkit.download.store.PersistedState$Companion Companion;
+  public static final io.sanato.appkit.download.store.PersistedState QUEUED;
+  public static final io.sanato.appkit.download.store.PersistedState PAUSED;
+  public static io.sanato.appkit.download.store.PersistedState[] values();
+  public static io.sanato.appkit.download.store.PersistedState valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.download.store.PersistedState> getEntries();
+}
+
+
+Compiled from "TaskMetadata.kt"
+public final class io.sanato.appkit.download.store.PersistedState$Companion {
+  public final kotlinx.serialization.KSerializer<io.sanato.appkit.download.store.PersistedState> serializer();
+  public io.sanato.appkit.download.store.PersistedState$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "TaskMetadata.kt"
+public final class io.sanato.appkit.download.store.TaskMetadata {
+  public static final io.sanato.appkit.download.store.TaskMetadata$Companion Companion;
+  public io.sanato.appkit.download.store.TaskMetadata(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, boolean, int, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.store.PersistedState);
+  public io.sanato.appkit.download.store.TaskMetadata(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, boolean, int, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.store.PersistedState, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getId();
+  public final java.lang.String getUrl();
+  public final java.lang.String getFileName();
+  public final java.lang.String getDestDir();
+  public final java.lang.String getSha256();
+  public final java.util.Map<java.lang.String, java.lang.String> getHeaders();
+  public final boolean getAllowMetered();
+  public final int getPriority();
+  public final long getBytesDownloaded();
+  public final long getTotalBytes();
+  public final java.lang.String getEtag();
+  public final java.lang.String getLastModified();
+  public final boolean getAcceptRanges();
+  public final io.sanato.appkit.download.store.PersistedState getState();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final java.lang.String component3();
+  public final java.lang.String component4();
+  public final java.lang.String component5();
+  public final java.util.Map<java.lang.String, java.lang.String> component6();
+  public final boolean component7();
+  public final int component8();
+  public final long component9();
+  public final long component10();
+  public final java.lang.String component11();
+  public final java.lang.String component12();
+  public final boolean component13();
+  public final io.sanato.appkit.download.store.PersistedState component14();
+  public final io.sanato.appkit.download.store.TaskMetadata copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, boolean, int, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.store.PersistedState);
+  public static io.sanato.appkit.download.store.TaskMetadata copy$default(io.sanato.appkit.download.store.TaskMetadata, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, boolean, int, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.store.PersistedState, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public static final void write$Self$downloadkit(io.sanato.appkit.download.store.TaskMetadata, kotlinx.serialization.encoding.CompositeEncoder, kotlinx.serialization.descriptors.SerialDescriptor);
+  public io.sanato.appkit.download.store.TaskMetadata(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, boolean, int, long, long, java.lang.String, java.lang.String, boolean, io.sanato.appkit.download.store.PersistedState, kotlinx.serialization.internal.SerializationConstructorMarker);
+}
+
+
+Compiled from "TaskMetadata.kt"
+public final class io.sanato.appkit.download.store.TaskMetadata$Companion {
+  public final kotlinx.serialization.KSerializer<io.sanato.appkit.download.store.TaskMetadata> serializer();
+  public io.sanato.appkit.download.store.TaskMetadata$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "TaskStore.kt"
+public final class io.sanato.appkit.download.store.TaskStore {
+  public io.sanato.appkit.download.store.TaskStore(java.io.File);
+  public final java.io.File partFile(java.lang.String);
+  public final java.io.File metaFile(java.lang.String);
+  public final java.io.File destinationFile(java.io.File, java.lang.String);
+  public final void save(io.sanato.appkit.download.store.TaskMetadata);
+  public final io.sanato.appkit.download.store.TaskMetadata load(java.lang.String);
+  public final java.util.List<io.sanato.appkit.download.store.TaskMetadata> loadAll();
+  public final void delete(java.lang.String);
+}
+
+

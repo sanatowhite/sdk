@@ -10,6 +10,23 @@
     <string name="home_account_signed_out_hint">未登录 · 点击登录</string>
     <string name="home_websocket_demo">WebSocket 长连接 Demo</string>
     <string name="home_websocket_demo_subtitle">连接公网 echo 服务,收发消息</string>
+    <string name="home_download_demo">下载 Demo</string>
+    <string name="home_download_demo_subtitle">断点续传、并发上限、通知栏进度</string>
+
+    <string name="download_demo_title">下载 Demo</string>
+    <string name="download_demo_add_sample">添加示例下载</string>
+    <string name="download_demo_cancel_all">全部取消</string>
+    <string name="download_demo_pause">暂停</string>
+    <string name="download_demo_resume">继续</string>
+    <string name="download_demo_cancel">取消</string>
+    <string name="download_demo_empty">还没有下载任务——点\"添加示例下载\"开始一个</string>
+    <string name="download_demo_unknown_size">…</string>
+    <string name="download_demo_state_queued">排队中</string>
+    <string name="download_demo_state_running">下载中 %1$s</string>
+    <string name="download_demo_state_paused">已暂停</string>
+    <string name="download_demo_state_completed">已完成</string>
+    <string name="download_demo_state_failed">失败:%1$s</string>
+    <string name="download_demo_state_canceled">已取消</string>
 
     <string name="ws_demo_title">WebSocket Demo</string>
     <string name="ws_demo_connect">连接</string>
