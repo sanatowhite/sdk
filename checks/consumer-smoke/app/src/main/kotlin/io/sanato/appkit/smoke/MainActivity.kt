@@ -31,11 +31,17 @@ private data object SmokeHome
  * 占位——这里只验证编译期的类型/坐标解析,不追求运行期渲染正确(AboutLibraries
  * 生成的真实资源需要消费方自己 apply 插件,不是这个 smoke 工程的验证目标)。
  *
- * `netSmoke`/`dataSmoke`/`dispatcherSmoke`/`backupSmoke` 四个 `@Inject` 字段是刻意加的:光是
- * `@Inject constructor` 存在、没有任何入口点引用,Dagger 不会去校验它们的
- * provision graph(可达性剪枝),只有 Kotlin 编译器会检查类型解析。挂在
- * `@AndroidEntryPoint` 的字段上,才会真正逼 `hiltJavaCompile` 走一遍完整绑定
- * 解析——这正是本模块要验证的"发布出去的 AAR 上 Hilt 聚合是否依然成立"。
+ * `netSmoke`/`dataSmoke`/`dispatcherSmoke`/`backupSmoke`/`authSmoke` 五个 `@Inject`
+ * 字段是刻意加的:光是 `@Inject constructor` 存在、没有任何入口点引用,Dagger
+ * 不会去校验它们的 provision graph(可达性剪枝),只有 Kotlin 编译器会检查类型
+ * 解析。挂在 `@AndroidEntryPoint` 的字段上,才会真正逼 `hiltJavaCompile` 走一遍
+ * 完整绑定解析——这正是本模块要验证的"发布出去的 AAR 上 Hilt 聚合是否依然成立"。
+ * `authSmoke` 额外验证 `:auth-firebase` 的 `FirebaseAuthModule` 绑定
+ * (`AuthRepository`/`AuthTokenProvider`)和 `:auth-net-hilt` 的
+ * `@Authenticated OkHttpClient` 绑定在没有真实 `google-services.json` 的
+ * consumer 里也能完整解析——`FirebaseAuth.getInstance()` 是 lazy,不在
+ * `@Provides` 构造期调用,所以字段注入本身不会在 `onCreate` 崩溃(见
+ * `AuthSmoke`/`FirebaseAuthRepository` 各自的 KDoc)。
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -50,6 +56,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var backupSmoke: BackupSmoke
+
+    @Inject
+    lateinit var authSmoke: AuthSmoke
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

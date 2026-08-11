@@ -17,7 +17,7 @@ env:
 
 jobs:
   sdk-guard:
-    name: sdk-guard (18 SDK modules)
+    name: sdk-guard (25 SDK modules)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -145,6 +145,18 @@ jobs:
           BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
           if "$BUILD_TOOLS/apkanalyzer" dex packages "$APK" | grep -qE "debugtools|leakcanary|okhttp3\.logging"; then
             echo "::error::debug-only code leaked into the release APK"
+            exit 1
+          fi
+      - name: Assert Firebase Auth survived R8 (positive assertion, see ADR 0012)
+        # 上面那条断言只查"不该在的不在"——R8 full mode 剥掉反射路径这类问题
+        # (比如 :auth-firebase 的 OAuthProvider Apple 登录用到的反射)只有真机点一次
+        # 才发现得了,但至少"整个 com.google.firebase.auth 包被 R8 完全裁掉"这种
+        # 更粗粒度的 keep-rules 缺失,可以在这里机械捕获。
+        run: |
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
+          if ! "$BUILD_TOOLS/apkanalyzer" dex packages "$APK" | grep -q "com.google.firebase.auth"; then
+            echo "::error::com.google.firebase.auth missing from release APK — R8 keep rules for :auth-firebase likely broken"
             exit 1
           fi
 

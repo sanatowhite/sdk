@@ -1,0 +1,52 @@
+Compiled from "AuthInterceptor.kt"
+public final class io.sanato.appkit.auth.net.hilt.AuthInterceptor implements okhttp3.Interceptor {
+  public static final io.sanato.appkit.auth.net.hilt.AuthInterceptor$Companion Companion;
+  public static final java.lang.String HEADER;
+  public static final java.lang.String PREFIX;
+  public io.sanato.appkit.auth.net.hilt.AuthInterceptor(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public okhttp3.Response intercept(okhttp3.Interceptor$Chain);
+}
+
+
+Compiled from "AuthInterceptor.kt"
+public final class io.sanato.appkit.auth.net.hilt.AuthInterceptor$Companion {
+  public io.sanato.appkit.auth.net.hilt.AuthInterceptor$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "AuthNetModule.kt"
+public abstract class io.sanato.appkit.auth.net.hilt.AuthNetBindsModule {
+  public io.sanato.appkit.auth.net.hilt.AuthNetBindsModule();
+  public abstract io.sanato.appkit.core.net.NetworkMetricsSink networkMetricsSink();
+}
+
+
+Compiled from "AuthNetModule.kt"
+public final class io.sanato.appkit.auth.net.hilt.AuthNetModule {
+  public static final io.sanato.appkit.auth.net.hilt.AuthNetModule INSTANCE;
+  public final io.sanato.appkit.auth.net.hilt.AuthInterceptor provideAuthInterceptor(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public final io.sanato.appkit.auth.net.hilt.AuthTokenAuthenticator provideAuthTokenAuthenticator(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public final io.sanato.appkit.core.net.ws.WebSocketTokenProvider provideAuthWebSocketTokenProvider(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public final okhttp3.OkHttpClient provideAuthenticatedOkHttpClient(io.sanato.appkit.auth.net.hilt.AuthInterceptor, io.sanato.appkit.auth.net.hilt.AuthTokenAuthenticator, java.util.Optional<io.sanato.appkit.core.net.NetworkMetricsSink>, android.content.Context);
+}
+
+
+Compiled from "AuthTokenAuthenticator.kt"
+public final class io.sanato.appkit.auth.net.hilt.AuthTokenAuthenticator implements okhttp3.Authenticator {
+  public io.sanato.appkit.auth.net.hilt.AuthTokenAuthenticator(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public okhttp3.Request authenticate(okhttp3.Route, okhttp3.Response);
+}
+
+
+Compiled from "AuthWebSocketTokenProvider.kt"
+public final class io.sanato.appkit.auth.net.hilt.AuthWebSocketTokenProvider implements io.sanato.appkit.core.net.ws.WebSocketTokenProvider {
+  public io.sanato.appkit.auth.net.hilt.AuthWebSocketTokenProvider(io.sanato.appkit.core.auth.AuthTokenProvider);
+  public java.lang.Object token(boolean, kotlin.coroutines.Continuation<? super java.lang.String>);
+}
+
+
+Compiled from "AuthNetModule.kt"
+public interface io.sanato.appkit.auth.net.hilt.Authenticated extends java.lang.annotation.Annotation {
+}
+
+

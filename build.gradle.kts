@@ -55,7 +55,7 @@ plugins {
 // `verifyModuleGraph` 的 `doLast` 硬引用更早、更硬，会让整条 JitPack 发布链在
 // 跑到任何任务之前就死在配置阶段。
 val koverAggregatedModules =
-    listOf(":core-common", ":core-init", ":core-ui", ":core-net", ":core-data", ":core-telemetry", ":app")
+    listOf(":core-common", ":core-init", ":core-ui", ":core-net", ":core-data", ":core-telemetry", ":core-auth", ":app")
 
 val koverProjects = koverAggregatedModules.mapNotNull { findProject(it) }
 koverProjects.forEach { it.apply(plugin = "org.jetbrains.kotlinx.kover") }
@@ -84,12 +84,16 @@ val sdkModules =
         ":core-telemetry",
         ":core-telemetry-hilt",
         ":net-telemetry-hilt",
+        ":core-auth",
+        ":auth-firebase",
+        ":auth-net-hilt",
         ":debug-tools",
         ":telemetry-firebase",
         ":feature-settings",
         ":feature-feedback",
         ":feature-licenses",
         ":feature-update",
+        ":feature-auth",
         ":sdk-bom",
     )
 
@@ -113,6 +117,7 @@ val apiCheckExcludedModules =
         ":feature-feedback",
         ":feature-licenses",
         ":feature-update",
+        ":feature-auth",
         ":sdk-bom",
     )
 
@@ -200,6 +205,12 @@ tasks.register("verifyModuleGraph") {
                 ":core-net" to setOf(":core-common"),
                 ":core-data" to setOf(":core-common"),
                 ":core-telemetry" to setOf(":core-common", ":core-init"),
+                // :core-auth is Tier 1 like the rest of this group — zero Hilt, zero
+                // vendor deps, only :core-common. Its one implementation lives in
+                // :auth-firebase (a leaf, ADR 0011 vendor-backed module), not in a
+                // "-hilt" companion — see core-auth/README.md for why there is no
+                // :core-auth-hilt.
+                ":core-auth" to setOf(":core-common"),
                 // ── Tier 3：装配层，唯一允许跨 Tier-1 边界粘合的地方 ──
                 ":core-common-hilt" to setOf(":core-common"),
                 ":core-init-hilt" to setOf(":core-init"),
@@ -207,6 +218,15 @@ tasks.register("verifyModuleGraph") {
                 ":core-telemetry-hilt" to setOf(":core-telemetry", ":core-init-hilt", ":core-common"),
                 ":net-telemetry-hilt" to setOf(":core-net", ":core-telemetry"),
                 ":telemetry-firebase" to setOf(":core-telemetry"),
+                // Second cross-Tier-1 bridge (after :net-telemetry-hilt): bridges
+                // :core-auth and :core-net for BOTH the HTTP Authenticator/Interceptor
+                // and the WebSocket ws.WebSocketTokenProvider — one module, since both
+                // concerns serve exactly the same pair of Tier-1 modules.
+                ":auth-net-hilt" to setOf(":core-auth", ":core-net", ":core-common"),
+                // vendor-backed (ADR 0011): the only implementation of :core-auth's
+                // interfaces. See auth-firebase/README.md for the four-condition
+                // walkthrough.
+                ":auth-firebase" to setOf(":core-auth"),
                 // ── Tier 2：标准页面 ──
                 ":feature-settings" to
                     setOf(":core-common", ":core-ui", ":core-data", ":core-data-hilt", ":core-common-hilt"),
@@ -214,6 +234,7 @@ tasks.register("verifyModuleGraph") {
                     setOf(":core-common", ":core-telemetry", ":core-ui", ":core-common-hilt"),
                 ":feature-licenses" to setOf(":core-ui"),
                 ":feature-update" to setOf(":updatechecker", ":core-ui"),
+                ":feature-auth" to setOf(":core-common", ":core-ui", ":core-auth"),
                 // ── 其余 ──
                 ":debug-tools" to setOf(":core-telemetry"),
                 ":updatechecker" to emptySet<String>(),

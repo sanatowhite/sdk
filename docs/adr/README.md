@@ -8,9 +8,10 @@ Lightweight ADRs (context / decision / consequences) for the choices made while 
 - [0004 — Hilt + KSP for `:app`, `javax.inject` only in `core-*`](0004-hilt-ksp-di-boundary.md) — ⚠️ partially superseded by 0008
 - [0005 — `version.properties` as the single source of truth for app versioning](0005-version-properties-not-git-tags.md)
 - [0006 — Pluggable `Telemetry` abstraction with Firebase as an optional, off-by-default backend](0006-telemetry-abstraction-optional-firebase.md) — ⚠️ partially superseded by 0008
-- [0007 — What the template deliberately does not ship (Room, auth, in-app review)](0007-deliberately-excluded-capabilities.md)
+- [0007 — What the template deliberately does not ship (Room, auth, in-app review)](0007-deliberately-excluded-capabilities.md) — ⚠️ "No authentication" bullet superseded by 0012
 - [0008 — Turn `core-*`/`feature-*` into real published SDK modules, not fork-and-copy](0008-sdk-publishing-architecture.md)
 - [0009 — The `api()` vs `implementation()` judgment rule for published modules](0009-api-vs-implementation-judgment-rule.md)
 - [0010 — `:logkit` is a log pipeline, not a detector; `:core-telemetry` still does the detecting](0010-logkit-pipeline-vs-apm-detection.md)
 - [0011 — When a published module may carry a heavyweight vendor dependency](0011-vendor-backed-backend-modules.md)
+- [0012 — Firebase-hosted auth + WebSocket-in-`:core-net`, supersedes 0007's "No authentication"](0012-firebase-auth-and-websocket.md)
 - [spike 0000 — Hilt library-module `@Module` aggregation (empirical spike behind 0008)](spike-0000-hilt-library-module-aggregation.md)

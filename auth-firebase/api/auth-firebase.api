@@ -1,0 +1,82 @@
+Compiled from "FirebaseAuthModule.kt"
+public interface io.sanato.appkit.auth.firebase.AuthExternalScope extends java.lang.annotation.Annotation {
+}
+
+
+Compiled from "FirebaseAuthModule.kt"
+public abstract class io.sanato.appkit.auth.firebase.FirebaseAuthBindsModule {
+  public io.sanato.appkit.auth.firebase.FirebaseAuthBindsModule();
+  public abstract io.sanato.appkit.auth.firebase.GoogleWebClientIdOverride googleWebClientIdOverride();
+  public abstract java.util.Set<io.sanato.appkit.core.auth.SessionScopedStore> sessionScopedStores();
+}
+
+
+Compiled from "FirebaseAuthModule.kt"
+public final class io.sanato.appkit.auth.firebase.FirebaseAuthModule {
+  public static final io.sanato.appkit.auth.firebase.FirebaseAuthModule INSTANCE;
+  public final kotlinx.coroutines.CoroutineScope provideAuthExternalScope();
+  public final java.lang.String provideGoogleWebClientId(android.app.Application, java.util.Optional<io.sanato.appkit.auth.firebase.GoogleWebClientIdOverride>);
+  public final io.sanato.appkit.auth.firebase.FirebaseAuthRepository provideFirebaseAuthRepository(android.content.Context, java.lang.String, kotlinx.coroutines.CoroutineScope);
+  public final io.sanato.appkit.core.auth.AuthRepository provideAuthRepository(io.sanato.appkit.auth.firebase.FirebaseAuthRepository);
+  public final io.sanato.appkit.core.auth.AuthTokenProvider provideAuthTokenProvider(io.sanato.appkit.auth.firebase.FirebaseAuthRepository);
+}
+
+
+Compiled from "FirebaseAuthRepository.kt"
+public final class io.sanato.appkit.auth.firebase.FirebaseAuthRepository implements io.sanato.appkit.core.auth.AuthRepository,io.sanato.appkit.core.auth.AuthTokenProvider {
+  public static final java.lang.String APPLE_PROVIDER_ID;
+  public static final int MAX_TRACKED_RESEND_TOKENS;
+  public io.sanato.appkit.auth.firebase.FirebaseAuthRepository(android.content.Context, java.lang.String, java.util.List<java.lang.String>, kotlinx.coroutines.CoroutineScope);
+  public io.sanato.appkit.auth.firebase.FirebaseAuthRepository(android.content.Context, java.lang.String, java.util.List, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public kotlinx.coroutines.flow.StateFlow<io.sanato.appkit.core.auth.AuthState> getAuthState();
+  public java.lang.Object signInWithEmail(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public java.lang.Object signUpWithEmail(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public java.lang.Object sendPasswordResetEmail(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object sendEmailVerification(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object updatePassword(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object signInWithGoogle(android.app.Activity, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public java.lang.Object signInWithApple(android.app.Activity, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.auth.PhoneAuthEvent> signInWithPhoneNumber-SxA4cEA(android.app.Activity, java.lang.String, long);
+  public kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.auth.PhoneAuthEvent> resendPhoneVerificationCode-W1avntA(android.app.Activity, java.lang.String, java.lang.String, long);
+  public java.lang.Object confirmPhoneVerificationCode-YSt7Ods(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public java.lang.Object signOut(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object deleteAccount(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object reauthenticateWithPassword(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public java.lang.Object reloadUser(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public java.lang.Object availableProviders(kotlin.coroutines.Continuation<? super java.util.Set<? extends io.sanato.appkit.core.auth.AuthProvider>>);
+  public java.lang.Object currentIdToken(boolean, kotlin.coroutines.Continuation<? super java.lang.String>);
+  public java.lang.String cachedIdToken();
+  public java.lang.Object invalidateToken(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "FirebaseAuthRepository.kt"
+final class io.sanato.appkit.auth.firebase.FirebaseAuthRepository$Companion {
+  public io.sanato.appkit.auth.firebase.FirebaseAuthRepository$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "FirebaseAuthRepository.kt"
+public final class io.sanato.appkit.auth.firebase.FirebaseAuthRepositoryKt {
+}
+
+
+Compiled from "FirebaseErrorMapping.kt"
+public final class io.sanato.appkit.auth.firebase.FirebaseErrorMappingKt {
+  public static final io.sanato.appkit.core.auth.AuthError toAuthError(java.lang.Throwable);
+  public static final <T> io.sanato.appkit.core.common.AppResult<T> runCatchingAuth(kotlin.jvm.functions.Function0<? extends T>);
+}
+
+
+Compiled from "FirebaseUserMapping.kt"
+public final class io.sanato.appkit.auth.firebase.FirebaseUserMappingKt {
+  public static final io.sanato.appkit.core.auth.AuthProvider toAuthProvider(java.lang.String);
+}
+
+
+Compiled from "FirebaseAuthModule.kt"
+public interface io.sanato.appkit.auth.firebase.GoogleWebClientIdOverride {
+  public abstract java.lang.String get();
+}
+
+

@@ -44,12 +44,16 @@ dependencies {
             "core-telemetry",
             "core-telemetry-hilt",
             "net-telemetry-hilt",
+            "core-auth",
+            "auth-firebase",
+            "auth-net-hilt",
             "debug-tools",
             "telemetry-firebase",
             "feature-settings",
             "feature-feedback",
             "feature-licenses",
             "feature-update",
+            "feature-auth",
         ).forEach { module -> api("$group:$module:$version") }
     }
 }

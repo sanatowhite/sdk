@@ -65,6 +65,10 @@ dependencies {
     implementation("com.github.sanatowhite.sdk:feature-feedback")
     implementation("com.github.sanatowhite.sdk:feature-licenses")
     implementation("com.github.sanatowhite.sdk:feature-update")
+    implementation("com.github.sanatowhite.sdk:core-auth")
+    implementation("com.github.sanatowhite.sdk:auth-firebase")
+    implementation("com.github.sanatowhite.sdk:auth-net-hilt")
+    implementation("com.github.sanatowhite.sdk:feature-auth")
 
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.activity:activity-compose:1.13.0")

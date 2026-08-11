@@ -1,0 +1,364 @@
+Compiled from "AuthError.kt"
+public abstract class io.sanato.appkit.core.auth.AuthError extends java.lang.Exception {
+  public io.sanato.appkit.core.auth.AuthError(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError(java.lang.String, java.lang.Throwable, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$AccountExistsWithDifferentCredential extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$AccountExistsWithDifferentCredential(java.lang.String, java.lang.String, java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$AccountExistsWithDifferentCredential(java.lang.String, java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getEmail();
+  public final java.lang.String getConflictId();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$Cancelled extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$Cancelled(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$Cancelled(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$Cancelled();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$EmailAlreadyInUse extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$EmailAlreadyInUse(java.lang.String, java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$EmailAlreadyInUse(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getEmail();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$InvalidCredentials extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$InvalidCredentials(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$InvalidCredentials(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$InvalidCredentials();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$InvalidEmail extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$InvalidEmail(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$InvalidEmail(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$InvalidEmail();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$InvalidPhoneNumber extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$InvalidPhoneNumber(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$InvalidPhoneNumber(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$InvalidPhoneNumber();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$InvalidVerificationCode extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$InvalidVerificationCode(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$InvalidVerificationCode(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$InvalidVerificationCode();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$Network extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$Network(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$Network(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$Network();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$NoCredentialAvailable extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$NoCredentialAvailable(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$NoCredentialAvailable(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$NoCredentialAvailable();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$NotSignedIn extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$NotSignedIn();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$ProviderNotEnabled extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$ProviderNotEnabled(io.sanato.appkit.core.auth.AuthProvider, java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$ProviderNotEnabled(io.sanato.appkit.core.auth.AuthProvider, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final io.sanato.appkit.core.auth.AuthProvider getProvider();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$RequiresRecentLogin extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$RequiresRecentLogin(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$RequiresRecentLogin(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$RequiresRecentLogin();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$TooManyRequests extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$TooManyRequests(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$TooManyRequests(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$TooManyRequests();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$Unknown extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$Unknown(java.lang.String, java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$Unknown(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getCode();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$UserDisabled extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$UserDisabled(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$UserDisabled(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$UserDisabled();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$UserNotFound extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$UserNotFound(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$UserNotFound(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$UserNotFound();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$VerificationCodeExpired extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$VerificationCodeExpired(java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$VerificationCodeExpired(java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.core.auth.AuthError$VerificationCodeExpired();
+}
+
+
+Compiled from "AuthError.kt"
+public final class io.sanato.appkit.core.auth.AuthError$WeakPassword extends io.sanato.appkit.core.auth.AuthError {
+  public io.sanato.appkit.core.auth.AuthError$WeakPassword(java.lang.String, java.lang.Throwable);
+  public io.sanato.appkit.core.auth.AuthError$WeakPassword(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.String getReason();
+}
+
+
+Compiled from "AuthUser.kt"
+public final class io.sanato.appkit.core.auth.AuthProvider extends java.lang.Enum<io.sanato.appkit.core.auth.AuthProvider> {
+  public static final io.sanato.appkit.core.auth.AuthProvider Password;
+  public static final io.sanato.appkit.core.auth.AuthProvider Google;
+  public static final io.sanato.appkit.core.auth.AuthProvider Apple;
+  public static final io.sanato.appkit.core.auth.AuthProvider Phone;
+  public static final io.sanato.appkit.core.auth.AuthProvider Anonymous;
+  public static final io.sanato.appkit.core.auth.AuthProvider Unknown;
+  public static io.sanato.appkit.core.auth.AuthProvider[] values();
+  public static io.sanato.appkit.core.auth.AuthProvider valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.auth.AuthProvider> getEntries();
+}
+
+
+Compiled from "AuthRepository.kt"
+public interface io.sanato.appkit.core.auth.AuthRepository {
+  public static final io.sanato.appkit.core.auth.AuthRepository$Companion Companion;
+  public abstract kotlinx.coroutines.flow.StateFlow<io.sanato.appkit.core.auth.AuthState> getAuthState();
+  public abstract java.lang.Object signInWithEmail(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract java.lang.Object signUpWithEmail(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract java.lang.Object sendPasswordResetEmail(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object sendEmailVerification(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object updatePassword(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object signInWithGoogle(android.app.Activity, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract java.lang.Object signInWithApple(android.app.Activity, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.auth.PhoneAuthEvent> signInWithPhoneNumber-SxA4cEA(android.app.Activity, java.lang.String, long);
+  public static kotlinx.coroutines.flow.Flow signInWithPhoneNumber-SxA4cEA$default(io.sanato.appkit.core.auth.AuthRepository, android.app.Activity, java.lang.String, long, int, java.lang.Object);
+  public abstract kotlinx.coroutines.flow.Flow<io.sanato.appkit.core.auth.PhoneAuthEvent> resendPhoneVerificationCode-W1avntA(android.app.Activity, java.lang.String, java.lang.String, long);
+  public static kotlinx.coroutines.flow.Flow resendPhoneVerificationCode-W1avntA$default(io.sanato.appkit.core.auth.AuthRepository, android.app.Activity, java.lang.String, java.lang.String, long, int, java.lang.Object);
+  public abstract java.lang.Object confirmPhoneVerificationCode-YSt7Ods(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract java.lang.Object signOut(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object deleteAccount(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object reauthenticateWithPassword(java.lang.String, kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<kotlin.Unit>>);
+  public abstract java.lang.Object reloadUser(kotlin.coroutines.Continuation<? super io.sanato.appkit.core.common.AppResult<io.sanato.appkit.core.auth.AuthUser>>);
+  public abstract java.lang.Object availableProviders(kotlin.coroutines.Continuation<? super java.util.Set<? extends io.sanato.appkit.core.auth.AuthProvider>>);
+}
+
+
+Compiled from "AuthRepository.kt"
+final class io.sanato.appkit.core.auth.AuthRepository$Companion {
+  public final long getDEFAULT_PHONE_AUTO_RETRIEVAL_TIMEOUT-UwyO8pc();
+}
+
+
+Compiled from "AuthState.kt"
+public interface io.sanato.appkit.core.auth.AuthState {
+}
+
+
+Compiled from "AuthState.kt"
+public final class io.sanato.appkit.core.auth.AuthState$SignedIn implements io.sanato.appkit.core.auth.AuthState {
+  public io.sanato.appkit.core.auth.AuthState$SignedIn(io.sanato.appkit.core.auth.AuthUser);
+  public final io.sanato.appkit.core.auth.AuthUser getUser();
+  public final io.sanato.appkit.core.auth.AuthUser component1();
+  public final io.sanato.appkit.core.auth.AuthState$SignedIn copy(io.sanato.appkit.core.auth.AuthUser);
+  public static io.sanato.appkit.core.auth.AuthState$SignedIn copy$default(io.sanato.appkit.core.auth.AuthState$SignedIn, io.sanato.appkit.core.auth.AuthUser, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "AuthState.kt"
+public final class io.sanato.appkit.core.auth.AuthState$SignedOut implements io.sanato.appkit.core.auth.AuthState {
+  public io.sanato.appkit.core.auth.AuthState$SignedOut(io.sanato.appkit.core.auth.SignOutReason);
+  public io.sanato.appkit.core.auth.AuthState$SignedOut(io.sanato.appkit.core.auth.SignOutReason, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final io.sanato.appkit.core.auth.SignOutReason getReason();
+  public final io.sanato.appkit.core.auth.SignOutReason component1();
+  public final io.sanato.appkit.core.auth.AuthState$SignedOut copy(io.sanato.appkit.core.auth.SignOutReason);
+  public static io.sanato.appkit.core.auth.AuthState$SignedOut copy$default(io.sanato.appkit.core.auth.AuthState$SignedOut, io.sanato.appkit.core.auth.SignOutReason, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.auth.AuthState$SignedOut();
+}
+
+
+Compiled from "AuthState.kt"
+public final class io.sanato.appkit.core.auth.AuthState$Unknown implements io.sanato.appkit.core.auth.AuthState {
+  public static final io.sanato.appkit.core.auth.AuthState$Unknown INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "AuthTokenProvider.kt"
+public interface io.sanato.appkit.core.auth.AuthTokenProvider {
+  public abstract java.lang.Object currentIdToken(boolean, kotlin.coroutines.Continuation<? super java.lang.String>);
+  public static java.lang.Object currentIdToken$default(io.sanato.appkit.core.auth.AuthTokenProvider, boolean, kotlin.coroutines.Continuation, int, java.lang.Object);
+  public abstract java.lang.String cachedIdToken();
+  public abstract java.lang.Object invalidateToken(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "AuthUser.kt"
+public final class io.sanato.appkit.core.auth.AuthUser {
+  public io.sanato.appkit.core.auth.AuthUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, boolean, java.util.Set<? extends io.sanato.appkit.core.auth.AuthProvider>, java.lang.Long, java.lang.Long);
+  public final java.lang.String getUid();
+  public final java.lang.String getEmail();
+  public final java.lang.String getDisplayName();
+  public final java.lang.String getPhotoUrl();
+  public final java.lang.String getPhoneNumber();
+  public final boolean isEmailVerified();
+  public final boolean isAnonymous();
+  public final java.util.Set<io.sanato.appkit.core.auth.AuthProvider> getProviders();
+  public final java.lang.Long getCreatedAtMillis();
+  public final java.lang.Long getLastSignInAtMillis();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final java.lang.String component3();
+  public final java.lang.String component4();
+  public final java.lang.String component5();
+  public final boolean component6();
+  public final boolean component7();
+  public final java.util.Set<io.sanato.appkit.core.auth.AuthProvider> component8();
+  public final java.lang.Long component9();
+  public final java.lang.Long component10();
+  public final io.sanato.appkit.core.auth.AuthUser copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, boolean, java.util.Set<? extends io.sanato.appkit.core.auth.AuthProvider>, java.lang.Long, java.lang.Long);
+  public static io.sanato.appkit.core.auth.AuthUser copy$default(io.sanato.appkit.core.auth.AuthUser, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, boolean, java.util.Set, java.lang.Long, java.lang.Long, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public interface io.sanato.appkit.core.auth.PhoneAuthEvent {
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public final class io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrievalTimeout implements io.sanato.appkit.core.auth.PhoneAuthEvent {
+  public static final io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrievalTimeout INSTANCE;
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public final class io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrieved implements io.sanato.appkit.core.auth.PhoneAuthEvent {
+  public io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrieved(io.sanato.appkit.core.auth.AuthUser);
+  public final io.sanato.appkit.core.auth.AuthUser getUser();
+  public final io.sanato.appkit.core.auth.AuthUser component1();
+  public final io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrieved copy(io.sanato.appkit.core.auth.AuthUser);
+  public static io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrieved copy$default(io.sanato.appkit.core.auth.PhoneAuthEvent$AutoRetrieved, io.sanato.appkit.core.auth.AuthUser, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public final class io.sanato.appkit.core.auth.PhoneAuthEvent$CodeSent implements io.sanato.appkit.core.auth.PhoneAuthEvent {
+  public final java.lang.String getVerificationId-2ob3bkk();
+  public final java.lang.String component1-2ob3bkk();
+  public final io.sanato.appkit.core.auth.PhoneAuthEvent$CodeSent copy-Z-UHbL4(java.lang.String);
+  public static io.sanato.appkit.core.auth.PhoneAuthEvent$CodeSent copy-Z-UHbL4$default(io.sanato.appkit.core.auth.PhoneAuthEvent$CodeSent, java.lang.String, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public io.sanato.appkit.core.auth.PhoneAuthEvent$CodeSent(java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public final class io.sanato.appkit.core.auth.PhoneAuthEvent$Failed implements io.sanato.appkit.core.auth.PhoneAuthEvent {
+  public io.sanato.appkit.core.auth.PhoneAuthEvent$Failed(io.sanato.appkit.core.auth.AuthError);
+  public final io.sanato.appkit.core.auth.AuthError getError();
+  public final io.sanato.appkit.core.auth.AuthError component1();
+  public final io.sanato.appkit.core.auth.PhoneAuthEvent$Failed copy(io.sanato.appkit.core.auth.AuthError);
+  public static io.sanato.appkit.core.auth.PhoneAuthEvent$Failed copy$default(io.sanato.appkit.core.auth.PhoneAuthEvent$Failed, io.sanato.appkit.core.auth.AuthError, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+
+
+Compiled from "PhoneAuthEvent.kt"
+public final class io.sanato.appkit.core.auth.PhoneVerificationId {
+  public final java.lang.String getValue();
+  public static java.lang.String toString-impl(java.lang.String);
+  public java.lang.String toString();
+  public static int hashCode-impl(java.lang.String);
+  public int hashCode();
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+  public boolean equals(java.lang.Object);
+  public static java.lang.String constructor-impl(java.lang.String);
+  public static final io.sanato.appkit.core.auth.PhoneVerificationId box-impl(java.lang.String);
+  public final java.lang.String unbox-impl();
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+}
+
+
+Compiled from "SessionScopedStore.kt"
+public interface io.sanato.appkit.core.auth.SessionScopedStore {
+  public abstract java.lang.Object clearForSignOut(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+
+
+Compiled from "AuthState.kt"
+public final class io.sanato.appkit.core.auth.SignOutReason extends java.lang.Enum<io.sanato.appkit.core.auth.SignOutReason> {
+  public static final io.sanato.appkit.core.auth.SignOutReason UserInitiated;
+  public static final io.sanato.appkit.core.auth.SignOutReason SessionExpired;
+  public static final io.sanato.appkit.core.auth.SignOutReason AccountDisabled;
+  public static final io.sanato.appkit.core.auth.SignOutReason AccountDeleted;
+  public static final io.sanato.appkit.core.auth.SignOutReason NeverSignedIn;
+  public static io.sanato.appkit.core.auth.SignOutReason[] values();
+  public static io.sanato.appkit.core.auth.SignOutReason valueOf(java.lang.String);
+  public static kotlin.enums.EnumEntries<io.sanato.appkit.core.auth.SignOutReason> getEntries();
+}
+
+

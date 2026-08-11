@@ -1,0 +1,53 @@
+<resources>
+    <string name="appkit_auth_signin_title">Sign in</string>
+    <string name="appkit_auth_email_label">Email</string>
+    <string name="appkit_auth_password_label">Password</string>
+    <string name="appkit_auth_confirm_password_label">Confirm password</string>
+    <string name="appkit_auth_show_password">Show</string>
+    <string name="appkit_auth_hide_password">Hide</string>
+    <string name="appkit_auth_signin_button">Sign in</string>
+    <string name="appkit_auth_signup_link">Create an account</string>
+    <string name="appkit_auth_forgot_password_link">Forgot password?</string>
+    <string name="appkit_auth_google_button">Continue with Google</string>
+    <string name="appkit_auth_apple_button">Continue with Apple</string>
+    <string name="appkit_auth_phone_button">Continue with phone number</string>
+
+    <string name="appkit_auth_signup_title">Create account</string>
+    <string name="appkit_auth_signup_button">Create account</string>
+
+    <string name="appkit_auth_forgot_password_title">Reset password</string>
+    <string name="appkit_auth_forgot_password_body">Enter the email address you signed up with and we\'ll send you a link to reset your password.</string>
+    <string name="appkit_auth_send_reset_link_button">Send reset link</string>
+    <string name="appkit_auth_reset_email_sent">Check your email for a link to reset your password.</string>
+
+    <string name="appkit_auth_phone_number_title">Phone number</string>
+    <string name="appkit_auth_phone_number_label">Phone number</string>
+    <string name="appkit_auth_send_code_button">Send code</string>
+
+    <string name="appkit_auth_phone_code_title">Enter code</string>
+    <string name="appkit_auth_phone_code_body">We sent a code to %1$s.</string>
+    <string name="appkit_auth_code_label">Verification code</string>
+    <string name="appkit_auth_resend_code_button">Resend code</string>
+    <string name="appkit_auth_resend_code_countdown">Resend code in %1$ds</string>
+
+    <string name="appkit_auth_account_title">Account</string>
+    <string name="appkit_auth_signed_in_as">Signed in as %1$s</string>
+    <string name="appkit_auth_sign_out_button">Sign out</string>
+
+    <string name="appkit_auth_error_invalid_email">That email address doesn\'t look right.</string>
+    <string name="appkit_auth_error_invalid_credentials">Email or password is incorrect.</string>
+    <string name="appkit_auth_error_user_disabled">This account has been disabled.</string>
+    <string name="appkit_auth_error_email_in_use">An account already exists with that email.</string>
+    <string name="appkit_auth_error_weak_password">Please choose a stronger password.</string>
+    <string name="appkit_auth_error_account_exists_different_credential">This email is already linked to a different sign-in method. Please use that method instead.</string>
+    <string name="appkit_auth_error_provider_not_enabled">This sign-in method isn\'t available right now.</string>
+    <string name="appkit_auth_error_invalid_phone_number">That phone number doesn\'t look right.</string>
+    <string name="appkit_auth_error_invalid_verification_code">That code is incorrect. Please try again.</string>
+    <string name="appkit_auth_error_verification_code_expired">This code has expired. Please request a new one.</string>
+    <string name="appkit_auth_error_no_credential_available">No account is available for that sign-in method.</string>
+    <string name="appkit_auth_error_requires_recent_login">Please sign in again to continue.</string>
+    <string name="appkit_auth_error_not_signed_in">You need to sign in first.</string>
+    <string name="appkit_auth_error_too_many_requests">Too many attempts. Please try again later.</string>
+    <string name="appkit_auth_error_network">No network connection. Please check your connection and try again.</string>
+    <string name="appkit_auth_error_unknown">Something went wrong. Please try again.</string>
+</resources>
