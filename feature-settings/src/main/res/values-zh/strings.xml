@@ -1,5 +1,7 @@
 <resources>
     <string name="appkit_settings_title">设置</string>
+    <string name="appkit_settings_section_account">账号</string>
+    <string name="appkit_settings_account">账号</string>
     <string name="appkit_settings_section_appearance">外观</string>
     <string name="appkit_settings_theme">主题</string>
     <string name="appkit_settings_theme_system">跟随系统</string>

@@ -19,6 +19,8 @@ fun SettingsRoute(
     onNavigateToTermsOfService: () -> Unit,
     onNavigateToFeedback: (() -> Unit)? = null,
     onCheckForUpdates: (() -> Unit)? = null,
+    onNavigateToAccount: (() -> Unit)? = null,
+    accountSubtitle: String? = null,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -40,5 +42,7 @@ fun SettingsRoute(
         onNavigateToTermsOfService = onNavigateToTermsOfService,
         onNavigateToFeedback = onNavigateToFeedback,
         onCheckForUpdates = onCheckForUpdates,
+        onNavigateToAccount = onNavigateToAccount,
+        accountSubtitle = accountSubtitle,
     )
 }

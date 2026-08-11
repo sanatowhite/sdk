@@ -1,9 +1,11 @@
 # 0006 — Pluggable `Telemetry` abstraction with Firebase as an optional, off-by-default backend
 
 > ⚠️ **Superseded (partially).** The "off-by-default" half of this decision no longer
-> holds: `:app` now depends on `:telemetry-firebase` unconditionally and ships a
-> placeholder `app/google-services.json` so it builds/runs out of the box; forking
-> developers just swap in their own `google-services.json`. The `telemetryFirebaseEnabled`
+> holds: `:app` now depends on `:telemetry-firebase` unconditionally and ships a real,
+> working `app/google-services.json` for a shared demo project (`sanato-app-template`
+> — also `:feature-auth`'s login backend, see ADR 0012) so it builds/runs/reports/logs-in
+> out of the box; forking developers should swap in their own `google-services.json`
+> before shipping anything real (see TEMPLATE.md). The `telemetryFirebaseEnabled`
 > gradle property and the conditional-`buildscript`-classpath mechanism described below
 > are gone. The rest of this ADR (the `Telemetry` interface shape, `CompositeTelemetry`/
 > `SamplingTelemetry`, `@Multibinds` requirement, no self-registration, no

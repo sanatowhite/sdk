@@ -33,6 +33,10 @@ import androidx.navigation.compose.composable
  * 决定的,这个模块不知道也不应该知道那个路由长什么样。不传就退回
  * `popBackStack()`(适合"从设置页里再次查看同意页"这种非首启场景);首启同意
  * 流程(配合 [AppEntryViewModel])必须传,导航到消费方自己的首页路由。
+ *
+ * `onNavigateToAccount`/`accountSubtitle` 尾部追加,同 `onNavigateToFeedback` 的
+ * 模式——引了 `:feature-auth` 的消费方才传,这个模块零新增依赖边,不需要知道
+ * `:core-auth`/`AuthState` 存在。
  */
 fun NavGraphBuilder.settingsGraph(
     navController: NavController,
@@ -42,6 +46,8 @@ fun NavGraphBuilder.settingsGraph(
     onNavigateToLicenses: (() -> Unit)? = null,
     onCheckForUpdates: (() -> Unit)? = null,
     onConsentAccepted: (() -> Unit)? = null,
+    onNavigateToAccount: (() -> Unit)? = null,
+    accountSubtitle: String? = null,
 ) {
     composable<SettingsRoute> {
         SettingsRoute(
@@ -53,6 +59,8 @@ fun NavGraphBuilder.settingsGraph(
             onNavigateToTermsOfService = { navController.navigate(TermsOfServiceRoute) },
             onNavigateToFeedback = onNavigateToFeedback,
             onCheckForUpdates = onCheckForUpdates,
+            onNavigateToAccount = onNavigateToAccount,
+            accountSubtitle = accountSubtitle,
         )
     }
     composable<AboutRoute> {

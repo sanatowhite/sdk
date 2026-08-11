@@ -2,7 +2,7 @@
 
 ## 这是什么 / 不是什么
 
-`:core-telemetry` 的 `Telemetry` 接口的 Firebase 实现(Analytics + Crashlytics),以及把它贡献进消费方 Hilt 图的 `@Module`。**这是 `:app` 模板默认的遥测后端**——`:app` 无条件依赖它、无条件 apply `google-services`/`firebase-crashlytics` 两个 Gradle 插件,仓库里提交了一份指向不存在项目的占位 `app/google-services.json`,让 `:app:assembleDebug` 开箱可编译/可运行。fork 者只需要把这个占位文件换成自己 Firebase 项目的真实 `google-services.json`,不需要改任何 Gradle/Kotlin 代码。
+`:core-telemetry` 的 `Telemetry` 接口的 Firebase 实现(Analytics + Crashlytics),以及把它贡献进消费方 Hilt 图的 `@Module`。**这是 `:app` 模板默认的遥测后端**——`:app` 无条件依赖它、无条件 apply `google-services`/`firebase-crashlytics` 两个 Gradle 插件。仓库里提交的 `app/google-services.json` 指向一个真实的共享 demo 项目(`sanato-app-template`,同时也是 `:feature-auth` 登录能力的后端——见 `auth-firebase/README.md`),不是不可用的占位文件,让 `:app:assembleDebug`/`:app:assembleRelease` 开箱可编译/可运行,上报和登录也真的能用。fork 者应该把这个文件换成自己 Firebase 项目的 `google-services.json`(不需要改任何 Gradle/Kotlin 代码)——继续用共享 demo 项目意味着你的 Analytics/Crashlytics 数据和登录用户会和其他 clone 这个仓库的人混在一起,你也没有那个项目的控制台权限。
 
 想要"零 Firebase"的消费方(不管是 fork 这个模板,还是只引用发布出去的 SDK 模块)只依赖 `:core-telemetry`(或 `:core-telemetry-hilt`),不引用这个模块即可——`Set<Telemetry>` 的 `@Multibinds` 保证空集是合法状态,不依赖这个模块的编译产物里完全不会出现 Firebase 相关代码。
 
@@ -34,7 +34,7 @@
 3. 放一份真实的 `google-services.json` 在 app 模块根目录(去 <https://console.firebase.google.com> 建项目下载),包名必须和 `applicationId`(含各 buildType 后缀)完全匹配。
 4. 不需要写任何 `@Module`——`FirebaseTelemetryModule` 自动把 `FirebaseTelemetry` 加进 `Set<Telemetry>`。
 
-**验证**:`./gradlew :app:assembleDebug` 编译通过(即使用占位 `google-services.json` 也能过);真实上报需要用真实项目的 json,验证方式是在 Firebase 控制台 DebugView 里看到事件。
+**验证**:`./gradlew :app:assembleDebug` 编译通过;真实上报验证方式是在 Firebase 控制台 DebugView 里看到事件(仓库自带的共享 demo 项目已经能收到,不需要先换成自己的项目才能验证这一步)。
 
 **不要做的事**:见"已知限制"——不要在这个模块里加 productFlavor/多环境判断。
 
@@ -46,4 +46,4 @@
 ## 已知限制 / 不要做的事
 
 - **不要**在这个模块里加 productFlavor 或多环境判断——环境切换(测试/生产 Firebase 项目)属于 `google-services.json` 本身的职责(Firebase 支持一个项目挂多个 app 变体),不需要在这里重新发明。
-- 占位 `google-services.json` 里的 `project_id`/`api_key` 都是假的——编译/运行不受影响,但任何真实上报(Analytics 事件、Crashlytics 崩溃)都会静默失败,不会抛异常也不会有本地日志提示,这是 Firebase SDK 自身的行为,不是这个模块能改变的。
+- 仓库自带的 `google-services.json` 指向一个真实但共享的 demo 项目——真实上报(Analytics 事件、Crashlytics 崩溃)是能成功的,但会混进所有 clone 这个仓库的人的数据里,不是你私有的遥测后台。如果换成自己项目之前误删了这个文件,行为会变成:`project_id`/`api_key` 都是假的,编译/运行不受影响,但任何真实上报都会静默失败(不抛异常也不会有本地日志提示,这是 Firebase SDK 自身的行为,不是这个模块能改变的)。

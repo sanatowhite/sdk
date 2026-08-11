@@ -1,0 +1,23 @@
+<resources>
+    <!--
+      在 Firebase 控制台启用 Google 登录后重新下载 google-services.json,把里面
+      client_type == 3 的那个 client_id 填到这里。留空 = Google 登录按钮不显示
+      (:auth-firebase 的 FirebaseAuthModule.provideGoogleWebClientId 按名字查这个
+      资源,查到空字符串/查不到都会让 AuthRepository.availableProviders() 剔除
+      AuthProvider.Google)——这和"设备没有 GMS"走的是完全相同的代码路径,已被
+      :feature-auth 的 Roborazzi 基线和单元测试覆盖。
+
+      ⚠️ 代码库任何地方都不得引用 google-services 插件生成的
+      R.string.default_web_client_id——占位 google-services.json 的
+      oauth_client 数组为空,那个资源根本不会被生成,引用它会导致 :app
+      编译失败(而不是运行时优雅降级)。:auth-firebase 因此改为在运行期按
+      "default_google_web_client_id" 这个名字查找 :app 的资源,而不是编译期
+      引用生成的 R 类。
+
+      下面这个值来自 sanato-app-template 这个真实 Firebase 项目(见
+      TEMPLATE.md 关于"开箱即用 demo"的说明)——client_type == 3 的那个
+      client_id,在 Firebase 控制台启用 Google 登录后自动生成,不是手填的。
+      fork 出去建自己的项目后记得换成自己的。
+    -->
+    <string name="default_google_web_client_id" translatable="false">17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com</string>
+</resources>

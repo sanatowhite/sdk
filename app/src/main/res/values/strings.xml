@@ -1,4 +1,27 @@
 <resources>
     <!-- bootstrap.sh 会替换这一个 key，见计划里的 Step 4 -->
     <string name="app_name">App Template</string>
+
+    <string name="home_section_features">Try it out</string>
+    <string name="home_feedback">Send feedback</string>
+    <string name="home_feedback_subtitle">Email compose with screenshot/log attachment</string>
+    <string name="home_licenses">Open-source licenses</string>
+    <string name="home_check_updates">Check for updates</string>
+    <string name="home_account">Account</string>
+    <string name="home_account_signed_out_hint">Not signed in — tap to sign in</string>
+    <string name="home_websocket_demo">WebSocket demo</string>
+    <string name="home_websocket_demo_subtitle">Connect to a public echo server, send/receive messages</string>
+
+    <string name="ws_demo_title">WebSocket demo</string>
+    <string name="ws_demo_connect">Connect</string>
+    <string name="ws_demo_disconnect">Disconnect</string>
+    <string name="ws_demo_input_hint">Message to send</string>
+    <string name="ws_demo_send">Send</string>
+    <string name="ws_demo_empty_log">No messages yet — type below to send one</string>
+    <string name="ws_demo_state_idle">Not connected</string>
+    <string name="ws_demo_state_connecting">Connecting…</string>
+    <string name="ws_demo_state_connected">Connected</string>
+    <string name="ws_demo_state_reconnecting">Reconnecting (attempt %1$d)…</string>
+    <string name="ws_demo_state_closed">Disconnected (code %1$d)</string>
+    <string name="ws_demo_state_failed">Connection failed: %1$s</string>
 </resources>

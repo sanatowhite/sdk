@@ -62,6 +62,11 @@ fun SettingsScreen(
     // null ⇒ 对应入口不显示——消费方没有引入那个能力(反馈页/更新检查)时就是这样。
     onNavigateToFeedback: (() -> Unit)? = null,
     onCheckForUpdates: (() -> Unit)? = null,
+    // 尾部追加,同上面两个回调的模式——消费方没有引入 :feature-auth 就不传,
+    // "账号"区块整体不显示。accountSubtitle 是当前登录邮箱/手机号等展示串,由
+    // 消费方从自己的 AuthState 里派生,这个模块不知道 AuthState 长什么样。
+    onNavigateToAccount: (() -> Unit)? = null,
+    accountSubtitle: String? = null,
 ) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -80,6 +85,16 @@ fun SettingsScreen(
         },
     ) { padding ->
         LazyColumn(modifier = Modifier.fillMaxSize().padding(padding)) {
+            if (onNavigateToAccount != null) {
+                item { SectionHeader(stringResource(R.string.appkit_settings_section_account)) }
+                item {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.appkit_settings_account)) },
+                        supportingContent = accountSubtitle?.let { { Text(it) } },
+                        modifier = Modifier.clickable(onClick = onNavigateToAccount),
+                    )
+                }
+            }
             item { SectionHeader(stringResource(R.string.appkit_settings_section_appearance)) }
             item {
                 ThemeModeRow(current = themeMode, onSelect = onThemeModeChange)

@@ -1,65 +1,102 @@
 {
-  "_comment": "占位文件——project_id/api_key 都是假的,指向一个不存在的 Firebase 项目。它的唯一作用是让 google-services 插件在 :app:assembleDebug 等构建里找到匹配 applicationId 的 client 条目从而不报错,FirebaseAnalytics/Crashlytics 会正常初始化但真实上报不到任何地方。fork 这个仓库后,去 https://console.firebase.google.com 建一个自己的项目,下载它的 google-services.json 覆盖这个文件即可——不需要改任何 Kotlin/Gradle 代码。",
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "sanato-app-template-placeholder",
-    "storage_bucket": "sanato-app-template-placeholder.appspot.com"
+    "project_number": "17011883772",
+    "project_id": "sanato-app-template",
+    "storage_bucket": "sanato-app-template.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:17011883772:android:c30a33b961bac7c5f1e179",
         "android_client_info": {
           "package_name": "io.sanato.apptemplate"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+          "current_key": "AIzaSyCVb6xtzSTMh3Y7610gRBGovq16Fmb_5eQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000001",
+        "mobilesdk_app_id": "1:17011883772:android:433c1d9ceac8b587f1e179",
         "android_client_info": {
           "package_name": "io.sanato.apptemplate.debug"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "17011883772-r5phgv7q086im51ajqllbec4psuo9vos.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.sanato.apptemplate.debug",
+            "certificate_hash": "b5154169a65b3fcacf08f00c78df5cb9c190a07f"
+          }
+        },
+        {
+          "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+          "current_key": "AIzaSyCVb6xtzSTMh3Y7610gRBGovq16Fmb_5eQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000002",
+        "mobilesdk_app_id": "1:17011883772:android:c9282ec01cc4e11af1e179",
         "android_client_info": {
           "package_name": "io.sanato.apptemplate.staging"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholder0000000000000000000000000"
+          "current_key": "AIzaSyCVb6xtzSTMh3Y7610gRBGovq16Fmb_5eQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "17011883772-tvoftqf70r6tc0lhlatr78vrk2ru46fv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -1,5 +1,7 @@
 <resources>
     <string name="appkit_settings_title">Settings</string>
+    <string name="appkit_settings_section_account">Account</string>
+    <string name="appkit_settings_account">Account</string>
     <string name="appkit_settings_section_appearance">Appearance</string>
     <string name="appkit_settings_theme">Theme</string>
     <string name="appkit_settings_theme_system">System</string>

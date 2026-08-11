@@ -19,6 +19,12 @@ paths = [
   # 嵌入的公钥(SPKI DER 字节数组)——公钥不是秘密,但是一长串高熵数字,
   # 通用规则可能误报。
   '''logkit/src/main/java/io/sanato/logkit/BuiltInRecipientKey\.kt''',
+  # Firebase 客户端配置里的 api_key 不是需要保密的凭证——按 Google 官方安全模型,
+  # 访问控制靠 Firebase Security Rules/App Check,不是靠这个字符串保密,官方文档
+  # 明确说明它可以安全地出现在客户端代码/公开仓库里。这个文件现在指向一个真实的
+  # 共享 demo 项目(sanato-app-template,见 TEMPLATE.md),gitleaks 默认的
+  # gcp-api-key 规则对这个模式(AIza...)是通用误报,不是真的凭证泄漏。
+  '''app/google-services\.json''',
 ]
 regexes = [
   # debug keystore 的默认 alias/密码("androiddebugkey"/"android")本身就是公开常量。
