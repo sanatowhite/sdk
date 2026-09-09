@@ -53,5 +53,6 @@ fun UpdateCheckHost(
         onDownload = viewModel::startDownload,
         onInstall = viewModel::install,
         onDismiss = viewModel::dismiss,
+        onSkip = viewModel::skipVersion,
     )
 }

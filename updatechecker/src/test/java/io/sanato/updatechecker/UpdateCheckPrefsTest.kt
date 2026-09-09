@@ -3,7 +3,9 @@ package io.sanato.updatechecker
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -54,5 +56,23 @@ class UpdateCheckPrefsTest {
     fun `next day after marking checked allows auto check again`() {
         UpdateCheckPrefs.markChecked(context, day1)
         assertTrue(UpdateCheckPrefs.shouldAutoCheck(context, nextDay))
+    }
+
+    @Test
+    fun `no skipped version by default`() {
+        assertNull(UpdateCheckPrefs.skippedVersionCode(context))
+    }
+
+    @Test
+    fun `skipVersion persists the version code`() {
+        UpdateCheckPrefs.skipVersion(context, 42L)
+        assertEquals(42L, UpdateCheckPrefs.skippedVersionCode(context))
+    }
+
+    @Test
+    fun `skipVersion overwrites a previously skipped version`() {
+        UpdateCheckPrefs.skipVersion(context, 42L)
+        UpdateCheckPrefs.skipVersion(context, 50L)
+        assertEquals(50L, UpdateCheckPrefs.skippedVersionCode(context))
     }
 }
