@@ -1,5 +1,6 @@
 package io.sanato.appkit.feature.update
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -18,6 +19,7 @@ fun UpdateDialog(
     onDownload: (UpdateInfo) -> Unit,
     onInstall: (File) -> Unit,
     onDismiss: () -> Unit,
+    onSkip: (UpdateInfo) -> Unit = {},
 ) {
     when (state) {
         is UpdateUiState.Available -> {
@@ -34,8 +36,16 @@ fun UpdateDialog(
                 dismissButton =
                     if (!state.info.force) {
                         {
-                            TextButton(onClick = onDismiss) {
-                                Text(stringResource(R.string.appkit_update_action_close))
+                            // 跳过此版本和关闭放同一个插槽:AlertDialog 只有 confirm/dismiss
+                            // 两个按钮位,跳过是强制更新时也不该出现的"次要关闭"动作,
+                            // 语义上和 close 同级,不值得为它单独占一个视觉位置。
+                            Row {
+                                TextButton(onClick = { onSkip(state.info) }) {
+                                    Text(stringResource(R.string.appkit_update_action_skip))
+                                }
+                                TextButton(onClick = onDismiss) {
+                                    Text(stringResource(R.string.appkit_update_action_close))
+                                }
                             }
                         }
                     } else {

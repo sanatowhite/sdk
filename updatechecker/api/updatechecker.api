@@ -41,6 +41,8 @@ public final class io.sanato.updatechecker.UpdateCheckPrefs {
   public static boolean shouldAutoCheck$default(io.sanato.updatechecker.UpdateCheckPrefs, android.content.Context, long, int, java.lang.Object);
   public final void markChecked(android.content.Context, long);
   public static void markChecked$default(io.sanato.updatechecker.UpdateCheckPrefs, android.content.Context, long, int, java.lang.Object);
+  public final java.lang.Long skippedVersionCode(android.content.Context);
+  public final void skipVersion(android.content.Context, long);
 }
 
 
@@ -50,6 +52,7 @@ public final class io.sanato.updatechecker.UpdateChecker {
   public io.sanato.updatechecker.UpdateChecker(android.content.Context, java.lang.String, io.sanato.updatechecker.ConfigFetcher);
   public io.sanato.updatechecker.UpdateChecker(android.content.Context, java.lang.String);
   public final java.lang.Object check(kotlin.coroutines.Continuation<? super io.sanato.updatechecker.UpdateResult>);
+  public final void skipVersion(long);
 }
 
 

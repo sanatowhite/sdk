@@ -22,7 +22,9 @@ class UpdateChecker internal constructor(
                     val json = fetcher.fetch(configUrl)
                     val info = UpdateConfigParser.parse(json)
                     val currentVersionCode = CurrentVersionReader.read(context)
-                    if (VersionCompare.isNewerVersion(info.versionCode, currentVersionCode)) {
+                    val skippedVersionCode = UpdateCheckPrefs.skippedVersionCode(context)
+                    val isSkipped = skippedVersionCode != null && !VersionCompare.isNewerVersion(info.versionCode, skippedVersionCode)
+                    if (VersionCompare.isNewerVersion(info.versionCode, currentVersionCode) && !isSkipped) {
                         UpdateResult.Available(info)
                     } else {
                         UpdateResult.UpToDate
@@ -33,6 +35,15 @@ class UpdateChecker internal constructor(
             UpdateCheckPrefs.markChecked(context)
             result
         }
+
+    /**
+     * Suppress the update prompt for [versionCode] and anything not newer than it.
+     * A later [check] whose remote version is strictly newer than [versionCode]
+     * shows the prompt again — this is "skip this version", not "stop checking".
+     */
+    fun skipVersion(versionCode: Long) {
+        UpdateCheckPrefs.skipVersion(context, versionCode)
+    }
 
     companion object {
         fun shouldAutoCheck(context: Context): Boolean = UpdateCheckPrefs.shouldAutoCheck(context)

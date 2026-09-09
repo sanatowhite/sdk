@@ -124,4 +124,9 @@ class UpdateViewModel
         fun dismiss() {
             _uiState.value = UpdateUiState.Idle
         }
+
+        fun skipVersion(info: UpdateInfo) {
+            updateChecker.skipVersion(info.versionCode)
+            _uiState.value = UpdateUiState.Idle
+        }
     }

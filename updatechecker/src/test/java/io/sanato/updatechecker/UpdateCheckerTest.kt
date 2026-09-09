@@ -85,6 +85,55 @@ class UpdateCheckerTest {
         }
 
     @Test
+    fun `returns UpToDate when the available version was skipped`() =
+        runTest {
+            installCurrentVersion(6L)
+            UpdateCheckPrefs.skipVersion(context, 7L)
+            val fetcher =
+                object : ConfigFetcher {
+                    override fun fetch(configUrl: String) =
+                        """{"versionCode": 7, "versionName": "1.0.1", "apkUrl": "x", "sha256": "abc", "force": false}"""
+                }
+            val checker = UpdateChecker(context, "https://example.com/version.json", fetcher)
+
+            val result = checker.check()
+
+            assertEquals(UpdateResult.UpToDate, result)
+        }
+
+    @Test
+    fun `returns Available when a newer version supersedes a skipped one`() =
+        runTest {
+            installCurrentVersion(6L)
+            UpdateCheckPrefs.skipVersion(context, 7L)
+            val fetcher =
+                object : ConfigFetcher {
+                    override fun fetch(configUrl: String) =
+                        """{"versionCode": 8, "versionName": "1.0.2", "apkUrl": "x", "sha256": "abc", "force": false}"""
+                }
+            val checker = UpdateChecker(context, "https://example.com/version.json", fetcher)
+
+            val result = checker.check()
+
+            assertTrue(result is UpdateResult.Available)
+            assertEquals(8L, (result as UpdateResult.Available).info.versionCode)
+        }
+
+    @Test
+    fun `skipVersion on the instance persists via UpdateCheckPrefs`() =
+        runTest {
+            installCurrentVersion(6L)
+            val fetcher = object : ConfigFetcher {
+                override fun fetch(configUrl: String): String = throw IOException("unused")
+            }
+            val checker = UpdateChecker(context, "https://example.com/version.json", fetcher)
+
+            checker.skipVersion(7L)
+
+            assertEquals(7L, UpdateCheckPrefs.skippedVersionCode(context))
+        }
+
+    @Test
     fun `does not throttle future auto checks after a network error`() =
         runTest {
             installCurrentVersion(6L)

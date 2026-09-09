@@ -28,6 +28,9 @@ internal object UpdateDialogPresenter {
 
         if (!info.force) {
             builder.setNegativeButton(R.string.updatechecker_remind_later, null)
+            builder.setNeutralButton(R.string.updatechecker_skip_version) { _, _ ->
+                UpdateCheckPrefs.skipVersion(activity, info.versionCode)
+            }
         }
 
         val dialog = builder.create()
