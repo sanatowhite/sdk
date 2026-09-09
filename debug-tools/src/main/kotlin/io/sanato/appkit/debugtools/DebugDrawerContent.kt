@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -27,13 +31,23 @@ import io.sanato.appkit.core.telemetry.RingLogBuffer
 @Composable
 internal fun DebugDrawerContent(
     ringLogBuffer: RingLogBuffer,
+    onClose: () -> Unit,
     extraContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
     val flagStore = remember { DebugFlagStore(context) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Debug Drawer", style = MaterialTheme.typography.titleLarge)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Debug Drawer", style = MaterialTheme.typography.titleLarge)
+            IconButton(onClick = onClose) {
+                Icon(Icons.Outlined.Close, contentDescription = "Close debug drawer")
+            }
+        }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
         Text("Feature flags (local override)", style = MaterialTheme.typography.titleSmall)

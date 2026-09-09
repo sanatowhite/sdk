@@ -1,5 +1,6 @@
 package io.sanato.appkit.debugtools
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,12 @@ import kotlinx.coroutines.launch
  * 把手本身就是唯一入口,不需要再响应侧滑手势(避免跟内容自己的手势冲突)。
  * 明确排除摇一摇(模拟器不可用、噪声大)、通知栏(33+ 要权限)、悬浮窗(需授权)
  * 这三种常见的替代入口方案。
+ *
+ * ⚠️ `gesturesEnabled = false` 在 Compose Material3 里不只是关掉侧滑手势——
+ * 它把"点击抽屉外遮罩关闭"和"返回键关闭"这两个默认行为也一并关掉了(实测确认,
+ * 不是文档写明的行为)。所以这里手动补两条关闭路径,不能只依赖 `gesturesEnabled`
+ * 之外还剩下什么默认行为:内容区顶部的关闭按钮([DebugDrawerContent] 的
+ * `onClose`)+ 这里的 [BackHandler]。少了任一条,抽屉打开后就只能杀进程重启。
  */
 @Composable
 fun DebugDrawer(
@@ -48,12 +55,20 @@ fun DebugDrawer(
     val scope = rememberCoroutineScope()
     var handleOffset by remember { mutableStateOf(Offset(0f, 300f)) }
 
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
         drawerContent = {
             ModalDrawerSheet {
-                DebugDrawerContent(ringLogBuffer = ringLogBuffer, extraContent = extraContent)
+                DebugDrawerContent(
+                    ringLogBuffer = ringLogBuffer,
+                    onClose = { scope.launch { drawerState.close() } },
+                    extraContent = extraContent,
+                )
             }
         },
     ) {

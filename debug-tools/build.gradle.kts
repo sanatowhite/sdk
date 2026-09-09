@@ -19,6 +19,9 @@ dependencies {
 
     // RingLogBuffer 是 DebugDrawer(ringLogBuffer: RingLogBuffer, ...) 的参数类型。
     api(project(":core-telemetry"))
+    // BackHandler——让系统返回键在抽屉打开时优先关抽屉而不是直接退出宿主 Activity。
+    // 不出现在任何公开签名里，implementation 即可。
+    implementation(libs.androidx.activity.compose)
     // @Composable 注解本身出现在 DebugDrawer 的公开签名里（content 参数是
     // @Composable () -> Unit）。BOM 同理需要 api，见 core-ui 的同一条注释。
     api(platform(libs.androidx.compose.bom))
