@@ -207,6 +207,85 @@ public class BackupOrchestrator(
         }
 
     /**
+     * [auditRemote] 的结果：**云端到底有什么**。不做任何判断——"少了哪几篇"由宿主拿它跟
+     * 本地清单求差集，因为只有宿主知道"本地应该有哪些"（空间划分、回收站、诱饵模式……）。
+     */
+    public data class RemoteAudit(
+        /** 最新快照的文件名；云端一份快照都没有时为 null。 */
+        public val snapshotName: String?,
+        /** 最新快照的逻辑创建时间（毫秒）；无快照时为 0。 */
+        public val snapshotCreatedAtMillis: Long,
+        /** 最新快照清单里的 record id。 */
+        public val snapshotRecordIds: Set<String>,
+        /** `entries/` 里躺着的单篇增量对应的 record id（从文件名解出，不下载内容）。 */
+        public val entryRecordIds: Set<String>,
+        /** 远端 media 库里的媒体名（已去掉 sealed 后缀，只算非空文件）。 */
+        public val mediaNames: Set<String>,
+    ) {
+        /** 云端已覆盖的 record id = 最新快照 ∪ 增量。恢复正是这两者的并集（见 [restore]）。 */
+        public val coveredRecordIds: Set<String> get() = snapshotRecordIds + entryRecordIds
+    }
+
+    /**
+     * **只读**自检/对账：把最新快照下载下来解密、只读它的 manifest，再列一遍 `entries/`
+     * 与 `media/`，报告云端实际覆盖了哪些 record 和哪些媒体。
+     *
+     * 与 [restore] 的区别：这里**绝不触碰宿主数据**——不调 [restoreTarget] 的任何写入方法、
+     * 不往媒体目录落盘（用 [ArchiveReader.peekManifest] 只读 manifest），也不改远端。
+     * 因此它可以随时调，用来回答"我的数据真的都备份上去了吗"这个问题，而不用做一次真恢复。
+     *
+     * 顺带它证明了一件光看文件列表证明不了的事：**那份快照能解开**。
+     * [verifySnapshotOrThrow] 只校验"文件存在且非空"，解不开的密文同样能通过。
+     *
+     * @return 云端现状；`snapshotName == null` 表示一份快照都没有（可能只有 `entries/`）。
+     */
+    public suspend fun auditRemote(): RemoteAudit =
+        withContext(ioDispatcher) {
+            val entryRecordIds =
+                store
+                    .list(RemoteBackupStore.FOLDER_ENTRIES)
+                    .mapNotNull { it.name.removeSurrounding(ENTRY_PREFIX, sealedSuffix).takeIf { id -> id != it.name } }
+                    .toSet()
+            val mediaNames =
+                store
+                    .list(RemoteBackupStore.FOLDER_MEDIA)
+                    .filter { it.size > 0 }
+                    .map { it.name.removeSuffix(sealedSuffix) }
+                    .toSet()
+            val latestSnapshot =
+                store
+                    .list(RemoteBackupStore.FOLDER_SNAPSHOTS)
+                    .filter { it.name.startsWith(SNAPSHOT_PREFIX) }
+                    .maxByName()
+                    ?: return@withContext RemoteAudit(
+                        snapshotName = null,
+                        snapshotCreatedAtMillis = 0L,
+                        snapshotRecordIds = emptySet(),
+                        entryRecordIds = entryRecordIds,
+                        mediaNames = mediaNames,
+                    )
+
+            val sealed = File(workDir, "audit_dl_${System.nanoTime()}$sealedSuffix")
+            val plainZip = File(workDir, "audit_${System.nanoTime()}.zip")
+            try {
+                store.download(latestSnapshot.id, sealed)
+                codec.unseal(sealed, plainZip, unsealPassphrases)
+                val manifest = ArchiveReader.peekManifest(plainZip, dataSource.payloadSchema)
+                RemoteAudit(
+                    snapshotName = latestSnapshot.name,
+                    snapshotCreatedAtMillis = manifest.header.createdAtMillis,
+                    snapshotRecordIds = manifest.records.map { it.id }.toSet(),
+                    entryRecordIds = entryRecordIds,
+                    mediaNames = mediaNames,
+                )
+            } finally {
+                sealed.delete()
+                plainZip.delete()
+                sweepWorkDir()
+            }
+        }
+
+    /**
      * 恢复：取最新快照（+media 库按需补齐）与最新整包中较新者为基底导入，再叠加全部 entries；
      * bundle 仅在无快照、或快照路径一篇都没恢复出来时才兜底下载。全程 suspend，media 补齐
      * 不存在任何 runBlocking 桥接。

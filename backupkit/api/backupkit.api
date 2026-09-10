@@ -378,6 +378,7 @@ public final class io.sanato.appkit.backup.remote.BackupOrchestrator {
   public final java.lang.Object writeSnapshot(long, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation<? super java.lang.Integer>);
   public static java.lang.Object writeSnapshot$default(io.sanato.appkit.backup.remote.BackupOrchestrator, long, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation, int, java.lang.Object);
   public final java.lang.Object writeArchiveBundle(long, kotlin.coroutines.Continuation<? super java.lang.Integer>);
+  public final java.lang.Object auditRemote(kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit>);
   public final java.lang.Object restore(io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation<? super java.lang.Integer>);
   public static java.lang.Object restore$default(io.sanato.appkit.backup.remote.BackupOrchestrator, io.sanato.appkit.backup.core.ProgressListener, kotlin.coroutines.Continuation, int, java.lang.Object);
 }
@@ -386,6 +387,28 @@ public final class io.sanato.appkit.backup.remote.BackupOrchestrator {
 Compiled from "BackupOrchestrator.kt"
 final class io.sanato.appkit.backup.remote.BackupOrchestrator$Companion {
   public io.sanato.appkit.backup.remote.BackupOrchestrator$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "BackupOrchestrator.kt"
+public final class io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit {
+  public io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit(java.lang.String, long, java.util.Set<java.lang.String>, java.util.Set<java.lang.String>, java.util.Set<java.lang.String>);
+  public final java.lang.String getSnapshotName();
+  public final long getSnapshotCreatedAtMillis();
+  public final java.util.Set<java.lang.String> getSnapshotRecordIds();
+  public final java.util.Set<java.lang.String> getEntryRecordIds();
+  public final java.util.Set<java.lang.String> getMediaNames();
+  public final java.util.Set<java.lang.String> getCoveredRecordIds();
+  public final java.lang.String component1();
+  public final long component2();
+  public final java.util.Set<java.lang.String> component3();
+  public final java.util.Set<java.lang.String> component4();
+  public final java.util.Set<java.lang.String> component5();
+  public final io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit copy(java.lang.String, long, java.util.Set<java.lang.String>, java.util.Set<java.lang.String>, java.util.Set<java.lang.String>);
+  public static io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit copy$default(io.sanato.appkit.backup.remote.BackupOrchestrator$RemoteAudit, java.lang.String, long, java.util.Set, java.util.Set, java.util.Set, int, java.lang.Object);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
 }
 
 
