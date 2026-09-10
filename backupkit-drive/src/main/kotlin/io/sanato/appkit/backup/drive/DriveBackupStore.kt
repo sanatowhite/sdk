@@ -21,6 +21,22 @@ import java.net.URLEncoder
  * @param rootFolderName 每个消费方 app 必须传自己的根目录名（不设默认值）——多个 app
  * 共用同一个 Google 账号时，根目录名撞车会导致互相覆盖对方的备份，这是刻意不给默认值
  * 强制调用方显式决定的原因。
+ *
+ * ## 超时必须显式设置（别把它当可有可无的调优）
+ *
+ * `HttpURLConnection` 的 `connectTimeout`/`readTimeout` 默认值是 **0 = 无限等待**。
+ * 本类原先三处建连接（[openConnection]、[startResumableSession]、[resumableUpload] 的
+ * PUT）都没设，结果一条半死的 googleapis.com 连接会让调用方永久阻塞在 socket 上：
+ * 不抛异常、不返回、[io.sanato.appkit.backup.remote.BackupOrchestrator] 的进度回调也
+ * 一次不出（第一个网络动作就在 `ensureMediaUploaded` 的 `store.list` 里卡住）。
+ *
+ * 宿主 sanato-diary 上的真实故障：用户点「立即备份」后前台服务挂住 8 分钟，进程 CPU
+ * 占用 0，通知栏永远停在初始的不确定进度条，服务的 `runCatching` 永不返回 → 不通知
+ * 失败、不收尾、wakeLock 一直持有、备份互斥锁一直被占（把之后所有自动补漏都挤掉）。
+ *
+ * 注意这里**只能**盖住"连不上"和"连上了但不回数据"两类停摆：`HttpURLConnection` 没有
+ * 写超时可设，上传时对端 TCP 窗口关死导致的写阻塞仍然管不了。消费方要彻底不被拖死，
+ * 还得在自己那侧给整个任务加一道总闸（sanato-diary 的 `withBackupDeadline` 就是这个角色）。
  */
 public class DriveBackupStore(
     private val tokenProvider: DriveTokenProvider,
@@ -30,6 +46,10 @@ public class DriveBackupStore(
     // 单测用它们把请求指向本地假 HTTP 服务器，不必为此单独反射或 mock HttpURLConnection。
     private val filesUrl: String = DEFAULT_FILES_URL,
     private val uploadUrl: String = DEFAULT_UPLOAD_URL,
+    // 同样是测试接缝：真实消费方用默认值即可；单测把它们调到几十毫秒，才能在秒级内
+    // 验证"服务端不回包时会按时失败"，而不是让用例真的等满 15/30 秒。
+    private val connectTimeoutMs: Int = DEFAULT_CONNECT_TIMEOUT_MS,
+    private val readTimeoutMs: Int = DEFAULT_READ_TIMEOUT_MS,
 ) : RemoteBackupStore {
     private val folderIdCache = mutableMapOf<String, String>()
 
@@ -172,7 +192,7 @@ public class DriveBackupStore(
                 startResumableSession(token, "POST", "$uploadUrl?uploadType=resumable", metadata.toString())
             }
 
-        val connection = URL(sessionUri).openConnection() as HttpURLConnection
+        val connection = newConnection(sessionUri)
         connection.requestMethod = "PUT"
         connection.doOutput = true
         connection.setFixedLengthStreamingMode(file.length())
@@ -193,7 +213,7 @@ public class DriveBackupStore(
         url: String,
         jsonBody: String?,
     ): String {
-        val connection = URL(url).openConnection() as HttpURLConnection
+        val connection = newConnection(url)
         // java.net.HttpURLConnection 硬编码的合法方法白名单里没有 PATCH（一个从未被修复的
         // JDK 老限制，最新 JDK 依然如此）。Google API 对这个已知的 Java 限制有官方支持的
         // 绕过方式：实际方法发 POST，用 X-HTTP-Method-Override 头告诉服务端"当 PATCH 处理"。
@@ -247,11 +267,22 @@ public class DriveBackupStore(
         method: String,
         url: String,
     ): HttpURLConnection {
-        val connection = URL(url).openConnection() as HttpURLConnection
+        val connection = newConnection(url)
         connection.requestMethod = method
         connection.setRequestProperty("Authorization", "Bearer $token")
         return connection
     }
+
+    /**
+     * 本类建 [HttpURLConnection] 的唯一入口——三处建连接都必须走这里，别再直接
+     * `URL(...).openConnection()`：那样就漏了超时，等于回到"一条半死的连接把调用方
+     * 永久挂住"的老 bug（见类 KDoc）。
+     */
+    private fun newConnection(url: String): HttpURLConnection =
+        (URL(url).openConnection() as HttpURLConnection).apply {
+            connectTimeout = connectTimeoutMs
+            readTimeout = readTimeoutMs
+        }
 
     private fun checkOk(
         connection: HttpURLConnection,
@@ -273,5 +304,12 @@ public class DriveBackupStore(
         const val DEFAULT_FILES_URL = "https://www.googleapis.com/drive/v3/files"
         const val DEFAULT_UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files"
         const val FOLDER_MIME = "application/vnd.google-apps.folder"
+
+        // 建连接 15s：连不上就是连不上，等更久没有意义。
+        const val DEFAULT_CONNECT_TIMEOUT_MS = 15_000
+
+        // 读 30s：这是"两次收到字节之间"的上限，不是整个传输的上限——大文件上传/下载
+        // 只要还在出数据就不会被它打断，30 秒一个字节都没动才算对端停摆。
+        const val DEFAULT_READ_TIMEOUT_MS = 30_000
     }
 }

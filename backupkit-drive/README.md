@@ -66,12 +66,14 @@ dependencies {
 - `DriveTokenProvider` — `suspend fun currentAccessToken(): String`，唯一职责是"给我一个当前可用的 access token"，不关心它是怎么来的。
 - `DriveAuthResult` — `isSuccess`/`needsConsent`/`accessToken`/`consentIntentSender`/`errorMessage`；三个工厂方法 `success(token)`/`consentRequired(intentSender)`/`failure(message)`。
 - `GmsDriveAuthorizer(context, serverClientId)` — `suspend fun authorize(): DriveAuthResult`、`fun handleConsentResult(intent): DriveAuthResult`、`suspend fun clearCachedToken()`、`fun asTokenProvider(): DriveTokenProvider`。`TOKEN_TTL_MILLIS` 常量供宿主判断是否需要提前刷新。
-- `DriveBackupStore(tokenProvider, rootFolderName, subPath = null, filesUrl = DEFAULT_FILES_URL, uploadUrl = DEFAULT_UPLOAD_URL)` — `RemoteBackupStore` 的 Google Drive REST v3 实现；`filesUrl`/`uploadUrl` 两个参数只在测试里指向假服务器时才需要覆盖，真实消费方不传即可。
+- `DriveBackupStore(tokenProvider, rootFolderName, subPath = null, filesUrl = DEFAULT_FILES_URL, uploadUrl = DEFAULT_UPLOAD_URL, connectTimeoutMs = DEFAULT_CONNECT_TIMEOUT_MS, readTimeoutMs = DEFAULT_READ_TIMEOUT_MS)` — `RemoteBackupStore` 的 Google Drive REST v3 实现；后四个参数都只在测试里才需要覆盖（前两个指向假服务器，后两个调小到几十毫秒来验证超时），真实消费方不传即可。
 
 ## 已知限制 / 不要做的事
 
 - **`rootFolderName` 没有默认值，必须显式传**——多个 app 共用同一个 Google 账号登录时，根目录名撞车会导致互相覆盖对方的备份数据，这是刻意不给默认值、强制调用方显式决定的设计。
 - **`java.net.HttpURLConnection` 不支持 PATCH 方法**——这是从未被修复的 JDK 老限制（最新 JDK 依然如此，见 `DriveBackupStore.startResumableSession` 的实现注释），内部用 Google 官方支持的绕过方式（实际发 POST，加 `X-HTTP-Method-Override: PATCH` 头）解决，`DriveBackupStoreTest` 里的假服务器专门验证了这一点——如果未来有人想"简化"这段代码直接用 `setRequestMethod("PATCH")`，会在真实 Drive API 上抛 `ProtocolException`，不要这么改。
+- **三处建连接必须都走 `newConnection()`，别直接 `URL(...).openConnection()`**——`HttpURLConnection` 的 `connectTimeout`/`readTimeout` 默认是 **0 = 无限等待**。本类曾经三处（`openConnection`、`startResumableSession`、`resumableUpload` 的 PUT）一个都没设，一条半死的 googleapis.com 连接就能让调用方永久阻塞在 socket 上：不抛异常、不返回、`BackupOrchestrator` 的进度回调一次不出（第一个网络动作就卡在 `ensureMediaUploaded` 的 `store.list`）。宿主 sanato-diary 的真实故障表现：点「立即备份」后前台服务挂住 8 分钟、进程 CPU 占用 0、通知栏永远停在不确定进度条、备份互斥锁一直被占把后续自动补漏全挤掉。`DriveBackupStoreTest` 的 `list_failsFast_whenServerAcceptsButNeverResponds` / `upload_failsFast_whenResumableSessionEndpointStalls` 两个用例用"收下请求但永不回包"的假服务器守着这一点——绕过 `newConnection()` 会让它们直接挂到超时。
+- **超时只盖得住"连不上"和"连上了不回数据"**——`HttpURLConnection` 没有写超时可设，上传时对端 TCP 窗口关死导致的写阻塞本模块管不了。消费方要彻底不被拖死，还得在自己那侧给整个备份任务加一道总闸（sanato-diary 的做法是 `withBackupDeadline`：把任务丢到进程级 scope、只对 `await()` 计时，因为 `withTimeout` 取消不了卡在阻塞 IO 上的线程，自己会跟着一起挂）。
 - **`folderIdCache` 是实例级别、进程内存中的**——`DriveBackupStore` 实例存活期间会缓存"文件夹名 → Drive folder id"的映射，减少重复的 `files.list` 查询；这意味着同一个文件夹在 Drive 网页端被手动删除后，同一个 `DriveBackupStore` 实例可能仍然认为它存在直到下次重建实例，不做跨进程/跨实例的缓存失效检测。
 - **不对 `access token` 做本地持久化**——`GmsDriveAuthorizer`/`DriveTokenProvider` 只在内存/GMS 自己的 token 缓存里存活，进程重启后需要重新走一遍授权流程（GMS 侧通常是静默完成，不需要用户再次交互，除非 refresh token 已失效）。
 - **不做账号切换的产品逻辑**——"记住上次登录的账号邮箱""切换账号时提示会看到新账号下的备份"这类 UX 决策留给宿主（本仓库消费方的做法：邮箱展示、账号切换确认弹窗都在 app 侧的 `DriveAuthCoordinator`，不在这个模块里）。

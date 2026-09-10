@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicLong
 
@@ -35,6 +36,13 @@ class DriveBackupStoreTest {
         val mimeType: String,
         var bytes: ByteArray = ByteArray(0),
     )
+
+    /**
+     * 让假服务器对匹配前缀的请求"收下但永不回包"，用来模拟真实故障里那条半死的
+     * googleapis.com 连接（见 DriveBackupStore 类 KDoc）。
+     */
+    @Volatile
+    private var stallPathPrefix: String? = null
 
     private val filesById = mutableMapOf<String, FakeFile>()
     private val pendingSessions = mutableMapOf<String, Pair<String?, FakeFile>>() // sessionId -> (existingId, metadata)
@@ -154,11 +162,69 @@ class DriveBackupStoreTest {
             assertEquals(1, privateStore.list(RemoteBackupStore.FOLDER_ENTRIES).size)
         }
 
+    // ── 超时：服务端收下请求但永不回包时，必须按时失败而不是永久挂住 ──────────
+    //
+    // 根因回归防护：HttpURLConnection 的 connectTimeout/readTimeout 默认是 0 = 无限等待。
+    // 这两个值原先一处都没设，宿主 sanato-diary 上的表现是前台备份服务挂住 8 分钟、
+    // 进程 CPU 占用 0、通知栏永远转圈、备份互斥锁一直被占。任何人把 newConnection() 绕过去
+    // 直接 URL(...).openConnection()，这两个用例就会挂到 runTest 超时。
+
+    private fun shortTimeoutStore(subPath: String? = null) =
+        DriveBackupStore(
+            tokenProvider = DriveTokenProvider { "fake-token" },
+            rootFolderName = "TestRoot",
+            subPath = subPath,
+            filesUrl = baseUrl,
+            uploadUrl = uploadBaseUrl,
+            connectTimeoutMs = 200,
+            readTimeoutMs = 200,
+        )
+
+    @Test
+    fun list_failsFast_whenServerAcceptsButNeverResponds() =
+        runTest {
+            stallPathPrefix = "/drive/v3/files"
+            val started = System.currentTimeMillis()
+            val error =
+                runCatching { shortTimeoutStore().list(RemoteBackupStore.FOLDER_ENTRIES) }
+                    .exceptionOrNull()
+            val elapsed = System.currentTimeMillis() - started
+
+            assertTrue("必须抛出 IO 异常，实际是 $error", error is IOException)
+            assertTrue("应在 readTimeout 附近失败，实际耗时 ${elapsed}ms", elapsed < STALL_MS / 2)
+        }
+
+    @Test
+    fun upload_failsFast_whenResumableSessionEndpointStalls() =
+        runTest {
+            // 只卡上传端点：目录解析照常成功，卡的是 startResumableSession 那一段——
+            // 它和 resumable PUT 都不走 openConnection()，是三处建连接里最容易被漏掉的两处。
+            val store = shortTimeoutStore()
+            val source = File(tmpDir, "stall.bin").apply { writeBytes("x".toByteArray()) }
+            stallPathPrefix = "/upload/"
+
+            val started = System.currentTimeMillis()
+            val error =
+                runCatching { store.upload(RemoteBackupStore.FOLDER_MEDIA, "stall.bin", source) }
+                    .exceptionOrNull()
+            val elapsed = System.currentTimeMillis() - started
+
+            assertTrue("必须抛出 IO 异常，实际是 $error", error is IOException)
+            assertTrue("应在 readTimeout 附近失败，实际耗时 ${elapsed}ms", elapsed < STALL_MS / 2)
+        }
+
     // ── 假 Drive API ──────────────────────────────────────────────────
 
     private fun handle(exchange: HttpExchange) {
         try {
             val path = exchange.requestURI.path
+            stallPathPrefix?.let { prefix ->
+                if (path.startsWith(prefix)) {
+                    // 连接建好了、请求也收下了，就是不回任何字节——只有 readTimeout 能救。
+                    Thread.sleep(STALL_MS)
+                    return
+                }
+            }
             val query = exchange.requestURI.rawQuery ?: ""
             // 生产代码用 X-HTTP-Method-Override 绕过 HttpURLConnection 不支持 PATCH 的限制
             // （见 DriveBackupStore.startResumableSession 的注释），假服务器要认这个头。
@@ -349,4 +415,9 @@ class DriveBackupStoreTest {
             val (k, v) = pair.split("=", limit = 2).let { it[0] to it.getOrElse(1) { "" } }
             if (k == key) java.net.URLDecoder.decode(v, "UTF-8") else null
         }
+
+    private companion object {
+        /** 假服务器"永不回包"要撑得比 readTimeout 长很多，才能证明是超时救的场而不是它自己醒了。 */
+        const val STALL_MS = 10_000L
+    }
 }

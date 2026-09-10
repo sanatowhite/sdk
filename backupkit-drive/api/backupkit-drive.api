@@ -32,8 +32,10 @@ public final class io.sanato.appkit.backup.drive.DriveBackupStore implements io.
   public static final java.lang.String DEFAULT_FILES_URL;
   public static final java.lang.String DEFAULT_UPLOAD_URL;
   public static final java.lang.String FOLDER_MIME;
-  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
-  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public static final int DEFAULT_CONNECT_TIMEOUT_MS;
+  public static final int DEFAULT_READ_TIMEOUT_MS;
+  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int);
+  public io.sanato.appkit.backup.drive.DriveBackupStore(io.sanato.appkit.backup.drive.DriveTokenProvider, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public java.lang.Object list(java.lang.String, kotlin.coroutines.Continuation<? super java.util.List<io.sanato.appkit.backup.remote.RemoteFile>>);
   public java.lang.Object uploadIfAbsent(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
   public java.lang.Object upload(java.lang.String, java.lang.String, java.io.File, kotlin.coroutines.Continuation<? super io.sanato.appkit.backup.remote.RemoteFile>);
