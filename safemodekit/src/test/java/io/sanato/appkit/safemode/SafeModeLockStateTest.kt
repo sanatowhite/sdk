@@ -9,6 +9,8 @@ class SafeModeLockStateTest {
 
     private fun state() = SafeModeLockState { clock }
 
+    private fun unlocked() = state().apply { unlock() }
+
     @Test
     fun startsLocked() {
         assertTrue(state().isLocked)
@@ -122,5 +124,33 @@ class SafeModeLockStateTest {
         clock += SafeModeLockState.TRIP_ARM_MS
         assertFalse(s.onAppBackgrounded())
         assertFalse(s.isLocked)
+    }
+
+    @Test
+    fun backgroundDuringAuthenticationDoesNotLock() {
+        val s = unlocked()
+        s.beginAuthentication()
+        clock += 30_000 // 用户在指纹框上停留很久才点「使用密码」
+        assertFalse(s.onAppBackgrounded())
+        assertFalse(s.isLocked)
+    }
+
+    @Test
+    fun backgroundAfterAuthenticationEndedLocks() {
+        val s = unlocked()
+        s.beginAuthentication()
+        s.endAuthentication()
+        assertTrue(s.onAppBackgrounded())
+        assertTrue(s.isLocked)
+    }
+
+    @Test
+    fun screenOffDuringAuthenticationStillLocks() {
+        val s = unlocked()
+        s.beginAuthentication()
+        assertTrue(s.onScreenOff())
+        // 锁屏同时作废验证中状态，之后退后台照常处理
+        assertFalse(s.onAppBackgrounded())
+        assertTrue(s.isLocked)
     }
 }

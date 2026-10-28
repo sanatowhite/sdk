@@ -8,7 +8,9 @@
 - 别人拿到已解锁的手机后随手点开 App。
 - 有人当面让你打开 App 看看。
 
-发布坐标 `com.github.sanatowhite.sdk:safemodekit:<version>`。零内部模块依赖，只依赖 AndroidX（`biometric` / `appcompat` / `swiperefreshlayout`），纯 View 实现，不需要 Compose、Hilt 或任何 DI 框架，Java / Kotlin、View / Compose 的宿主都能接。minSdk 24。
+发布坐标 `com.github.sanatowhite.sdk:safemodekit:<version>`。零内部模块依赖，只依赖 AndroidX（`biometric` / `appcompat` / `swiperefreshlayout`），纯 View 实现，不需要 Compose、Hilt 或任何 DI 框架。minSdk 24。
+
+宿主要求：调用 `SafeMode.authenticate(...)` 的页面（通常是设置页）必须是 `FragmentActivity`（`AppCompatActivity` 即可）——这是 `androidx.biometric` 的要求。纯 Compose 的 App 把承载设置页的 Activity 从 `ComponentActivity` 换成 `AppCompatActivity`/`FragmentActivity` 即可，Compose 照常使用。
 
 **不是**：
 - **不能只认某一根手指。** Android 的 `BiometricPrompt` 只返回「成功/失败」，不告诉 App 是哪一根手指，所以手机上录入的任何指纹都能通过。真正的门槛是「暗号 + 验证」两道。
@@ -147,7 +149,7 @@ dependencies {
 
 | API | 说明 |
 |---|---|
-| `install(application, config)` | 只能调用一次，放在 `Application.onCreate()`。启动时会按开关状态校正桌面入口。 |
+| `install(application, config)` | 放在 `Application.onCreate()`，**无条件**调用（不要放在功能开关/远程配置后面：开启过安全模式后不再 install，伪装入口会打开即退出）。同一个 Application 重复调用会被忽略。启动时会按开关状态校正桌面入口。 |
 | `isEnabled(context)` / `setEnabled(context, enabled)` | 读写开关并切换桌面入口；开启时同时解锁当前会话。 |
 | `holdDurationMs(context)` / `setHoldDurationMs(context, ms)` | 暗号按住时长，夹紧在 500–5000ms，默认 `DEFAULT_HOLD_DURATION_MS`（1200）。下次打开伪装页生效。 |
 | `HOLD_DURATION_OPTIONS_MS` | 推荐档位 `[500, 800, 1200, 1500, 2000, 3000]`。 |

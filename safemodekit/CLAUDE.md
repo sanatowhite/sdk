@@ -38,10 +38,14 @@ alias) are the only other public types. See `README.md` for the full boundary.
   `TRIP_ARM_MS` (5s). Dialogs and the API 30+ `BiometricPrompt` don't trigger
   `onResume`, so without the arm window a stale allowance would let the next
   Home press skip locking.
-- `SafeModeAuthenticator.authenticate()` registers an external trip **only
-  below API 30**: there, device-credential fallback launches the system
-  confirm-credential activity, which stops the app. On API 30+ the prompt is a
-  SystemUI window and must *not* register one (see the point above).
+- `SafeModeAuthenticator.authenticate()` marks authentication in progress
+  (`beginAuthentication`/`endAuthentication`, which suppresses background
+  locking but not screen-off locking) **only below API 30**: there,
+  device-credential fallback launches the system confirm-credential activity,
+  which stops the app, possibly long after the prompt opened — so the 5s trip
+  window can't be used. On API 30+ the prompt is a SystemUI window; marking
+  it there would let a Home press skip locking, because `onStop` can arrive
+  before the cancel callback.
 - Locking `finish()`es every non-decoy activity, which stops activity-bound
   background playback. This is intended and disclosed in the enable dialog.
 

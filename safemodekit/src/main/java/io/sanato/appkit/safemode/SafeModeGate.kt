@@ -34,7 +34,9 @@ internal object SafeModeGate {
         application: Application,
         safeModeConfig: SafeModeConfig,
     ) {
-        check(app == null) { "SafeMode.install() must be called once, from Application.onCreate()" }
+        // 同一个 Application 重复调用直接忽略；换了 Application（Robolectric 每个用例新建一个，
+        // 但 object 的静态状态会跨用例保留）则重新绑定，而不是抛异常
+        if (app === application) return
         app = application
         config = safeModeConfig
         val appLauncher = SafeModeLauncher(safeModeConfig.realLauncherAlias, safeModeConfig.decoyLauncherAlias)
@@ -62,6 +64,10 @@ internal object SafeModeGate {
     fun unlock() = state.unlock()
 
     fun allowExternalTrip() = state.allowExternalTrip()
+
+    fun beginAuthentication() = state.beginAuthentication()
+
+    fun endAuthentication() = state.endAuthentication()
 
     private fun finishRealActivities() {
         activities.mapNotNull { it.get() }.filter { it !is DecoyActivity }.forEach { it.finish() }

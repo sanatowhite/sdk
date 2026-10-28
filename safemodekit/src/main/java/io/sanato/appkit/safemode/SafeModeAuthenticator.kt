@@ -29,27 +29,35 @@ internal object SafeModeAuthenticator {
     /**
      * 失败/取消一律走 [onFailOrCancel]，调用方静默处理。单次识别失败（手指不对）不回调，系统框自己提示重试。
      *
-     * API 30+ 的验证框（含锁屏密码回退）是 SystemUI 窗口，不会让当前 Activity stop；API 30 以下
-     * 回退到锁屏密码时会打开系统的确认凭据 Activity，App 会被 stop，所以先登记一次外跳放行，
-     * 否则在宿主设置页里开关安全模式时会被当成退后台而上锁。
+     * API 30+ 的验证框（含锁屏密码回退）是 SystemUI 窗口，不会让当前 Activity stop，不需要任何处理
+     * （若在这时标记「验证中」，用户按 Home 时 stop 可能先于取消回调到达，反而漏锁）。API 30 以下
+     * 回退到锁屏密码时会打开系统的确认凭据 Activity，App 会被 stop，所以从弹框到回调期间标记
+     * 「验证中」，否则在宿主设置页里开关安全模式时会被当成退后台而上锁。锁屏仍然照常上锁。
      */
     fun authenticate(
         activity: FragmentActivity,
         onSuccess: () -> Unit,
         onFailOrCancel: () -> Unit,
     ) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) SafeModeGate.allowExternalTrip()
+        val tracksAuth = Build.VERSION.SDK_INT < Build.VERSION_CODES.R
+        if (tracksAuth) SafeModeGate.beginAuthentication()
         val prompt =
             BiometricPrompt(
                 activity,
                 ContextCompat.getMainExecutor(activity),
                 object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) = onSuccess()
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        if (tracksAuth) SafeModeGate.endAuthentication()
+                        onSuccess()
+                    }
 
                     override fun onAuthenticationError(
                         errorCode: Int,
                         errString: CharSequence,
-                    ) = onFailOrCancel()
+                    ) {
+                        if (tracksAuth) SafeModeGate.endAuthentication()
+                        onFailOrCancel()
+                    }
                 },
             )
         val info =

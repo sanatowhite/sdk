@@ -13,6 +13,9 @@ internal class SafeModeLockState(
 
     private var tripStartedAt: Long? = null
 
+    /** 验证框（API 30 以下会打开系统确认凭据页，让 App 进后台）正在进行中。 */
+    private var authenticating = false
+
     fun unlock() {
         isLocked = false
     }
@@ -21,7 +24,18 @@ internal class SafeModeLockState(
         if (!isLocked) tripStartedAt = now()
     }
 
+    fun beginAuthentication() {
+        authenticating = true
+    }
+
+    fun endAuthentication() {
+        authenticating = false
+    }
+
     fun onAppBackgrounded(): Boolean {
+        // 验证进行中离开前台的只可能是系统确认凭据页；不靠 TRIP_ARM_MS——用户可能在指纹框上
+        // 停留很久才切到密码
+        if (authenticating) return false
         val start = tripStartedAt
         // 登记后 TRIP_ARM_MS 内真的离开了才算外跳；否则（验证框、普通 Dialog 不会触发 resume
         // 来清标记）视为没跳出去，照常上锁
@@ -48,6 +62,7 @@ internal class SafeModeLockState(
 
     fun onScreenOff(): Boolean {
         tripStartedAt = null
+        authenticating = false
         val changed = !isLocked
         isLocked = true
         return changed
