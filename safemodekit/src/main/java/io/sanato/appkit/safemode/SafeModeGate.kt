@@ -63,6 +63,12 @@ internal object SafeModeGate {
 
     fun unlock() = state.unlock()
 
+    /** 立即上锁并关闭所有真实页面（效果同退后台），下次进入必须走伪装页。 */
+    fun lockNow() {
+        state.lockNow()
+        finishRealActivities()
+    }
+
     fun allowExternalTrip() = state.allowExternalTrip()
 
     fun beginAuthentication() = state.beginAuthentication()

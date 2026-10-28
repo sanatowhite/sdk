@@ -60,7 +60,10 @@ internal class SafeModeLockState(
         tripStartedAt = null
     }
 
-    fun onScreenOff(): Boolean {
+    fun onScreenOff(): Boolean = lockNow()
+
+    /** 立即上锁，作废外跳放行和验证中状态。返回 true 表示由解锁变为上锁。 */
+    fun lockNow(): Boolean {
         tripStartedAt = null
         authenticating = false
         val changed = !isLocked

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="safemode_auth_title">Verify identity</string>
-    <string name="safemode_enable_explanation">1. The launcher icon becomes \"%1$s\" and opens an ordinary web page. Some launchers move the icon off the home screen; drag it back from the app list.\n\n2. To get in: at the top of the page, pull down and hold for about %2$s s until you feel a light vibration, then release and verify with your fingerprint or screen lock.\n\n3. The app locks again when it goes to the background or the screen turns off, which also stops background playback.</string>
+    <string name="safemode_enable_explanation">1. The launcher icon becomes \"%1$s\" and opens an ordinary web page. Some launchers move the icon off the home screen; drag it back from the app list.\n\n2. To get in: at the top of the page, pull down and hold for about %2$s s until you feel a light vibration, then release and verify with your fingerprint or screen lock.\n\n3. After you tap Enable the app closes right away; from then on it can only be opened from \"%1$s\". The app also locks again when it goes to the background or the screen turns off, which also stops background playback.</string>
 </resources>

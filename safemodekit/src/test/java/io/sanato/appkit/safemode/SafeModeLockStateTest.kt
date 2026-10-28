@@ -153,4 +153,21 @@ class SafeModeLockStateTest {
         assertFalse(s.onAppBackgrounded())
         assertTrue(s.isLocked)
     }
+
+    @Test
+    fun lockNowLocksAndDropsTripAndAuthentication() {
+        val s = unlocked()
+        s.allowExternalTrip()
+        s.beginAuthentication()
+        assertTrue(s.lockNow())
+        assertTrue(s.isLocked)
+        // 放行和验证中状态都已作废：再解锁后退后台照常上锁
+        s.unlock()
+        assertTrue(s.onAppBackgrounded())
+    }
+
+    @Test
+    fun lockNowWhenAlreadyLockedReportsNoChange() {
+        assertFalse(state().lockNow())
+    }
 }

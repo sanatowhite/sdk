@@ -32,8 +32,10 @@ object SafeMode {
     fun isEnabled(context: Context): Boolean = SafeModePrefs.isEnabled(context)
 
     /**
-     * 写入开关并切换桌面入口。开启时同时解锁当前会话——调用方此时正在自己的设置页里，
-     * 不应该立刻被踢回伪装页。调用前应先用 [authenticate] 验证身份。
+     * 写入开关并切换桌面入口。调用前应先用 [authenticate] 验证身份。
+     *
+     * 开启时**立即上锁并关闭所有真实页面**（App 回到桌面），下次只能从伪装入口进——
+     * 让用户马上确认伪装生效，也避免开启后一直停留在解锁状态。前台服务（下载等）不受影响。
      */
     @JvmStatic
     fun setEnabled(
@@ -42,8 +44,8 @@ object SafeMode {
     ) {
         val launcher = checkNotNull(SafeModeGate.launcher) { "call SafeMode.install() first" }
         SafeModePrefs.setEnabled(context, enabled)
-        if (enabled) SafeModeGate.unlock()
         launcher.apply(context, decoy = enabled)
+        if (enabled) SafeModeGate.lockNow()
     }
 
     /** 当前暗号按住时长（毫秒）。 */

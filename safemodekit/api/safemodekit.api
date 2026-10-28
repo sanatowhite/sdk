@@ -74,6 +74,7 @@ public final class io.sanato.appkit.safemode.SafeModeGate {
   public final boolean isInstalled();
   public final void install(android.app.Application, io.sanato.appkit.safemode.SafeModeConfig);
   public final void unlock();
+  public final void lockNow();
   public final void allowExternalTrip();
   public final void beginAuthentication();
   public final void endAuthentication();
@@ -103,6 +104,7 @@ public final class io.sanato.appkit.safemode.SafeModeLockState {
   public final boolean onAppForegrounded();
   public final void onActivityResumed();
   public final boolean onScreenOff();
+  public final boolean lockNow();
 }
 
 
