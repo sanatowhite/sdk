@@ -5,8 +5,9 @@ package io.sanato.appkit.safemode
  * 外跳放行（分享、外部播放器等）一次有效：登记后 [TRIP_ARM_MS] 内必须真的退到后台，
  * 放行最长 [TRIP_MAX_MS]，锁屏立即作废。
  */
-internal class SafeModeLockState(private val now: () -> Long) {
-
+internal class SafeModeLockState(
+    private val now: () -> Long,
+) {
     var isLocked = true
         private set
 

@@ -5,8 +5,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SafeModeLockStateTest {
-
     private var clock = 0L
+
     private fun state() = SafeModeLockState { clock }
 
     @Test
@@ -49,7 +49,7 @@ class SafeModeLockStateTest {
         s.onAppBackgrounded()
         s.onAppForegrounded()
         s.onActivityResumed()
-        assertTrue(s.onAppBackgrounded())    // 第二次退后台不再放行
+        assertTrue(s.onAppBackgrounded()) // 第二次退后台不再放行
     }
 
     @Test
@@ -81,7 +81,7 @@ class SafeModeLockStateTest {
         s.onAppBackgrounded()
         assertTrue(s.onScreenOff())
         assertTrue(s.isLocked)
-        assertFalse(s.onAppForegrounded())   // 已锁，无需再次跳转
+        assertFalse(s.onAppForegrounded()) // 已锁，无需再次跳转
     }
 
     @Test
@@ -91,7 +91,7 @@ class SafeModeLockStateTest {
         s.unlock()
         s.allowExternalTrip()
         s.onActivityResumed()
-        assertTrue(s.onAppBackgrounded())    // 之后按 Home 必须上锁
+        assertTrue(s.onAppBackgrounded()) // 之后按 Home 必须上锁
     }
 
     @Test

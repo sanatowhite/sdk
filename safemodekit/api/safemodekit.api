@@ -1,0 +1,131 @@
+Compiled from "DecoyActivity.kt"
+public final class io.sanato.appkit.safemode.DecoyActivity extends androidx.appcompat.app.AppCompatActivity {
+  public io.sanato.appkit.safemode.DecoyActivity();
+  public boolean dispatchTouchEvent(android.view.MotionEvent);
+}
+
+
+Compiled from "HoldToUnlockDetector.kt"
+public final class io.sanato.appkit.safemode.HoldToUnlockDetector {
+  public io.sanato.appkit.safemode.HoldToUnlockDetector(float, long);
+  public final long getHoldMs();
+  public final java.lang.Long getHoldStartTime();
+  public final void onDown(boolean, float, long);
+  public final void onMove(float, long);
+  public final boolean isHoldSatisfied(long);
+  public final boolean onUp(long);
+  public final void onCancel();
+}
+
+
+Compiled from "SafeMode.kt"
+public final class io.sanato.appkit.safemode.SafeMode {
+  public static final io.sanato.appkit.safemode.SafeMode INSTANCE;
+  public static final long DEFAULT_HOLD_DURATION_MS;
+  public static final java.util.List<java.lang.Long> HOLD_DURATION_OPTIONS_MS;
+  public static final void install(android.app.Application, io.sanato.appkit.safemode.SafeModeConfig);
+  public static final boolean isEnabled(android.content.Context);
+  public static final void setEnabled(android.content.Context, boolean);
+  public static final long holdDurationMs(android.content.Context);
+  public static final void setHoldDurationMs(android.content.Context, long);
+  public static final void allowExternalTrip();
+  public static final boolean isDecoy(android.app.Activity);
+  public static final boolean canAuthenticate(android.content.Context);
+  public static final void authenticate(androidx.fragment.app.FragmentActivity, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>);
+  public static void authenticate$default(androidx.fragment.app.FragmentActivity, kotlin.jvm.functions.Function0, kotlin.jvm.functions.Function0, int, java.lang.Object);
+  public static final java.lang.String formatSeconds(long);
+  public static final java.lang.String enableExplanation(android.content.Context, java.lang.CharSequence);
+  public static final void authenticate(androidx.fragment.app.FragmentActivity, kotlin.jvm.functions.Function0<kotlin.Unit>);
+}
+
+
+Compiled from "SafeModeAuthenticator.kt"
+public final class io.sanato.appkit.safemode.SafeModeAuthenticator {
+  public static final io.sanato.appkit.safemode.SafeModeAuthenticator INSTANCE;
+  public final boolean canAuthenticate(android.content.Context);
+  public final void authenticate(androidx.fragment.app.FragmentActivity, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>);
+}
+
+
+Compiled from "SafeModeConfig.kt"
+public final class io.sanato.appkit.safemode.SafeModeConfig {
+  public static final io.sanato.appkit.safemode.SafeModeConfig$Companion Companion;
+  public static final java.lang.String DEFAULT_DECOY_URL;
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class<? extends android.app.Activity>, java.lang.String, java.lang.String, java.lang.String);
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class, java.lang.String, java.lang.String, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.Class<? extends android.app.Activity> getHomeActivity();
+  public final java.lang.String getRealLauncherAlias();
+  public final java.lang.String getDecoyLauncherAlias();
+  public final java.lang.String getDecoyUrl();
+}
+
+
+Compiled from "SafeModeConfig.kt"
+public final class io.sanato.appkit.safemode.SafeModeConfig$Companion {
+  public io.sanato.appkit.safemode.SafeModeConfig$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "SafeModeGate.kt"
+public final class io.sanato.appkit.safemode.SafeModeGate {
+  public static final io.sanato.appkit.safemode.SafeModeGate INSTANCE;
+  public final io.sanato.appkit.safemode.SafeModeConfig getConfig();
+  public final io.sanato.appkit.safemode.SafeModeLauncher getLauncher();
+  public final boolean isInstalled();
+  public final void install(android.app.Application, io.sanato.appkit.safemode.SafeModeConfig);
+  public final void unlock();
+  public final void allowExternalTrip();
+}
+
+
+Compiled from "SafeModeLauncher.kt"
+public final class io.sanato.appkit.safemode.SafeModeLauncher {
+  public io.sanato.appkit.safemode.SafeModeLauncher(java.lang.String, java.lang.String);
+  public final void apply(android.content.Context, boolean);
+  public final boolean isDecoyActive(android.content.Context);
+}
+
+
+Compiled from "SafeModeLockState.kt"
+public final class io.sanato.appkit.safemode.SafeModeLockState {
+  public static final io.sanato.appkit.safemode.SafeModeLockState$Companion Companion;
+  public static final long TRIP_MAX_MS;
+  public static final long TRIP_ARM_MS;
+  public io.sanato.appkit.safemode.SafeModeLockState(kotlin.jvm.functions.Function0<java.lang.Long>);
+  public final boolean isLocked();
+  public final void unlock();
+  public final void allowExternalTrip();
+  public final boolean onAppBackgrounded();
+  public final boolean onAppForegrounded();
+  public final void onActivityResumed();
+  public final boolean onScreenOff();
+}
+
+
+Compiled from "SafeModeLockState.kt"
+public final class io.sanato.appkit.safemode.SafeModeLockState$Companion {
+  public io.sanato.appkit.safemode.SafeModeLockState$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+}
+
+
+Compiled from "SafeModePrefs.kt"
+public final class io.sanato.appkit.safemode.SafeModePrefs {
+  public static final io.sanato.appkit.safemode.SafeModePrefs INSTANCE;
+  public final boolean isEnabled(android.content.Context);
+  public final void setEnabled(android.content.Context, boolean);
+  public final long holdMs(android.content.Context);
+  public final void setHoldMs(android.content.Context, long);
+}
+
+
+Compiled from "SafeModeSettings.kt"
+public final class io.sanato.appkit.safemode.SafeModeSettings {
+  public static final io.sanato.appkit.safemode.SafeModeSettings INSTANCE;
+  public static final long DEFAULT_HOLD_MS;
+  public static final long MIN_HOLD_MS;
+  public static final long MAX_HOLD_MS;
+  public final java.util.List<java.lang.Long> getHOLD_OPTIONS_MS();
+  public final long coerceHoldMs(long);
+}
+
+

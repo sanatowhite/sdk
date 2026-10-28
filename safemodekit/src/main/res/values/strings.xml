@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="safemode_auth_title">验证身份</string>
+    <!-- %1$s：伪装入口在桌面上的名称；%2$s：暗号按住秒数，如 1.2 -->
+    <string name="safemode_enable_explanation">1. 桌面图标会变成「%1$s」，打开后是一个普通网页。部分桌面会把图标移走，需要在应用列表里重新拖回桌面。\n\n2. 进入方法：在网页顶部下拉，按住不松手约 %2$s 秒，感到轻微震动后松手，再验证指纹或锁屏密码。\n\n3. 退到后台或锁屏后会自动重新上锁，后台/息屏播放也会随之停止。</string>
+</resources>

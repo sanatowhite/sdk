@@ -1,0 +1,102 @@
+package io.sanato.appkit.safemode
+
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import androidx.fragment.app.FragmentActivity
+import java.util.Locale
+
+/**
+ * 安全模式（伪装启动页）的唯一入口。
+ *
+ * 开启后桌面入口换成宿主提供的伪装图标，打开是一个网页（[SafeModeConfig.decoyUrl]）；
+ * 在网页顶部下拉、按住 [holdDurationMs] 后松手，再通过指纹/锁屏密码验证，才进入
+ * [SafeModeConfig.homeActivity]。App 退到后台或锁屏即重新上锁。接入步骤见模块 README。
+ */
+object SafeMode {
+    /** 暗号默认按住时长（毫秒）。 */
+    const val DEFAULT_HOLD_DURATION_MS: Long = SafeModeSettings.DEFAULT_HOLD_MS
+
+    /** 推荐给设置页做单选的档位（毫秒，升序，含默认值）。 */
+    @JvmField
+    val HOLD_DURATION_OPTIONS_MS: List<Long> = SafeModeSettings.HOLD_OPTIONS_MS
+
+    /** 在 `Application.onCreate()` 里调用一次。 */
+    @JvmStatic
+    fun install(
+        application: Application,
+        config: SafeModeConfig,
+    ) = SafeModeGate.install(application, config)
+
+    @JvmStatic
+    fun isEnabled(context: Context): Boolean = SafeModePrefs.isEnabled(context)
+
+    /**
+     * 写入开关并切换桌面入口。开启时同时解锁当前会话——调用方此时正在自己的设置页里，
+     * 不应该立刻被踢回伪装页。调用前应先用 [authenticate] 验证身份。
+     */
+    @JvmStatic
+    fun setEnabled(
+        context: Context,
+        enabled: Boolean,
+    ) {
+        val launcher = checkNotNull(SafeModeGate.launcher) { "call SafeMode.install() first" }
+        SafeModePrefs.setEnabled(context, enabled)
+        if (enabled) SafeModeGate.unlock()
+        launcher.apply(context, decoy = enabled)
+    }
+
+    /** 当前暗号按住时长（毫秒）。 */
+    @JvmStatic
+    fun holdDurationMs(context: Context): Long = SafeModePrefs.holdMs(context)
+
+    /** 设置暗号按住时长，超出 500–5000ms 会被夹紧。下次打开伪装页时生效。 */
+    @JvmStatic
+    fun setHoldDurationMs(
+        context: Context,
+        ms: Long,
+    ) = SafeModePrefs.setHoldMs(context, ms)
+
+    /**
+     * App 主动跳到外部之前调用（分享、外部播放器、系统选文件、安装更新等），这一次回来不上锁。
+     * 登记后 5 秒内没有真的离开就作废；离开超过 10 分钟或中途锁屏，回来照样上锁。
+     */
+    @JvmStatic
+    fun allowExternalTrip() = SafeModeGate.allowExternalTrip()
+
+    /** 宿主的全局 Activity 处理（如统一加 FLAG_SECURE）用来跳过伪装页。 */
+    @JvmStatic
+    fun isDecoy(activity: Activity): Boolean = activity is DecoyActivity
+
+    /** 设备上是否有指纹/人脸或锁屏密码可用于验证。都没有时宿主应禁止开启安全模式。 */
+    @JvmStatic
+    fun canAuthenticate(context: Context): Boolean = SafeModeAuthenticator.canAuthenticate(context)
+
+    /** 弹出系统验证框（标题「验证身份」）。失败、取消都走 [onFailOrCancel]。 */
+    @JvmStatic
+    @JvmOverloads
+    fun authenticate(
+        activity: FragmentActivity,
+        onSuccess: () -> Unit,
+        onFailOrCancel: () -> Unit = {},
+    ) = SafeModeAuthenticator.authenticate(activity, onSuccess, onFailOrCancel)
+
+    /** 把毫秒格式化成设置页展示用的秒数，如 1200 → "1.2"，2000 → "2"。 */
+    @JvmStatic
+    fun formatSeconds(ms: Long): String {
+        val text = String.format(Locale.US, "%.1f", ms / 1000.0)
+        return text.removeSuffix(".0")
+    }
+
+    /** 开启前说明框的现成文案（含当前按住时长），宿主可直接用作 AlertDialog 的 message。 */
+    @JvmStatic
+    fun enableExplanation(
+        context: Context,
+        decoyLabel: CharSequence,
+    ): String =
+        context.getString(
+            R.string.safemode_enable_explanation,
+            decoyLabel,
+            formatSeconds(holdDurationMs(context)),
+        )
+}

@@ -7,16 +7,16 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HoldToUnlockDetectorTest {
-
     private val trigger = 300f
     private val hold = 1200L
+
     private fun detector(holdMs: Long = hold) = HoldToUnlockDetector(trigger, holdMs)
 
     @Test
     fun holdPastTriggerForFullDurationUnlocksOnUp() {
         val d = detector()
         d.onDown(atTop = true, y = 100f, t = 0)
-        d.onMove(y = 450f, t = 100)          // 过触发点，开始计时
+        d.onMove(y = 450f, t = 100) // 过触发点，开始计时
         assertEquals(100L, d.holdStartTime)
         assertTrue(d.onUp(t = 100 + hold))
     }
@@ -33,7 +33,7 @@ class HoldToUnlockDetectorTest {
     fun notPastTriggerNeverStartsTimer() {
         val d = detector()
         d.onDown(true, 100f, 0)
-        d.onMove(350f, 100)                  // dy = 250 < 300
+        d.onMove(350f, 100) // dy = 250 < 300
         assertNull(d.holdStartTime)
         assertFalse(d.onUp(5000))
     }
@@ -43,7 +43,7 @@ class HoldToUnlockDetectorTest {
         val d = detector()
         d.onDown(true, 100f, 0)
         d.onMove(450f, 100)
-        d.onMove(430f, 600)                  // 仍 ≥ 触发点
+        d.onMove(430f, 600) // 仍 ≥ 触发点
         d.onMove(460f, 900)
         assertEquals(100L, d.holdStartTime)
         assertTrue(d.onUp(1300))
@@ -54,9 +54,9 @@ class HoldToUnlockDetectorTest {
         val d = detector()
         d.onDown(true, 100f, 0)
         d.onMove(450f, 100)
-        d.onMove(300f, 800)                  // 推回到触发点以下：作废
+        d.onMove(300f, 800) // 推回到触发点以下：作废
         assertNull(d.holdStartTime)
-        d.onMove(450f, 900)                  // 重新过触发点：重新计时
+        d.onMove(450f, 900) // 重新过触发点：重新计时
         assertEquals(900L, d.holdStartTime)
         assertFalse(d.onUp(1400))
         d.onDown(true, 100f, 2000)
@@ -79,7 +79,7 @@ class HoldToUnlockDetectorTest {
         d.onDown(true, 100f, 0)
         d.onMove(450f, 100)
         assertFalse(d.isHoldSatisfied(1299))
-        assertTrue(d.isHoldSatisfied(1300))  // 手指完全静止也能判定（供定时器震动）
+        assertTrue(d.isHoldSatisfied(1300)) // 手指完全静止也能判定（供定时器震动）
     }
 
     @Test
@@ -98,7 +98,7 @@ class HoldToUnlockDetectorTest {
         d.onDown(true, 100f, 0)
         d.onMove(450f, 100)
         assertTrue(d.onUp(1300))
-        assertFalse(d.onUp(9000))            // 没有新的 down，不能再次触发
+        assertFalse(d.onUp(9000)) // 没有新的 down，不能再次触发
     }
 
     @Test

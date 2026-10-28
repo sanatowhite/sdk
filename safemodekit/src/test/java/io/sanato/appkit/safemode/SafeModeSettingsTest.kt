@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SafeModeSettingsTest {
-
     @Test
     fun holdBelowMinimumIsRaisedToMinimum() {
         assertEquals(SafeModeSettings.MIN_HOLD_MS, SafeModeSettings.coerceHoldMs(100))

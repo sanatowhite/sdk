@@ -8,7 +8,6 @@ internal class HoldToUnlockDetector(
     private val triggerPx: Float,
     val holdMs: Long,
 ) {
-
     private var tracking = false
     private var downY = 0f
 
@@ -16,13 +15,20 @@ internal class HoldToUnlockDetector(
     var holdStartTime: Long? = null
         private set
 
-    fun onDown(atTop: Boolean, y: Float, t: Long) {
+    fun onDown(
+        atTop: Boolean,
+        y: Float,
+        t: Long,
+    ) {
         tracking = atTop
         downY = y
         holdStartTime = null
     }
 
-    fun onMove(y: Float, t: Long) {
+    fun onMove(
+        y: Float,
+        t: Long,
+    ) {
         if (!tracking) return
         val pastTrigger = y - downY >= triggerPx
         if (pastTrigger) {
