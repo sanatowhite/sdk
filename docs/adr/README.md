@@ -16,4 +16,5 @@ Lightweight ADRs (context / decision / consequences) for the choices made while 
 - [0012 — Firebase-hosted auth + WebSocket-in-`:core-net`, supersedes 0007's "No authentication"](0012-firebase-auth-and-websocket.md)
 - [0013 — `:downloadkit` depends on `:core-net`, breaking the zero-dependency `*kit` pattern](0013-downloadkit-depends-on-core-net.md)
 - [0014 — Device-bound request signing (`:core-security`/`:security-net-hilt`), design only — implementation not started](0014-request-signing-and-device-enrollment.md)
+- [0015 — `:safemodekit`: app disguise as a zero-dependency `*kit` module](0015-safemodekit.md)
 - [spike 0000 — Hilt library-module `@Module` aggregation (empirical spike behind 0008)](spike-0000-hilt-library-module-aggregation.md)

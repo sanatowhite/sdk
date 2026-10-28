@@ -40,7 +40,10 @@ dependencies {
     // 按 ADR 0009 必须 api；FragmentActivity 经 biometric 的 api 依赖传递过来。
     // 版本取最低可用的稳定版，减少对消费方的传递依赖约束。
     api("androidx.biometric:biometric:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    // DecoyActivity 是公开类（宿主 alias 按全名指向它），父类 AppCompatActivity 因此出现在
+    // 公开类型层级里——implementation 的话消费方解析不到它的继承链（consumer-smoke 实测
+    // `Class<DecoyActivity>` 无法赋给 `Class<out Activity>`），同样按 ADR 0009 用 api。
+    api("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     testImplementation("junit:junit:4.13.2")

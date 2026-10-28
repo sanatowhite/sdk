@@ -71,6 +71,7 @@ dependencies {
     implementation("com.github.sanatowhite.sdk:feature-auth")
     implementation("com.github.sanatowhite.sdk:downloadkit")
     implementation("com.github.sanatowhite.sdk:downloadkit-hilt")
+    implementation("com.github.sanatowhite.sdk:safemodekit")
 
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.activity:activity-compose:1.13.0")
