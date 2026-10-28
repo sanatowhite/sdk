@@ -56,6 +56,7 @@ dependencies {
             "feature-auth",
             "downloadkit",
             "downloadkit-hilt",
+            "safemodekit",
         ).forEach { module -> api("$group:$module:$version") }
     }
 }

@@ -96,6 +96,7 @@ val sdkModules =
         ":feature-auth",
         ":downloadkit",
         ":downloadkit-hilt",
+        ":safemodekit",
         ":sdk-bom",
     )
 
@@ -252,6 +253,9 @@ tasks.register("verifyModuleGraph") {
                 // 只依赖 :core-telemetry 的形状，见 docs/adr/0011。
                 ":backupkit" to emptySet<String>(),
                 ":backupkit-drive" to setOf(":backupkit"),
+                // :safemodekit 零内部依赖：伪装页/门禁/验证全部自包含，只用 AndroidX，
+                // 见 docs/adr/0015。
+                ":safemodekit" to emptySet<String>(),
                 // 和 :updatechecker 同一条铁律,但理由不同::logkit 还不在 sdkModules
                 // 发布清单里(见 CLAUDE.md ":logkit 五条铁律" #1),依赖数必须恒为
                 // 0,不是"现在恰好没依赖"——见 docs/adr/0010。

@@ -86,6 +86,7 @@ include(
     ":feature-auth",
     ":downloadkit",
     ":downloadkit-hilt",
+    ":safemodekit",
     ":sdk-bom",
 )
 
