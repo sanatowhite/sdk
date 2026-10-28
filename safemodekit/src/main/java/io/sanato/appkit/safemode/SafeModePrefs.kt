@@ -19,7 +19,8 @@ internal object SafeModePrefs {
         context: Context,
         enabled: Boolean,
     ) {
-        prefs(context).edit().putBoolean(KEY_ENABLED, enabled).apply()
+        // commit 而非 apply：开启后可能紧接着杀进程（killProcessOnEnable），异步写入会丢
+        prefs(context).edit().putBoolean(KEY_ENABLED, enabled).commit()
     }
 
     fun holdMs(context: Context): Long =

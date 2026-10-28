@@ -51,12 +51,13 @@ Compiled from "SafeModeConfig.kt"
 public final class io.sanato.appkit.safemode.SafeModeConfig {
   public static final io.sanato.appkit.safemode.SafeModeConfig$Companion Companion;
   public static final java.lang.String DEFAULT_DECOY_URL;
-  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class<? extends android.app.Activity>, java.lang.String, java.lang.String, java.lang.String);
-  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class, java.lang.String, java.lang.String, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class<? extends android.app.Activity>, java.lang.String, java.lang.String, java.lang.String, boolean);
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class, java.lang.String, java.lang.String, java.lang.String, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public final java.lang.Class<? extends android.app.Activity> getHomeActivity();
   public final java.lang.String getRealLauncherAlias();
   public final java.lang.String getDecoyLauncherAlias();
   public final java.lang.String getDecoyUrl();
+  public final boolean getKillProcessOnEnable();
 }
 
 

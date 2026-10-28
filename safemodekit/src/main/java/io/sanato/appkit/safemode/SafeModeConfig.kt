@@ -13,12 +13,15 @@ import android.app.Activity
  * @property realLauncherAlias 指向 [homeActivity] 的 alias，manifest 里 `android:enabled="true"`。
  * @property decoyLauncherAlias 指向 [DecoyActivity] 的 alias，manifest 里 `android:enabled="false"`。
  * @property decoyUrl 伪装页加载的网址，只允许 http/https。
+ * @property killProcessOnEnable 开启安全模式后是否直接结束进程（先关闭所有页面再杀）。会中断
+ *   进程内正在进行的工作（如下载），宿主需自行保证可恢复；默认 false，只关闭页面。
  */
 class SafeModeConfig(
     val homeActivity: Class<out Activity>,
     val realLauncherAlias: String,
     val decoyLauncherAlias: String,
     val decoyUrl: String = DEFAULT_DECOY_URL,
+    val killProcessOnEnable: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_DECOY_URL = "https://m.baidu.com"

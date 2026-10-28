@@ -104,6 +104,7 @@ dependencies {
            realLauncherAlias = "com.example.app.LauncherReal",   // namespace + alias 名
            decoyLauncherAlias = "com.example.app.LauncherDecoy",
            // decoyUrl = "https://m.baidu.com",                  // 可选，默认就是这个
+           // killProcessOnEnable = true,                        // 可选：开启后直接结束进程（默认只关闭页面）
        ),
    )
    ```
@@ -150,7 +151,7 @@ dependencies {
 | API | 说明 |
 |---|---|
 | `install(application, config)` | 放在 `Application.onCreate()`，**无条件**调用（不要放在功能开关/远程配置后面：开启过安全模式后不再 install，伪装入口会打开即退出）。同一个 Application 重复调用会被忽略。启动时会按开关状态校正桌面入口。 |
-| `isEnabled(context)` / `setEnabled(context, enabled)` | 读写开关并切换桌面入口；开启时立即上锁并关闭所有真实页面（App 回到桌面）。 |
+| `isEnabled(context)` / `setEnabled(context, enabled)` | 读写开关并切换桌面入口；开启时立即上锁并关闭所有真实页面（App 回到桌面）；`killProcessOnEnable = true` 时随后结束进程，进程内的下载等工作会中断，宿主需保证可恢复。 |
 | `holdDurationMs(context)` / `setHoldDurationMs(context, ms)` | 暗号按住时长，夹紧在 500–5000ms，默认 `DEFAULT_HOLD_DURATION_MS`（1200）。下次打开伪装页生效。 |
 | `HOLD_DURATION_OPTIONS_MS` | 推荐档位 `[500, 800, 1200, 1500, 2000, 3000]`。 |
 | `formatSeconds(ms)` | `1200 → "1.2"`、`2000 → "2"`，设置页展示用。 |

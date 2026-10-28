@@ -7,6 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import java.lang.ref.WeakReference
@@ -63,11 +66,20 @@ internal object SafeModeGate {
 
     fun unlock() = state.unlock()
 
-    /** 立即上锁并关闭所有真实页面（效果同退后台），下次进入必须走伪装页。 */
+    /**
+     * 立即上锁并关闭所有真实页面（效果同退后台），下次进入必须走伪装页。
+     * [SafeModeConfig.killProcessOnEnable] 为 true 时再结束进程：先 finish 再延迟杀，避免系统把
+     * 「进程死了但还在前台的页面」当成崩溃重新拉起。
+     */
     fun lockNow() {
         state.lockNow()
         finishRealActivities()
+        if (config?.killProcessOnEnable == true) {
+            Handler(Looper.getMainLooper()).postDelayed({ Process.killProcess(Process.myPid()) }, KILL_DELAY_MS)
+        }
     }
+
+    private const val KILL_DELAY_MS = 300L
 
     fun allowExternalTrip() = state.allowExternalTrip()
 

@@ -35,7 +35,8 @@ object SafeMode {
      * 写入开关并切换桌面入口。调用前应先用 [authenticate] 验证身份。
      *
      * 开启时**立即上锁并关闭所有真实页面**（App 回到桌面），下次只能从伪装入口进——
-     * 让用户马上确认伪装生效，也避免开启后一直停留在解锁状态。前台服务（下载等）不受影响。
+     * 让用户马上确认伪装生效，也避免开启后一直停留在解锁状态。[SafeModeConfig.killProcessOnEnable]
+     * 为 true 时随后结束进程。
      */
     @JvmStatic
     fun setEnabled(
