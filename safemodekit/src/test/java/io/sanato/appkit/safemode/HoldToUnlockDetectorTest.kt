@@ -117,4 +117,35 @@ class HoldToUnlockDetectorTest {
         d.onMove(450f, 100)
         assertFalse(d.onUp(100 + 2999))
     }
+
+    @Test
+    fun consumeFiresOnceWhileFingerStillDown() {
+        val d = detector()
+        d.onDown(true, 100f, 0)
+        d.onMove(450f, 100)
+        assertFalse(d.consumeIfSatisfied(100 + hold - 1))
+        assertTrue(d.consumeIfSatisfied(100 + hold)) // 到点即触发，不等松手
+        assertNull(d.holdStartTime)
+        assertFalse(d.consumeIfSatisfied(100 + hold + 1)) // 同一手势不重复触发
+        d.onMove(460f, 100 + hold + 50)
+        assertFalse(d.onUp(100 + hold + 100)) // 之后的 move/up 不再触发
+    }
+
+    @Test
+    fun quickRefreshPullNeverFires() {
+        // 普通下拉刷新：越过触发点后很快松手
+        val d = detector(holdMs = 300)
+        d.onDown(true, 100f, 0)
+        d.onMove(450f, 150)
+        assertFalse(d.consumeIfSatisfied(300))
+        assertFalse(d.onUp(400))
+    }
+
+    @Test
+    fun consumeWithoutTriggerDoesNothing() {
+        val d = detector(holdMs = 300)
+        d.onDown(true, 100f, 0)
+        d.onMove(200f, 100)
+        assertFalse(d.consumeIfSatisfied(5000))
+    }
 }

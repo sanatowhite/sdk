@@ -20,7 +20,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /**
- * 安全模式伪装页：加载 [SafeModeConfig.decoyUrl]。暗号见 [HoldToUnlockDetector]，通过后再验证身份。
+ * 安全模式伪装页：加载 [SafeModeConfig.decoyUrl]。暗号见 [HoldToUnlockDetector]，按住满时长即弹出身份验证。
  *
  * 宿主 manifest 的伪装入口 alias 用全名 `io.sanato.appkit.safemode.DecoyActivity` 指向这里；
  * 除此之外宿主不应直接启动或继承它。
@@ -32,17 +32,16 @@ class DecoyActivity : AppCompatActivity() {
     private var scheduledHoldStart: Long? = null
     private var authenticating = false
 
-    private val hapticRunnable =
+    /** 暗号已触发，本次手势剩下的事件不再交给页面（避免松手时触发下拉刷新）。 */
+    private var swallowGesture = false
+    private var downX = 0f
+    private var downY = 0f
+    private var downTime = 0L
+
+    /** 按住满时长的那一刻直接触发：震动 + 弹验证，不必等用户感到震动再松手。 */
+    private val holdRunnable =
         Runnable {
-            if (detector.isHoldSatisfied(SystemClock.uptimeMillis())) {
-                val feedback =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        HapticFeedbackConstants.CONFIRM
-                    } else {
-                        HapticFeedbackConstants.LONG_PRESS
-                    }
-                refresh.performHapticFeedback(feedback)
-            }
+            if (detector.consumeIfSatisfied(SystemClock.uptimeMillis())) onHoldSatisfied()
         }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -125,18 +124,26 @@ class DecoyActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (::detector.isInitialized) trackGesture(ev)
-        return super.dispatchTouchEvent(ev)
+        if (!::detector.isInitialized) return super.dispatchTouchEvent(ev)
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) swallowGesture = false
+        if (swallowGesture) return true
+        trackGesture(ev)
+        return if (swallowGesture) true else super.dispatchTouchEvent(ev)
     }
 
     private fun trackGesture(ev: MotionEvent) {
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                downX = ev.x
+                downY = ev.y
+                downTime = ev.downTime
                 detector.onDown(!web.canScrollVertically(-1), ev.y, ev.eventTime)
             }
 
             MotionEvent.ACTION_MOVE -> {
                 detector.onMove(ev.y, ev.eventTime)
+                // 定时器被主线程卡住迟到时，用 move 事件兜底
+                if (detector.consumeIfSatisfied(ev.eventTime)) onHoldSatisfied()
             }
 
             MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_CANCEL -> {
@@ -144,20 +151,45 @@ class DecoyActivity : AppCompatActivity() {
             }
 
             MotionEvent.ACTION_UP -> {
-                if (detector.onUp(ev.eventTime)) requestUnlock()
+                // 定时器迟到的兜底：同样补 UP 收回指示器，不触发刷新
+                if (detector.onUp(ev.eventTime)) onHoldSatisfied()
             }
         }
-        syncHapticTimer()
+        syncHoldTimer()
     }
 
-    private fun syncHapticTimer() {
+    private fun syncHoldTimer() {
         val start = detector.holdStartTime
         if (start == scheduledHoldStart) return
-        refresh.removeCallbacks(hapticRunnable)
+        refresh.removeCallbacks(holdRunnable)
         scheduledHoldStart = start
         if (start != null) {
-            refresh.postDelayed(hapticRunnable, start + detector.holdMs - SystemClock.uptimeMillis())
+            refresh.postDelayed(holdRunnable, start + detector.holdMs - SystemClock.uptimeMillis())
         }
+    }
+
+    private fun onHoldSatisfied() {
+        val feedback =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                HapticFeedbackConstants.CONFIRM
+            } else {
+                HapticFeedbackConstants.LONG_PRESS
+            }
+        refresh.performHapticFeedback(feedback)
+        endGestureWithoutRefresh()
+        syncHoldTimer()
+        requestUnlock()
+    }
+
+    /**
+     * 手指还按着就触发了：给页面补一个落在按下位置的 UP，让 SwipeRefreshLayout 按「没拉够」
+     * 收回指示器（ACTION_CANCEL 不会收回，指示器会卡在半空），之后本次手势的事件全部吞掉。
+     */
+    private fun endGestureWithoutRefresh() {
+        val up = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, downX, downY, 0)
+        super.dispatchTouchEvent(up)
+        up.recycle()
+        swallowGesture = true
     }
 
     private fun requestUnlock() {
@@ -190,7 +222,7 @@ class DecoyActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (::web.isInitialized) {
-            refresh.removeCallbacks(hapticRunnable)
+            refresh.removeCallbacks(holdRunnable)
             web.destroy()
         }
         super.onDestroy()

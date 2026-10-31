@@ -10,7 +10,9 @@ App disguise ("safe mode"): the host's launcher entry switches to a decoy
 `activity-alias` that opens `DecoyActivity` (a WebView), and the real home
 screen is only reachable through a pull-down-and-hold gesture plus
 `BiometricPrompt` (weak biometric or device credential). The app relocks on
-background and screen-off. `SafeMode` is the only facade a consumer touches;
+background (immediately, or after a configurable grace period that is checked
+lazily on the next foreground) and on screen-off (configurable). The unlock
+fires the moment the hold is satisfied, while the finger is still down. `SafeMode` is the only facade a consumer touches;
 `SafeModeConfig` and `DecoyActivity` (referenced by full name from the host's
 alias) are the only other public types. See `README.md` for the full boundary.
 

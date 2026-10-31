@@ -16,7 +16,9 @@ import java.lang.ref.WeakReference
 
 /**
  * 安全模式门禁：退到后台/锁屏即上锁并 finish 所有真实页面，任务栈清空后从最近任务或桌面
- * 回来都会重新走 [DecoyActivity]。安全模式关闭或尚未 [install] 时不处理任何事件。
+ * 回来都会重新走 [DecoyActivity]。设置了退后台宽限期时，退后台只记时间、页面保留，
+ * 超时后回到前台再跳回伪装页（CLEAR_TASK 清掉真实页面）。安全模式关闭或尚未 [install]
+ * 时不处理任何事件。
  */
 internal object SafeModeGate {
     private var app: Application? = null
@@ -25,7 +27,11 @@ internal object SafeModeGate {
     var launcher: SafeModeLauncher? = null
         private set
 
-    private val state = SafeModeLockState { SystemClock.elapsedRealtime() }
+    private val state =
+        SafeModeLockState(
+            graceMs = { app?.let { SafeModePrefs.graceMs(it) } ?: 0L },
+            now = { SystemClock.elapsedRealtime() },
+        )
     private val activities = mutableListOf<WeakReference<Activity>>()
     private var startedCount = 0
 
@@ -56,7 +62,9 @@ internal object SafeModeGate {
                     context: Context,
                     intent: Intent,
                 ) {
-                    if (enabled() && state.onScreenOff()) finishRealActivities()
+                    if (enabled() && state.onScreenOff(SafeModePrefs.lockOnScreenOff(context))) {
+                        finishRealActivities()
+                    }
                 }
             },
             IntentFilter(Intent.ACTION_SCREEN_OFF),
@@ -112,8 +120,9 @@ internal object SafeModeGate {
 
             override fun onActivityStarted(activity: Activity) {
                 startedCount++
-                if (startedCount == 1 && enabled() && state.onAppForegrounded() && activity !is DecoyActivity) {
-                    redirectToDecoy(activity)
+                if (startedCount == 1 && enabled() && state.onAppForegrounded()) {
+                    // 宽限期/外跳放行超时：真实页面还在栈里，跳回伪装页（CLEAR_TASK 一并清掉）
+                    if (activity is DecoyActivity) finishRealActivities() else redirectToDecoy(activity)
                 }
             }
 

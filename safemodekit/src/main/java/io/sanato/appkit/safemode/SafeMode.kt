@@ -11,7 +11,8 @@ import java.util.Locale
  *
  * 开启后桌面入口换成宿主提供的伪装图标，打开是一个网页（[SafeModeConfig.decoyUrl]）；
  * 在网页顶部下拉、按住 [holdDurationMs] 后松手，再通过指纹/锁屏密码验证，才进入
- * [SafeModeConfig.homeActivity]。App 退到后台或锁屏即重新上锁。接入步骤见模块 README。
+ * [SafeModeConfig.homeActivity]。App 退到后台（可设宽限期 [gracePeriodMs]）或锁屏
+ * （可关 [isLockOnScreenOff]）后重新上锁。接入步骤见模块 README。
  */
 object SafeMode {
     /** 暗号默认按住时长（毫秒）。 */
@@ -53,16 +54,60 @@ object SafeMode {
     @JvmStatic
     fun holdDurationMs(context: Context): Long = SafeModePrefs.holdMs(context)
 
-    /** 设置暗号按住时长，超出 500–5000ms 会被夹紧。下次打开伪装页时生效。 */
+    /** 设置暗号按住时长，超出 300–5000ms 会被夹紧。下次打开伪装页时生效。 */
     @JvmStatic
     fun setHoldDurationMs(
         context: Context,
         ms: Long,
     ) = SafeModePrefs.setHoldMs(context, ms)
 
+    /** 退后台宽限期默认值（毫秒）：0 = 立即上锁。 */
+    const val DEFAULT_GRACE_PERIOD_MS: Long = SafeModeSettings.DEFAULT_GRACE_MS
+
+    /** 推荐给设置页做单选的宽限期档位（毫秒，升序，含默认值 0）：立即/30 秒/1/5/15/30 分钟。 */
+    @JvmField
+    val GRACE_PERIOD_OPTIONS_MS: List<Long> = SafeModeSettings.GRACE_OPTIONS_MS
+
+    /** 退到后台后多久重新上锁（毫秒），0 = 立即。 */
+    @JvmStatic
+    fun gracePeriodMs(context: Context): Long = SafeModePrefs.graceMs(context)
+
+    /**
+     * 设置退后台宽限期，超出 0–30 分钟会被夹紧。宽限期内回到 App 不需要再走伪装页；
+     * 进程被杀则一律上锁。下次退后台时生效。
+     */
+    @JvmStatic
+    fun setGracePeriodMs(
+        context: Context,
+        ms: Long,
+    ) = SafeModePrefs.setGraceMs(context, ms)
+
+    /** 宽限期的展示文案，如 0 → "立即"，30000 → "30 秒"，300000 → "5 分钟"（跟随系统语言）。 */
+    @JvmStatic
+    fun formatGracePeriod(
+        context: Context,
+        ms: Long,
+    ): String =
+        when (val label = SafeModeSettings.graceLabelParts(ms)) {
+            SafeModeSettings.GraceLabel.Immediately -> context.getString(R.string.safemode_grace_immediately)
+            is SafeModeSettings.GraceLabel.Seconds -> context.getString(R.string.safemode_grace_seconds, label.value)
+            is SafeModeSettings.GraceLabel.Minutes -> context.getString(R.string.safemode_grace_minutes, label.value)
+        }
+
+    /** 锁屏时是否立即上锁（默认 true）。关闭后锁屏按普通退后台处理，适用宽限期。 */
+    @JvmStatic
+    fun isLockOnScreenOff(context: Context): Boolean = SafeModePrefs.lockOnScreenOff(context)
+
+    @JvmStatic
+    fun setLockOnScreenOff(
+        context: Context,
+        enabled: Boolean,
+    ) = SafeModePrefs.setLockOnScreenOff(context, enabled)
+
     /**
      * App 主动跳到外部之前调用（分享、外部播放器、系统选文件、安装更新等），这一次回来不上锁。
-     * 登记后 5 秒内没有真的离开就作废；离开超过 10 分钟或中途锁屏，回来照样上锁。
+     * 登记后 5 秒内没有真的离开就作废；离开超过 10 分钟（宽限期更长时按宽限期）或中途锁屏上锁，
+     * 回来照样上锁。
      */
     @JvmStatic
     fun allowExternalTrip() = SafeModeGate.allowExternalTrip()

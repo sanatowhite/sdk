@@ -2,7 +2,7 @@
 
 ## 这是什么 / 不是什么
 
-**安全模式（伪装启动页）**：开启后，App 的桌面图标换成一个伪装入口（比如「浏览器」），打开看到的是一个普通网页（默认百度首页）。只有做出**暗号手势**并通过**指纹/人脸或锁屏密码**验证，才会进入 App 的真实首页。App 一退到后台或手机锁屏，就自动重新上锁。
+**安全模式（伪装启动页）**：开启后，App 的桌面图标换成一个伪装入口（比如「浏览器」），打开看到的是一个普通网页（默认百度首页）。只有做出**暗号手势**并通过**指纹/人脸或锁屏密码**验证，才会进入 App 的真实首页。App 退到后台（默认立即，可设宽限期）或手机锁屏（默认开启，可关），就自动重新上锁。
 
 防的是两类场景：
 - 别人拿到已解锁的手机后随手点开 App。
@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.sanatowhite.sdk:safemodekit:1.3.0'
+    implementation 'com.github.sanatowhite.sdk:safemodekit:1.4.0'
 }
 ```
 
@@ -41,14 +41,14 @@ dependencies {
 |---|---|
 | 开启安全模式 | 先验证身份 → 确认说明 → 桌面图标变成伪装入口，**App 立即关闭回到桌面**，之后只能从伪装入口进。部分桌面会把图标从主屏幕移走，需要在应用列表里重新拖回来。 |
 | 打开伪装入口 | 显示伪装网页，表现和普通浏览器一样：能刷新、能点链接、返回键回退网页历史、能截屏。唤起其他 App 的链接（如 `baiduboxapp://`、`intent://`）会被静默拦截。 |
-| 暗号 | 在网页**顶部**往下拉，拉过刷新触发点（和正常下拉刷新的距离一样）后**按住不松手**，满设定时长（默认 1.2 秒）时手机轻震一下，松手 → 弹出「验证身份」。 |
+| 暗号 | 在网页**顶部**往下拉，拉过刷新触发点（和正常下拉刷新的距离一样）后**按住不松手**，满设定时长（默认 0.8 秒）时手机轻震一下并立刻弹出「验证身份」（不用等松手）。只拉过触发点就松手的普通下拉刷新不会触发。 |
 | 松手太早 | 只是一次普通刷新，什么都不弹。 |
 | 往回推到触发点以下 / 第二根手指按下 | 本次计时作废。 |
 | 验证失败或取消 | 静默留在伪装页，没有任何提示。 |
 | 设备既没录指纹也没设锁屏密码 | 只凭暗号放行（避免把用户锁在外面）；这种设备上宿主应禁止**开启**安全模式。 |
-| 按 Home / 切到别的 App | 立即上锁，所有真实页面被关闭；回来看到的是伪装页。 |
-| 锁屏 | 立即上锁，外跳放行也一并作废。 |
-| 分享、用外部播放器打开、系统选文件等 | 宿主在跳出前调用了 `allowExternalTrip()` 的，10 分钟内回来不上锁。 |
+| 按 Home / 切到别的 App | 宽限期为 0（默认）时立即上锁，所有真实页面被关闭；回来看到的是伪装页。设了宽限期（`setGracePeriodMs`）则页面保留，离开 ≥ 宽限期后回来才跳回伪装页；离开期间进程被杀一律上锁。 |
+| 锁屏 | `isLockOnScreenOff` 为 true（默认）时立即上锁，外跳放行和宽限期一并作废；为 false 时按普通退后台处理（适用宽限期）。 |
+| 分享、用外部播放器打开、系统选文件等 | 宿主在跳出前调用了 `allowExternalTrip()` 的，10 分钟（宽限期更长时按宽限期）内回来不上锁。 |
 | 通知 / 深链直达真实页面 | 锁定状态下被拦回伪装页。 |
 | 关闭安全模式 | 先验证身份 → 桌面图标恢复。 |
 
@@ -152,10 +152,12 @@ dependencies {
 |---|---|
 | `install(application, config)` | 放在 `Application.onCreate()`，**无条件**调用（不要放在功能开关/远程配置后面：开启过安全模式后不再 install，伪装入口会打开即退出）。同一个 Application 重复调用会被忽略。启动时会按开关状态校正桌面入口。 |
 | `isEnabled(context)` / `setEnabled(context, enabled)` | 读写开关并切换桌面入口；开启时立即上锁并关闭所有真实页面（App 回到桌面）；`killProcessOnEnable = true` 时随后结束进程，进程内的下载等工作会中断，宿主需保证可恢复。 |
-| `holdDurationMs(context)` / `setHoldDurationMs(context, ms)` | 暗号按住时长，夹紧在 500–5000ms，默认 `DEFAULT_HOLD_DURATION_MS`（1200）。下次打开伪装页生效。 |
-| `HOLD_DURATION_OPTIONS_MS` | 推荐档位 `[500, 800, 1200, 1500, 2000, 3000]`。 |
+| `holdDurationMs(context)` / `setHoldDurationMs(context, ms)` | 暗号按住时长，夹紧在 300–5000ms，默认 `DEFAULT_HOLD_DURATION_MS`（800，1.4.0 起；之前 1200）。下次打开伪装页生效。 |
+| `HOLD_DURATION_OPTIONS_MS` | 推荐档位 `[300, 500, 800, 1200, 1500, 2000, 3000]`。 |
+| `gracePeriodMs(context)` / `setGracePeriodMs(context, ms)` | 退后台多久后上锁，夹紧在 0–30 分钟，默认 `DEFAULT_GRACE_PERIOD_MS`（0 = 立即）。档位 `GRACE_PERIOD_OPTIONS_MS` = `[0, 30s, 1min, 5min, 15min, 30min]`，`formatGracePeriod(context, ms)` 给出「立即 / 30 秒 / 5 分钟」文案。 |
+| `isLockOnScreenOff(context)` / `setLockOnScreenOff(context, enabled)` | 锁屏时是否立即上锁，默认 true。 |
 | `formatSeconds(ms)` | `1200 → "1.2"`、`2000 → "2"`，设置页展示用。 |
-| `allowExternalTrip()` | 跳出 App 前调用；5 秒内没真的离开就作废，最长 10 分钟，锁屏作废。 |
+| `allowExternalTrip()` | 跳出 App 前调用；5 秒内没真的离开就作废，最长 max(10 分钟, 宽限期)，锁屏上锁时作废。 |
 | `isDecoy(activity)` | 宿主全局处理跳过伪装页用。 |
 | `canAuthenticate(context)` / `authenticate(activity, onSuccess, onFailOrCancel)` | 系统验证框，允许指纹/人脸（弱）+ 锁屏密码。 |
 | `enableExplanation(context, decoyLabel)` | 开启前说明框的现成文案，含当前时长。 |
