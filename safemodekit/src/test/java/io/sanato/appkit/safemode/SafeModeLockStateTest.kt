@@ -312,4 +312,66 @@ class SafeModeLockStateTest {
         s.unlock()
         assertFalse(s.onAppForegrounded()) // 解锁后旧的离开时间已作废
     }
+
+    // ── keep-alive（例如安全模式下的锁屏继续播放）─────────────────────────────
+
+    @Test
+    fun keepAlivePostponesBackgroundLock() {
+        val s = unlocked()
+        s.postponeBackground()
+        assertFalse(s.isLocked)
+    }
+
+    @Test
+    fun keepAliveEndedInBackgroundLocksImmediately() {
+        val s = unlocked()
+        s.postponeBackground()
+        clock += 5_000
+        assertTrue(s.onKeepAliveEnded())
+        assertTrue(s.isLocked)
+    }
+
+    @Test
+    fun keepAliveEndedWhileForegroundDoesNothing() {
+        val s = unlocked()
+        // 没有 postponeBackground（一直在前台）→ 不该锁
+        assertFalse(s.onKeepAliveEnded())
+        assertFalse(s.isLocked)
+    }
+
+    @Test
+    fun keepAliveEndedWithinGraceKeepsUnlocked() {
+        grace = 60_000
+        val s = unlocked()
+        s.postponeBackground()
+        clock += 10_000
+        assertFalse(s.onKeepAliveEnded())
+        assertFalse(s.isLocked)
+        // 宽限期到了再回前台才上锁
+        clock += 55_000
+        assertTrue(s.onAppForegrounded())
+        assertTrue(s.isLocked)
+    }
+
+    @Test
+    fun comingBackWhileKeepAliveCancelsPostponedLock() {
+        val s = unlocked()
+        s.postponeBackground()
+        clock += 10_000
+        // 回到前台（宿主 keep-alive 中，会调 cancelPostponedBackground）
+        s.cancelPostponedBackground()
+        s.onActivityResumed()
+        assertFalse(s.onAppForegrounded())
+        assertFalse(s.onKeepAliveEnded())
+        assertFalse(s.isLocked)
+    }
+
+    @Test
+    fun keepAliveDoesNotOverrideManualLock() {
+        val s = state()
+        s.unlock()
+        s.lockNow()
+        s.postponeBackground()
+        assertTrue(s.isLocked)
+    }
 }

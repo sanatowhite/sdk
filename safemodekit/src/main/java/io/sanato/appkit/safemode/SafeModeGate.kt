@@ -62,7 +62,14 @@ internal object SafeModeGate {
                     context: Context,
                     intent: Intent,
                 ) {
-                    if (enabled() && state.onScreenOff(SafeModePrefs.lockOnScreenOff(context))) {
+                    if (!enabled()) return
+                    // keep-alive（例如安全模式下正在放视频）期间锁屏只按"退后台"处理：
+                    // 不锁、不关页面；之后由宿主调 [onKeepAliveChanged] 补上锁。
+                    if (keepAlive()) {
+                        state.postponeBackground()
+                        return
+                    }
+                    if (state.onScreenOff(SafeModePrefs.lockOnScreenOff(context))) {
                         finishRealActivities()
                     }
                 }
@@ -90,6 +97,18 @@ internal object SafeModeGate {
     private const val KILL_DELAY_MS = 300L
 
     fun allowExternalTrip() = state.allowExternalTrip()
+
+    /** 宿主声明的"先别锁"（见 [SafeModeConfig.keepAliveWhile]）。 */
+    private fun keepAlive(): Boolean = config?.keepAliveWhile?.invoke() == true
+
+    /**
+     * 宿主的 keep-alive 状态变了（例如视频放完了）。如果此时 App 已经退到后台，
+     * 按宽限期规则补上锁——否则会一直停在解锁状态。
+     */
+    fun onKeepAliveChanged() {
+        if (!enabled() || keepAlive()) return
+        if (startedCount == 0 && state.onKeepAliveEnded()) finishRealActivities()
+    }
 
     fun beginAuthentication() = state.beginAuthentication()
 
@@ -120,7 +139,13 @@ internal object SafeModeGate {
 
             override fun onActivityStarted(activity: Activity) {
                 startedCount++
-                if (startedCount == 1 && enabled() && state.onAppForegrounded()) {
+                if (startedCount != 1 || !enabled()) return
+                if (keepAlive()) {
+                    // 播放中回到前台：不锁，并且把上次退后台的计时作废
+                    state.cancelPostponedBackground()
+                    return
+                }
+                if (state.onAppForegrounded()) {
                     // 宽限期/外跳放行超时：真实页面还在栈里，跳回伪装页（CLEAR_TASK 一并清掉）
                     if (activity is DecoyActivity) finishRealActivities() else redirectToDecoy(activity)
                 }
@@ -132,7 +157,12 @@ internal object SafeModeGate {
                 startedCount--
                 // 旋转/夜间模式 recreate 不算退后台
                 if (activity.isChangingConfigurations) return
-                if (startedCount == 0 && enabled() && state.onAppBackgrounded()) finishRealActivities()
+                if (startedCount != 0 || !enabled()) return
+                if (keepAlive()) {
+                    state.postponeBackground()
+                    return
+                }
+                if (state.onAppBackgrounded()) finishRealActivities()
             }
 
             override fun onActivityDestroyed(activity: Activity) {

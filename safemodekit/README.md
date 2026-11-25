@@ -54,6 +54,34 @@ dependencies {
 
 **副作用**：上锁时会 `finish()` 所有真实页面，所以后台播放、息屏播放这类依赖页面存活的功能会随之停止。前台服务（下载等）不受影响。
 
+如果宿主确实需要"安全模式下也能锁屏持续播放"，用 [keep-alive](#keep-alive播放中途不锁屏) 声明：只要宿主说"现在还在放"，锁屏和退后台都只推迟、不关页面；播放一停就必须回调 SDK 补上锁。
+
+## keep-alive：播放中途不锁屏
+
+默认规则是"锁屏/退后台就 `finish()` 所有真实页面"。这对视频播放是致命的：用户明明打开了
+"允许后台播放"，一锁屏播放页就被关掉，声音和画面一起没了。
+
+宿主可以在 [SafeModeConfig] 里给出一个纯内存判断：
+
+```kotlin
+SafeMode.install(
+    this,
+    SafeModeConfig(
+        /* homeActivity / alias / decoyUrl / killProcessOnEnable 照旧 */
+        keepAliveWhile = { PlaybackState.somePlayerIsPlaying() },
+    ),
+)
+```
+
+- 返回 `true` 期间：锁屏**不上锁**（也不关页面），退后台只登记时间、不关页面；
+  宽限期内回到前台照常不上锁。
+- 返回 `false` 之后，宿主**必须**调用一次 `SafeMode.onKeepAliveRequiredChanged(context)`：
+  如果此时 App 在后台，SDK 会按宽限期规则把这次上锁补上（宽限期为 0 就立刻锁）。
+  不调用的话 App 会一直停在解锁状态。
+- 判断函数只会在系统生命周期回调里被调用，**不要做磁盘/网络 IO**；一条静态布尔量即可。
+- 这个能力不会削弱"密码/指纹验证"这道门：进程被杀、手动上锁、从通知直达真实页面等路径
+  仍然一律回到伪装页。
+
 ## AI 接入指南（可直接执行）
 
 **要不要用这个模块**：想让 App 在桌面上伪装成别的东西、打开先看到一个无害页面时用。只想给某个页面加指纹锁，直接用 `androidx.biometric` 就够了，不需要这个模块。
@@ -158,6 +186,7 @@ dependencies {
 | `isLockOnScreenOff(context)` / `setLockOnScreenOff(context, enabled)` | 锁屏时是否立即上锁，默认 true。 |
 | `formatSeconds(ms)` | `1200 → "1.2"`、`2000 → "2"`，设置页展示用。 |
 | `allowExternalTrip()` | 跳出 App 前调用；5 秒内没真的离开就作废，最长 max(10 分钟, 宽限期)，锁屏上锁时作废。 |
+| `onKeepAliveRequiredChanged(context)` | keep-alive 结束（视频放完/暂停）时调用，让 SDK 补上被推迟的那次上锁。 |
 | `isDecoy(activity)` | 宿主全局处理跳过伪装页用。 |
 | `canAuthenticate(context)` / `authenticate(activity, onSuccess, onFailOrCancel)` | 系统验证框，允许指纹/人脸（弱）+ 锁屏密码。 |
 | `enableExplanation(context, decoyLabel)` | 开启前说明框的现成文案，含当前时长。 |

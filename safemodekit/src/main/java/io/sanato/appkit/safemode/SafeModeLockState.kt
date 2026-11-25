@@ -83,6 +83,39 @@ internal class SafeModeLockState(
     }
 
     /**
+     * keep-alive（宿主的"先别锁"，例如安全模式下正在放视频）期间的退后台/锁屏：
+     * 只登记"其实已经离开前台"，不上锁。
+     *
+     * 等 keep-alive 结束时用 [onKeepAliveEnded] 按宽限期规则补上锁；宽限期内回到前台
+     * 仍然走 [onAppForegrounded]，由它决定要不要上锁。
+     */
+    fun postponeBackground() {
+        if (isLocked) return
+        tripStartedAt = null
+        backgroundedAt = now()
+    }
+
+    /** keep-alive 期间又回到前台：刚才那次"离开"作废，不许事后补锁。 */
+    fun cancelPostponedBackground() {
+        backgroundedAt = null
+    }
+
+    /**
+     * keep-alive 结束（例如视频放完/被暂停）。返回 true 表示此刻由解锁变为上锁
+     * （调用方应关闭真实页面）。
+     *
+     * 宽限期未满时不上锁：和普通退后台一致，等下次回到前台再由 [onAppForegrounded] 判定。
+     */
+    fun onKeepAliveEnded(): Boolean {
+        if (isLocked) return false
+        val leftAt = backgroundedAt ?: return false
+        if (graceMs() > 0L && now() - leftAt < graceMs()) return false
+        backgroundedAt = null
+        isLocked = true
+        return true
+    }
+
+    /**
      * 屏幕关闭。[lockImmediately] 为 true 时立即上锁（作废外跳放行和宽限期）；为 false 时不做
      * 任何事——Activity 随之 stop，按普通退后台走宽限期。
      */

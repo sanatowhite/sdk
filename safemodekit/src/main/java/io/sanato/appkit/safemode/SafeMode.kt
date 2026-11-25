@@ -33,6 +33,16 @@ object SafeMode {
     fun isEnabled(context: Context): Boolean = SafeModePrefs.isEnabled(context)
 
     /**
+     * 宿主的 keep-alive 状态变了（典型是"允许后台播放"的视频放完了/被暂停）。
+     *
+     * [SafeModeConfig.keepAliveWhile] 返回 true 期间，锁屏和退后台都只是**推迟**上锁；
+     * 一旦不再需要 keep-alive，宿主必须调用这里，让 SDK 按宽限期规则把这次上锁补上——
+     * 否则 App 会一直停在解锁状态。纯内存判断，随时可调。
+     */
+    @JvmStatic
+    fun onKeepAliveRequiredChanged(context: Context) = SafeModeGate.onKeepAliveChanged()
+
+    /**
      * 写入开关并切换桌面入口。调用前应先用 [authenticate] 验证身份。
      *
      * 开启时**立即上锁并关闭所有真实页面**（App 回到桌面），下次只能从伪装入口进——
