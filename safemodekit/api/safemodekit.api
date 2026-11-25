@@ -28,6 +28,7 @@ public final class io.sanato.appkit.safemode.SafeMode {
   public static final java.util.List<java.lang.Long> GRACE_PERIOD_OPTIONS_MS;
   public static final void install(android.app.Application, io.sanato.appkit.safemode.SafeModeConfig);
   public static final boolean isEnabled(android.content.Context);
+  public static final void onKeepAliveRequiredChanged(android.content.Context);
   public static final void setEnabled(android.content.Context, boolean);
   public static final long holdDurationMs(android.content.Context);
   public static final void setHoldDurationMs(android.content.Context, long);
@@ -59,13 +60,14 @@ Compiled from "SafeModeConfig.kt"
 public final class io.sanato.appkit.safemode.SafeModeConfig {
   public static final io.sanato.appkit.safemode.SafeModeConfig$Companion Companion;
   public static final java.lang.String DEFAULT_DECOY_URL;
-  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class<? extends android.app.Activity>, java.lang.String, java.lang.String, java.lang.String, boolean);
-  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class, java.lang.String, java.lang.String, java.lang.String, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class<? extends android.app.Activity>, java.lang.String, java.lang.String, java.lang.String, boolean, kotlin.jvm.functions.Function0<java.lang.Boolean>);
+  public io.sanato.appkit.safemode.SafeModeConfig(java.lang.Class, java.lang.String, java.lang.String, java.lang.String, boolean, kotlin.jvm.functions.Function0, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public final java.lang.Class<? extends android.app.Activity> getHomeActivity();
   public final java.lang.String getRealLauncherAlias();
   public final java.lang.String getDecoyLauncherAlias();
   public final java.lang.String getDecoyUrl();
   public final boolean getKillProcessOnEnable();
+  public final kotlin.jvm.functions.Function0<java.lang.Boolean> getKeepAliveWhile();
 }
 
 
@@ -85,6 +87,7 @@ public final class io.sanato.appkit.safemode.SafeModeGate {
   public final void unlock();
   public final void lockNow();
   public final void allowExternalTrip();
+  public final void onKeepAliveChanged();
   public final void beginAuthentication();
   public final void endAuthentication();
 }
@@ -113,6 +116,9 @@ public final class io.sanato.appkit.safemode.SafeModeLockState {
   public final boolean onAppBackgrounded();
   public final boolean onAppForegrounded();
   public final void onActivityResumed();
+  public final void postponeBackground();
+  public final void cancelPostponedBackground();
+  public final boolean onKeepAliveEnded();
   public final boolean onScreenOff(boolean);
   public static boolean onScreenOff$default(io.sanato.appkit.safemode.SafeModeLockState, boolean, int, java.lang.Object);
   public final boolean lockNow();
