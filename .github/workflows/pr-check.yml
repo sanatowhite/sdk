@@ -139,26 +139,69 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Assemble release
         run: ./gradlew :app:assembleRelease --stacktrace
+      - name: Extract release DEX
+        # 断言直接查 DEX 里的类描述符，**不再用 apkanalyzer**：
+        #   - 它不在 $ANDROID_HOME/build-tools/<ver>/ 下（新版 SDK 把它挪到了 cmdline-tools，
+        #     而且要求同一个 SDK 根里还有 build-tools，本地/CI 的 SDK 布局不一致时会直接
+        #     "Cannot locate latest build tools" 退出）；
+        #   - 之前那版脚本拿到的是一个不存在的可执行文件，输出永远是空串：
+        #     负向断言因此永远"通过"、正向断言永远报 missing（2026-09 起这个 job 一直红着，
+        #     但其实 APK 里 Firebase Auth 一直都在）。
+        # unzip + grep 是 runner 上一定有的工具，而且查的就是真实产物。
+        run: |
+          set -euo pipefail
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          test -n "$APK" || { echo "::error::no release APK found"; exit 1; }
+          DEX_DIR="$RUNNER_TEMP/release-dex"
+          rm -rf "$DEX_DIR"
+          mkdir -p "$DEX_DIR"
+          unzip -o -q "$APK" 'classes*.dex' -d "$DEX_DIR"
+          ls -l "$DEX_DIR"
+          test -n "$(ls "$DEX_DIR")" || { echo "::error::no classes*.dex extracted"; exit 1; }
+          echo "DEX_DIR=$DEX_DIR" >> "$GITHUB_ENV"
       - name: Assert zero debug-tools residue in release APK
         run: |
-          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
-          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
-          if "$BUILD_TOOLS/apkanalyzer" dex packages "$APK" | grep -qE "debugtools|leakcanary|okhttp3\.logging"; then
+          set -euo pipefail
+          # 只看"只该出现在 debug 变体里"的东西。
+          #
+          # 刻意不含 okhttp3/logging：HttpLoggingInterceptor 是 :core-net 的公开能力
+          # （okHttpClient(enableLogging = …)），调用方传的是运行时开关
+          # （context.isDebuggableBuild()），R8 折叠不掉这个分支；release 包里它只是
+          # "类在、但没人会把它装上链路"，不算 debug-only 代码泄漏。
+          if grep -rqaE -e "Lio/sanato/appkit/debugtools" -e "Lleakcanary/" "$DEX_DIR"; then
             echo "::error::debug-only code leaked into the release APK"
             exit 1
           fi
+          echo "OK: no debug-tools / leakcanary classes in the release DEX"
       - name: Assert Firebase Auth survived R8 (positive assertion, see ADR 0012)
         # 上面那条断言只查"不该在的不在"——R8 full mode 剥掉反射路径这类问题
         # (比如 :auth-firebase 的 OAuthProvider Apple 登录用到的反射)只有真机点一次
         # 才发现得了,但至少"整个 com.google.firebase.auth 包被 R8 完全裁掉"这种
         # 更粗粒度的 keep-rules 缺失,可以在这里机械捕获。
         run: |
-          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
-          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
-          if ! "$BUILD_TOOLS/apkanalyzer" dex packages "$APK" | grep -q "com.google.firebase.auth"; then
+          set -euo pipefail
+          if ! grep -rqa "Lcom/google/firebase/auth/FirebaseAuth;" "$DEX_DIR"; then
             echo "::error::com.google.firebase.auth missing from release APK — R8 keep rules for :auth-firebase likely broken"
             exit 1
           fi
+          # 更贴近"我们的接线还在"的一层：FirebaseAuth 这个名字其实是 Firebase 自己的
+          # consumer rules 保下来的，跟 :auth-firebase 有没有被接进 App 无关。我们的实现类
+          # 会被混淆改名（不是被裁掉），所以查 R8 的 mapping：被裁掉会写成
+          # `-> R8$$REMOVED$$CLASS$$N:`。
+          MAPPING=app/build/outputs/mapping/release/mapping.txt
+          test -f "$MAPPING" || { echo "::error::$MAPPING not found"; exit 1; }
+          REPO_LINE=$(grep -m1 "^io\.sanato\.appkit\.auth\.firebase\.FirebaseAuthRepository -> " "$MAPPING" || true)
+          test -n "$REPO_LINE" || {
+            echo "::error::FirebaseAuthRepository missing from R8 mapping — :auth-firebase 没被接进 App"
+            exit 1
+          }
+          case "$REPO_LINE" in
+            *'R8$$REMOVED$$CLASS$$'*)
+              echo "::error::FirebaseAuthRepository was stripped by R8 ($REPO_LINE)"
+              exit 1
+              ;;
+          esac
+          echo "OK: Firebase Auth survived R8 ($REPO_LINE)"
 
   quality-report:
     name: quality-report (detekt + kover)
